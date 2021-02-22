@@ -134,7 +134,7 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     if (m_healthPercent < 1) // creature is dead
         return;
 
-    Color fillColor = Color(96, 96, 96);
+    Color fillColor = Color(0, 184, 255);
 
     if (!useGray)
         fillColor = m_informationColor;
