@@ -44,8 +44,14 @@ jobs:
     - name: Upload otclient_debug.exe
       uses: 'actions/upload-artifact@v2'
       with:
-        path: otclient_debug.exe
         name: Download-otclient
+        path: |
+          otclient_debug.exe
+          *.dll
+          data
+          modules
+          layouts
+          init.lua
 
     - name: Upload otclientv8.log
       uses: 'actions/upload-artifact@v2'
