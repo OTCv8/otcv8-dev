@@ -1,6 +1,8 @@
 # OTCv8 Developer Editon
 
-Special version of OTC v8 allowing to edit src/client dir to conduct some tests and help create pull requests.
+Special version of OTC v8 allowing to edit src/client dir to conduct some tests and help improving free version of OTCv8.
+Merged pull requests will be added to official OTCv8 version, so if you want a new feature in OTCv8, just add it here.
+This repository uses CI/CD to build and test OTCv8 automaticlly whenever you push changes to repository. Check Actions tab. 
 
 ### Quick start
 
@@ -20,3 +22,8 @@ Special version of OTC v8 allowing to edit src/client dir to conduct some tests 
 - Executable has limited uptime, can work max. 1h
 - There's no access to framework .cpp files
 - Only DirectX is supported
+
+### Useful tips:
+
+- To run test manually use command `otclient_debug.exe --test`
+- To test mobile UI use command `otclient_debug.exe --mobile`
