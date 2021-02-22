@@ -27,12 +27,12 @@ Module
     - game_playermount
     - game_ruleviolation
     - game_market
-    - game_spelllist
+- game_spelllist
     - game_cooldown
     - game_modaldialog
-    - game_unjustifiedpoints
+		- game_unjustifiedpoints
     - game_walking
-    - game_shop
+   - game_shop
     - game_itemselector
     - client_textedit
     - game_actionbar
