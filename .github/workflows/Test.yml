@@ -34,7 +34,8 @@ jobs:
         $process = (Start-Process -Wait -PassThru otclient_debug.exe --test)        
         Get-Content otclientv8.log
         if ($process.ExitCode -ne 0) { throw "Invalid exit code: " + $process.ExitCode; }
-
+        Remove-Item 'data\things' -Recurse
+        
     - name: Copy screenshots
       run: |        
         dir $env:appdata\otclientv8\otclientv8
