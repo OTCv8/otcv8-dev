@@ -1,0 +1,60 @@
+name: Build and Test
+# Workflow file for windows
+on: [push, pull_request]
+
+jobs:
+  Windows:
+    name: build-windows
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+          submodules: recursive
+
+    - name: Setup MSBuild and add to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+      id: setup_msbuild
+
+    - name: Decompress files
+      run: |        
+        7z e lib.7z
+        7z e include.7z
+        7z e tests.7z
+
+    - name: Compile 
+      run: |
+        cd vc16
+        MSBuild
+        cd ..
+
+    - name: Run OTCv8
+      run: |        
+        $process = (Start-Process -Wait -PassThru otclient_debug.exe --test)        
+        Get-Content otclientv8.log
+        if ($process.ExitCode -ne 0) { throw "Invalid exit code: " + $process.ExitCode; }
+
+    - name: Copy screenshots
+      run: |        
+        dir $env:appdata\otclientv8\otclientv8
+        mkdir screenshots
+        Get-ChildItem $env:appdata\otclientv8\otclientv8 -Filter *.png | Copy-Item -Destination screenshots -Force -PassThru
+
+    - name: Upload otclient_debug.exe
+      uses: 'actions/upload-artifact@v2'
+      with:
+        path: otclient_debug.exe
+        name: Download-otclient
+
+    - name: Upload otclientv8.log
+      uses: 'actions/upload-artifact@v2'
+      with:
+        path: otclientv8.log
+        name: Download-otclientv8.log
+
+    - name: Upload screenshot
+      uses: 'actions/upload-artifact@v2'
+      with:
+        path: screenshots
+        name: Download-screenshots
