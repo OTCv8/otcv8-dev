@@ -52,10 +52,15 @@ int main(int argc, const char* argv[]) {
     std::string compactName = g_resources.getCompactName();
     g_logger.setLogFile(compactName + ".log");
 
+    bool testMode = std::find(args.begin(), args.end(), "--test") != args.end();
+    if (testMode) {
+        g_logger.setTestingMode();    
+    }
+
     // setup application name and version
     g_app.setName("OTClientV8");
     g_app.setCompactName(compactName);
-    g_app.setVersion("2.6.2");
+    g_app.setVersion("2.6.1");
 
 #ifdef WITH_ENCRYPTION
     if (std::find(args.begin(), args.end(), "--encrypt") != args.end()) {
@@ -97,8 +102,7 @@ int main(int argc, const char* argv[]) {
         }
     }
 
-    if (std::find(args.begin(), args.end(), "--test") != args.end()) {
-        g_logger.setTestingMode();
+    if (testMode) {
         if (!g_lua.safeRunScript("test.lua")) {
             g_logger.fatal("Can't run test.lua");
         }
