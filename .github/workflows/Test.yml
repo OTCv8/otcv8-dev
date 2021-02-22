@@ -19,9 +19,9 @@ jobs:
 
     - name: Decompress files
       run: |        
-        7z e lib.7z
-        7z e include.7z
-        7z e tests.7z
+        7z x lib.7z -aoa
+        7z x include.7z -aoa
+        7z x tests.7z -aoa
 
     - name: Compile 
       run: |
