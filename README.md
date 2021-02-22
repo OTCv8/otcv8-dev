@@ -1,9 +1,12 @@
 # OTCv8 Developer Editon
 
-Special version of OTC v8 allowing to edit src/client dir to conduct some tests and help improving free version of OTCv8.
-Merged pull requests will be added to official OTCv8 version, so if you want a new feature in OTCv8, just add it here.
+Special version of OTC v8 allowing to edit src/client dir to help improving OTCv8. You can add whatever you want and create pull request with your changes.
+Accepted pull requests will be added to official OTCv8 version, so if you want a new feature in OTCv8, just add it here and wait for approval.
 
-This repository uses CI/CD to build and test OTCv8 automaticlly whenever you push changes to repository. Check Actions tab.
+This repository uses CI/CD to build and test OTCv8 automaticlly whenever you push changes to repository.
+
+Check Actions tab to see test results or to download latest binaries. 
+
 ![Workflow status](https://github.com/OTCv8/otcv8-dev/actions/workflows/Test.yml/badge.svg)
 
 ### Quick start
