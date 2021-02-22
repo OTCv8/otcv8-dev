@@ -30,17 +30,6 @@
 #include <client/client.h>
 
 int main(int argc, const char* argv[]) {
-
-    auto error = glGetError();
-    if (error != GL_NO_ERROR) {
-#ifndef NDEBUG
-        g_logger.fatal(
-#else
-        g_logger.error(
-#endif
-            stdext::format("Render error: %i in %s (%s:%i)", error, "", "", ""));
-    }
-
     std::vector<std::string> args(argv, argv + argc);
 
 #ifdef CRASH_HANDLER
@@ -51,11 +40,6 @@ int main(int argc, const char* argv[]) {
     g_resources.init(argv[0]);
     std::string compactName = g_resources.getCompactName();
     g_logger.setLogFile(compactName + ".log");
-
-    bool testMode = std::find(args.begin(), args.end(), "--test") != args.end();
-    if (testMode) {
-        g_logger.setTestingMode();    
-    }
 
     // setup application name and version
     g_app.setName("OTClientV8");
@@ -84,6 +68,11 @@ int main(int argc, const char* argv[]) {
 #ifdef FW_NET
     g_http.init();
 #endif
+
+    bool testMode = std::find(args.begin(), args.end(), "--test") != args.end();
+    if (testMode) {
+        g_logger.setTestingMode();    
+    }
 
     // find script init.lua and run it
     g_resources.setupWriteDir(g_app.getName(), g_app.getCompactName());
