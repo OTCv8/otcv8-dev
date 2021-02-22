@@ -20,7 +20,7 @@ jobs:
     - name: Decompress files
       run: |        
         7z x lib.7z -aoa
-        7z x include.7z -aoa
+        7z x include.7z -aoa -oinclude
         7z x tests.7z -aoa
 
     - name: Compile 
