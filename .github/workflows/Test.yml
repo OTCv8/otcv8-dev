@@ -1,11 +1,11 @@
 name: Build and Test
-# Workflow file for windows
 on: [push, pull_request]
 
 jobs:
   Windows:
     name: build-windows
     runs-on: windows-latest
+    timeout-minutes: 30
 
     steps:
     - name: Checkout
@@ -24,12 +24,14 @@ jobs:
         7z x tests.7z -aoa
 
     - name: Compile 
+      timeout-minutes: 5
       run: |
         cd vc16
         MSBuild
         cd ..
 
     - name: Run OTCv8
+      timeout-minutes: 10
       run: |        
         $process = (Start-Process -Wait -PassThru otclient_debug.exe --test)        
         Get-Content otclientv8.log
