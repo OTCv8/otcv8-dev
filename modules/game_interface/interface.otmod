@@ -28,7 +28,7 @@ Module
     - game_ruleviolation
     - game_market
     - game_spelllist
-    - game_cooldown
+		- game_cooldown
     - game_modaldialog
     - game_unjustifiedpoints
     - game_walking
