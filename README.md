@@ -1,7 +1,8 @@
 # OTCv8 Developer Editon
 
-Special version of OTC v8 allowing to edit src/client dir to help improving OTCv8. You can add whatever you want and create pull request with your changes.
+Special version of OTCv8 allowing to edit src/client dir to help improving OTCv8. You can add whatever you want and create pull request with your changes.
 Accepted pull requests will be added to official OTCv8 version, so if you want a new feature in OTCv8, just add it here and wait for approval.
+If you add custom feature, make sure it's optional and can be enabled via g_game.enableFeature function, otherwise your pull request will be rejected.
 
 This repository uses CI/CD to build and test OTCv8 automaticlly whenever you push changes to repository.
 
@@ -13,7 +14,7 @@ Check Actions tab to see test results or to download latest binaries.
 
 1. Get and run: https://visualstudio.microsoft.com/vs/community/
 2. Select "Desktop Development with C++" and click Install
-3. Unpack lib.7z and include.7z (to include/ dir)
+3. Unpack include.7z (to include/ dir) and lib.7z (to main dir)
 4. Open vc16/otclient.sln
 5. Select Build -> Build otclient
 6. It should generate otclient_debug.exe
