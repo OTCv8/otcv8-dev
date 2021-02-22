@@ -1,0 +1,425 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{17A8F78F-1FFB-4128-A3B3-59CC6C19D89A}</ProjectGuid>
+    <RootNamespace>otclient</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="settings.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);../src;</IncludePath>
+    <TargetName>otclient_debug</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgAutoLink>false</VcpkgAutoLink>
+    <VcpkgEnabled>false</VcpkgEnabled>
+    <VcpkgManifestInstall>false</VcpkgManifestInstall>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+    <VcpkgConfiguration>Debug</VcpkgConfiguration>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>$(PREPROCESSOR_DEFS);%(PreprocessorDefinitions);OPENGL_ES;FREE_VERSION;FREE_VERSION_LIB;_SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING;_SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNINGS</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <Optimization>Disabled</Optimization>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <SDLCheck>true</SDLCheck>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ConformanceMode>true</ConformanceMode>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <EnableModules>false</EnableModules>
+      <StringPooling>true</StringPooling>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <OmitFramePointers>false</OmitFramePointers>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4326</DisableSpecificWarnings>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <PreprocessToFile>false</PreprocessToFile>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <ShowProgress>NotSet</ShowProgress>
+      <LinkStatus>false</LinkStatus>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <PreventDllBinding>true</PreventDllBinding>
+      <RegisterOutput>false</RegisterOutput>
+      <AdditionalDependencies>$(ProjectDir)..\otclient_debug_lib.lib;advapi32.lib;ole32.lib;bcrypt.lib;crypt32.lib;dbghelp.lib;gdi32.lib;psapi.lib;shell32.lib;user32.lib;winmm.lib</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <AdditionalOptions>/LTCG:OFF /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>OPENGL_ES</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Lib>
+      <LinkTimeCodeGeneration>false</LinkTimeCodeGeneration>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\client\animatedtext.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\animator.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\client.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\container.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\creature.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\creatures.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\effect.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\game.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\houses.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\item.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\itemtype.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\lightview.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\localplayer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\luafunctions_client.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\luavaluecasts_client.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\map.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\mapio.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\mapview.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4834</DisableSpecificWarnings>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\minimap.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\missile.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\outfit.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\player.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\protocolcodes.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\protocolgame.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\protocolgameparse.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\protocolgamesend.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\shadermanager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\spritemanager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\statictext.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\thing.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\thingtype.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\thingtypemanager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\tile.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\towns.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\uicreature.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\uiitem.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\uimap.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\uimapanchorlayout.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\uiminimap.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\uiprogressrect.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\uisprite.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\client\animatedtext.h" />
+    <ClInclude Include="..\src\client\animator.h" />
+    <ClInclude Include="..\src\client\client.h" />
+    <ClInclude Include="..\src\client\const.h" />
+    <ClInclude Include="..\src\client\container.h" />
+    <ClInclude Include="..\src\client\creature.h" />
+    <ClInclude Include="..\src\client\creatures.h" />
+    <ClInclude Include="..\src\client\declarations.h" />
+    <ClInclude Include="..\src\client\effect.h" />
+    <ClInclude Include="..\src\client\game.h" />
+    <ClInclude Include="..\src\client\global.h" />
+    <ClInclude Include="..\src\client\houses.h" />
+    <ClInclude Include="..\src\client\item.h" />
+    <ClInclude Include="..\src\client\itemtype.h" />
+    <ClInclude Include="..\src\client\lightview.h" />
+    <ClInclude Include="..\src\client\localplayer.h" />
+    <ClInclude Include="..\src\client\luavaluecasts_client.h" />
+    <ClInclude Include="..\src\client\map.h" />
+    <ClInclude Include="..\src\client\mapview.h" />
+    <ClInclude Include="..\src\client\minimap.h" />
+    <ClInclude Include="..\src\client\missile.h" />
+    <ClInclude Include="..\src\client\outfit.h" />
+    <ClInclude Include="..\src\client\player.h" />
+    <ClInclude Include="..\src\client\position.h" />
+    <ClInclude Include="..\src\client\protocolcodes.h" />
+    <ClInclude Include="..\src\client\protocolgame.h" />
+    <ClInclude Include="..\src\client\shadermanager.h" />
+    <ClInclude Include="..\src\client\spritemanager.h" />
+    <ClInclude Include="..\src\client\statictext.h" />
+    <ClInclude Include="..\src\client\thing.h" />
+    <ClInclude Include="..\src\client\thingstype.h" />
+    <ClInclude Include="..\src\client\thingtype.h" />
+    <ClInclude Include="..\src\client\thingtypemanager.h" />
+    <ClInclude Include="..\src\client\tile.h" />
+    <ClInclude Include="..\src\client\towns.h" />
+    <ClInclude Include="..\src\client\uicreature.h" />
+    <ClInclude Include="..\src\client\uiitem.h" />
+    <ClInclude Include="..\src\client\uimap.h" />
+    <ClInclude Include="..\src\client\uimapanchorlayout.h" />
+    <ClInclude Include="..\src\client\uiminimap.h" />
+    <ClInclude Include="..\src\client\uiprogressrect.h" />
+    <ClInclude Include="..\src\client\uisprite.h" />
+    <ClInclude Include="..\src\client\walkmatrix.h" />
+    <ClInclude Include="..\src\framework\const.h" />
+    <ClInclude Include="..\src\framework\core\adaptiverenderer.h" />
+    <ClInclude Include="..\src\framework\core\application.h" />
+    <ClInclude Include="..\src\framework\core\asyncdispatcher.h" />
+    <ClInclude Include="..\src\framework\core\binarytree.h" />
+    <ClInclude Include="..\src\framework\core\clock.h" />
+    <ClInclude Include="..\src\framework\core\config.h" />
+    <ClInclude Include="..\src\framework\core\configmanager.h" />
+    <ClInclude Include="..\src\framework\core\declarations.h" />
+    <ClInclude Include="..\src\framework\core\event.h" />
+    <ClInclude Include="..\src\framework\core\eventdispatcher.h" />
+    <ClInclude Include="..\src\framework\core\filestream.h" />
+    <ClInclude Include="..\src\framework\core\graphicalapplication.h" />
+    <ClInclude Include="..\src\framework\core\inputevent.h" />
+    <ClInclude Include="..\src\framework\core\logger.h" />
+    <ClInclude Include="..\src\framework\core\module.h" />
+    <ClInclude Include="..\src\framework\core\modulemanager.h" />
+    <ClInclude Include="..\src\framework\core\resourcemanager.h" />
+    <ClInclude Include="..\src\framework\core\scheduledevent.h" />
+    <ClInclude Include="..\src\framework\core\timer.h" />
+    <ClInclude Include="..\src\framework\global.h" />
+    <ClInclude Include="..\src\framework\graphics\animatedtexture.h" />
+    <ClInclude Include="..\src\framework\graphics\apngloader.h" />
+    <ClInclude Include="..\src\framework\graphics\atlas.h" />
+    <ClInclude Include="..\src\framework\graphics\bitmapfont.h" />
+    <ClInclude Include="..\src\framework\graphics\cachedtext.h" />
+    <ClInclude Include="..\src\framework\graphics\colorarray.h" />
+    <ClInclude Include="..\src\framework\graphics\coordsbuffer.h" />
+    <ClInclude Include="..\src\framework\graphics\declarations.h" />
+    <ClInclude Include="..\src\framework\graphics\deptharray.h" />
+    <ClInclude Include="..\src\framework\graphics\drawcache.h" />
+    <ClInclude Include="..\src\framework\graphics\drawqueue.h" />
+    <ClInclude Include="..\src\framework\graphics\fontmanager.h" />
+    <ClInclude Include="..\src\framework\graphics\framebuffer.h" />
+    <ClInclude Include="..\src\framework\graphics\framebuffermanager.h" />
+    <ClInclude Include="..\src\framework\graphics\glutil.h" />
+    <ClInclude Include="..\src\framework\graphics\graph.h" />
+    <ClInclude Include="..\src\framework\graphics\graphics.h" />
+    <ClInclude Include="..\src\framework\graphics\hardwarebuffer.h" />
+    <ClInclude Include="..\src\framework\graphics\image.h" />
+    <ClInclude Include="..\src\framework\graphics\painter.h" />
+    <ClInclude Include="..\src\framework\graphics\paintershaderprogram.h" />
+    <ClInclude Include="..\src\framework\graphics\shader.h" />
+    <ClInclude Include="..\src\framework\graphics\shaderprogram.h" />
+    <ClInclude Include="..\src\framework\graphics\shaders\newshader.h" />
+    <ClInclude Include="..\src\framework\graphics\shaders\outfits.h" />
+    <ClInclude Include="..\src\framework\graphics\shaders\shaders.h" />
+    <ClInclude Include="..\src\framework\graphics\shaders\shadersources.h" />
+    <ClInclude Include="..\src\framework\graphics\textrender.h" />
+    <ClInclude Include="..\src\framework\graphics\texture.h" />
+    <ClInclude Include="..\src\framework\graphics\texturemanager.h" />
+    <ClInclude Include="..\src\framework\graphics\vertexarray.h" />
+    <ClInclude Include="..\src\framework\http\http.h" />
+    <ClInclude Include="..\src\framework\http\result.h" />
+    <ClInclude Include="..\src\framework\http\session.h" />
+    <ClInclude Include="..\src\framework\http\websocket.h" />
+    <ClInclude Include="..\src\framework\input\mouse.h" />
+    <ClInclude Include="..\src\framework\luaengine\declarations.h" />
+    <ClInclude Include="..\src\framework\luaengine\lbitlib.h" />
+    <ClInclude Include="..\src\framework\luaengine\luabinder.h" />
+    <ClInclude Include="..\src\framework\luaengine\luaexception.h" />
+    <ClInclude Include="..\src\framework\luaengine\luainterface.h" />
+    <ClInclude Include="..\src\framework\luaengine\luaobject.h" />
+    <ClInclude Include="..\src\framework\luaengine\luavaluecasts.h" />
+    <ClInclude Include="..\src\framework\net\connection.h" />
+    <ClInclude Include="..\src\framework\net\declarations.h" />
+    <ClInclude Include="..\src\framework\net\inputmessage.h" />
+    <ClInclude Include="..\src\framework\net\outputmessage.h" />
+    <ClInclude Include="..\src\framework\net\packet_player.h" />
+    <ClInclude Include="..\src\framework\net\packet_recorder.h" />
+    <ClInclude Include="..\src\framework\net\protocol.h" />
+    <ClInclude Include="..\src\framework\net\server.h" />
+    <ClInclude Include="..\src\framework\otml\declarations.h" />
+    <ClInclude Include="..\src\framework\otml\otml.h" />
+    <ClInclude Include="..\src\framework\otml\otmldocument.h" />
+    <ClInclude Include="..\src\framework\otml\otmlemitter.h" />
+    <ClInclude Include="..\src\framework\otml\otmlexception.h" />
+    <ClInclude Include="..\src\framework\otml\otmlnode.h" />
+    <ClInclude Include="..\src\framework\otml\otmlparser.h" />
+    <ClInclude Include="..\src\framework\pch.h" />
+    <ClInclude Include="..\src\framework\platform\crashhandler.h" />
+    <ClInclude Include="..\src\framework\platform\platform.h" />
+    <ClInclude Include="..\src\framework\platform\platformwindow.h" />
+    <ClInclude Include="..\src\framework\platform\win32window.h" />
+    <ClInclude Include="..\src\framework\proxy\proxy.h" />
+    <ClInclude Include="..\src\framework\proxy\proxy_client.h" />
+    <ClInclude Include="..\src\framework\sound\combinedsoundsource.h" />
+    <ClInclude Include="..\src\framework\sound\declarations.h" />
+    <ClInclude Include="..\src\framework\sound\oggsoundfile.h" />
+    <ClInclude Include="..\src\framework\sound\soundbuffer.h" />
+    <ClInclude Include="..\src\framework\sound\soundchannel.h" />
+    <ClInclude Include="..\src\framework\sound\soundfile.h" />
+    <ClInclude Include="..\src\framework\sound\soundmanager.h" />
+    <ClInclude Include="..\src\framework\sound\soundsource.h" />
+    <ClInclude Include="..\src\framework\sound\streamsoundsource.h" />
+    <ClInclude Include="..\src\framework\stdext\any.h" />
+    <ClInclude Include="..\src\framework\stdext\boolean.h" />
+    <ClInclude Include="..\src\framework\stdext\cast.h" />
+    <ClInclude Include="..\src\framework\stdext\compiler.h" />
+    <ClInclude Include="..\src\framework\stdext\demangle.h" />
+    <ClInclude Include="..\src\framework\stdext\dumper.h" />
+    <ClInclude Include="..\src\framework\stdext\dynamic_storage.h" />
+    <ClInclude Include="..\src\framework\stdext\exception.h" />
+    <ClInclude Include="..\src\framework\stdext\fastrand.h" />
+    <ClInclude Include="..\src\framework\stdext\format.h" />
+    <ClInclude Include="..\src\framework\stdext\math.h" />
+    <ClInclude Include="..\src\framework\stdext\net.h" />
+    <ClInclude Include="..\src\framework\stdext\packed_any.h" />
+    <ClInclude Include="..\src\framework\stdext\packed_storage.h" />
+    <ClInclude Include="..\src\framework\stdext\shared_object.h" />
+    <ClInclude Include="..\src\framework\stdext\stdext.h" />
+    <ClInclude Include="..\src\framework\stdext\string.h" />
+    <ClInclude Include="..\src\framework\stdext\thread.h" />
+    <ClInclude Include="..\src\framework\stdext\time.h" />
+    <ClInclude Include="..\src\framework\stdext\traits.h" />
+    <ClInclude Include="..\src\framework\stdext\types.h" />
+    <ClInclude Include="..\src\framework\stdext\uri.h" />
+    <ClInclude Include="..\src\framework\ui\declarations.h" />
+    <ClInclude Include="..\src\framework\ui\ui.h" />
+    <ClInclude Include="..\src\framework\ui\uianchorlayout.h" />
+    <ClInclude Include="..\src\framework\ui\uiboxlayout.h" />
+    <ClInclude Include="..\src\framework\ui\uigridlayout.h" />
+    <ClInclude Include="..\src\framework\ui\uihorizontallayout.h" />
+    <ClInclude Include="..\src\framework\ui\uilayout.h" />
+    <ClInclude Include="..\src\framework\ui\uimanager.h" />
+    <ClInclude Include="..\src\framework\ui\uitextedit.h" />
+    <ClInclude Include="..\src\framework\ui\uitranslator.h" />
+    <ClInclude Include="..\src\framework\ui\uiverticallayout.h" />
+    <ClInclude Include="..\src\framework\ui\uiwidget.h" />
+    <ClInclude Include="..\src\framework\util\color.h" />
+    <ClInclude Include="..\src\framework\util\crypt.h" />
+    <ClInclude Include="..\src\framework\util\databuffer.h" />
+    <ClInclude Include="..\src\framework\util\framecounter.h" />
+    <ClInclude Include="..\src\framework\util\matrix.h" />
+    <ClInclude Include="..\src\framework\util\point.h" />
+    <ClInclude Include="..\src\framework\util\qrcodegen.h" />
+    <ClInclude Include="..\src\framework\util\rect.h" />
+    <ClInclude Include="..\src\framework\util\size.h" />
+    <ClInclude Include="..\src\framework\util\stats.h" />
+    <ClInclude Include="..\src\framework\xml\tinystr.h" />
+    <ClInclude Include="..\src\framework\xml\tinyxml.h" />
+    <ClInclude Include="..\src\resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\src\otclient.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\src\otcicon.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

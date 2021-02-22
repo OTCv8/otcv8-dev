@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <PREPROCESSOR_DEFS>
+        WIN32;
+        _CRT_SECURE_NO_WARNINGS;
+        _WIN32_WINNT=0x0501;
+    		WINVER=0x0501;
+        OTCLIENT;
+        CRASH_HANDLER;
+        FW_GRAPHICS;
+        FW_NET;
+        FW_XML;
+        FW_SOUND;
+        BUILD_TYPE="RelWithDebInfo";
+        BUILD_COMMIT="alpha";
+        BUILD_REVISION="0";
+        FW_CAM;
+        AB;
+        NOMINMAX;
+    </PREPROCESSOR_DEFS>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutDir>$(ProjectDir)../</OutDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <ObjectFileName>$(IntDir)\obj_r\%(RelativeDir)</ObjectFileName>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(OTCLIENT_LIBDEPS)</AdditionalDependencies>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
+      <LargeAddressAware>true</LargeAddressAware>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+</Project>

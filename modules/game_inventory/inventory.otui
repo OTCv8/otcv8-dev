@@ -1,0 +1,6 @@
+InventoryWindow
+  id: inventoryWindow
+  !text: tr('Inventory')
+  @onClose: modules.game_inventory.onMiniWindowClose()
+  &save: true
+  &autoOpen: 3

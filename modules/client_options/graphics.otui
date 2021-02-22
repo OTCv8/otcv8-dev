@@ -1,0 +1,96 @@
+OptionPanel
+  Label
+    text-wrap: false
+    @onSetup: |
+      self:setText(tr("GPU: ") .. g_graphics.getRenderer())      
+
+  Label
+    text-wrap: false
+    @onSetup: |
+      self:setText(tr("Version: ") .. g_graphics.getVersion())      
+
+  HorizontalSeparator
+    id: separator
+    margin: 5 5 5 5
+
+  OptionCheckBox
+    id: vsync
+    !text: tr('Enable vertical synchronization')
+    !tooltip: tr('Limits FPS (usually to 60)')
+
+  OptionCheckBox
+    id: showFps
+    !text: tr('Show frame rate')
+
+  OptionCheckBox
+    id: enableLights
+    !text: tr('Enable lights')
+
+  OptionCheckBox
+    id: fullscreen
+    !text: tr('Fullscreen')
+    tooltip: Ctrl+Shift+F
+
+  Label
+    margin-top: 12
+    id: optimizationLevelLabel
+    !text: tr("Optimization level")
+    
+  ComboBox
+    id: optimizationLevel
+    margin-top: 3
+    margin-right: 2
+    margin-left: 2
+    @onOptionChange: modules.client_options.setOption(self:getId(), self.currentIndex)
+    @onSetup: |
+      self:addOption("Automatic")
+      self:addOption("None")
+      self:addOption("Low")
+      self:addOption("Medium")
+      self:addOption("High")
+      self:addOption("Maximum")
+      
+  Label
+    !text: tr('High/Maximum optimization level may cause visual defects.')
+    margin-top: 5
+
+  Label
+    id: backgroundFrameRateLabel
+    !text: tr('Game framerate limit: %s', 'max')
+    margin-top: 12
+    @onSetup: |
+      local value = modules.client_options.getOption('backgroundFrameRate')
+      local text = value
+      if value <= 0 or value >= 201 then
+        text = 'max'
+      end
+      self:setText(tr('Game framerate limit: %s', text))
+
+  OptionScrollbar
+    id: backgroundFrameRate
+    margin-top: 3
+    minimum: 10
+    maximum: 201
+
+  Label
+    id: ambientLightLabel
+    margin-top: 6
+    @onSetup: |
+      local value = modules.client_options.getOption('ambientLight')
+      self:setText(tr('Ambient light: %s%%', value))
+
+  OptionScrollbar
+    id: ambientLight
+    margin-top: 3
+    minimum: 0
+    maximum: 100
+  
+  Label
+    id: tips
+    margin-top: 20
+    text-auto-resize: true
+    text-align: left
+    text-wrap: true
+    !text: tr("If you have FPS issues:\n- Use OpenGL version (_gl)\n- Disable vertical synchronization\n- Set higher optimization level\n- Lower screen resolution\nOr report it on forum: http://otclient.net")
+    $mobile:
+      visible: false

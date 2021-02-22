@@ -1,0 +1,147 @@
+OptionPanel
+  OptionCheckBox
+    id: classicControl
+    !text: tr('Classic control')
+
+    $mobile:
+      visible: false
+
+  OptionCheckBox
+    id: autoChaseOverride
+    !text: tr('Allow auto chase override')
+
+  OptionCheckBox
+    id: displayText
+    !text: tr('Display text messages')
+
+  OptionCheckBox
+    id: wsadWalking
+    !text: tr('Enable WSAD walking')
+    !tooltip: tr('Disable chat and allow walk using WSAD keys')
+    $mobile:
+      visible: false
+
+  OptionCheckBox
+    id: dash
+    !text: tr('Enable fast walking (DASH)')
+    !tooltip: tr('Allows to execute next move without server confirmation of previous one')
+
+  OptionCheckBox
+    id: smartWalk
+    !text: tr('Enable smart walking')
+    !tooltip: tr('Will detect when to use diagonal step based on the\nkeys you are pressing')
+
+  Label
+    id: hotkeyDelayLabel
+    margin-top: 10
+    !tooltip: tr('Give you some time to make a turn while walking if you press many keys simultaneously')
+    @onSetup: |
+      local value = modules.client_options.getOption('hotkeyDelay')
+      self:setText(tr('Hotkey delay: %s ms', value))
+
+  OptionScrollbar
+    id: hotkeyDelay
+    margin-top: 3
+    minimum: 5
+    maximum: 50
+
+  Label
+    id: walkFirstStepDelayLabel
+    margin-top: 10
+    @onSetup: |
+      local value = modules.client_options.getOption('walkFirstStepDelay')
+      self:setText(tr('Walk delay after first step: %s ms', value))
+
+    $mobile:
+      visible: false
+
+  OptionScrollbar
+    id: walkFirstStepDelay
+    margin-top: 3
+    minimum: 50
+    maximum: 300
+
+    $mobile:
+      visible: false
+
+  Label
+    id: walkTurnDelayLabel
+    margin-top: 10
+    @onSetup: |
+      local value = modules.client_options.getOption('walkTurnDelay')
+      self:setText(tr('Walk delay after turn: %s ms', value))
+
+    $mobile:
+      visible: false
+
+  OptionScrollbar
+    id: walkTurnDelay
+    margin-top: 3
+    minimum: 0
+    maximum: 300
+
+    $mobile:
+      visible: false
+
+  Label
+    id: walkCtrlTurnDelayLabel
+    margin-top: 10
+    $mobile:
+      visible: false
+    @onSetup: |
+      local value = modules.client_options.getOption('walkTurnDelay')
+      self:setText(tr('Walk delay after ctrl turn: %s ms', value))
+
+  OptionScrollbar
+    id: walkCtrlTurnDelay
+    margin-top: 3
+    minimum: 0
+    maximum: 300    
+    $mobile:
+      visible: false
+
+  Label
+    id: walkStairsDelayLabel
+    margin-top: 10
+    @onSetup: |
+      local value = modules.client_options.getOption('walkStairsDelay')
+      self:setText(tr('Walk delay after floor change: %s ms', value))
+    $mobile:
+      visible: false
+
+  OptionScrollbar
+    id: walkStairsDelay
+    margin-top: 3
+    minimum: 0
+    maximum: 300
+    $mobile:
+      visible: false
+
+  Label
+    id: walkTeleportDelayLabel
+    margin-top: 10
+    @onSetup: |
+      local value = modules.client_options.getOption('walkTeleportDelay')
+      self:setText(tr('Walk delay after teleport: %s ms', value))
+    $mobile:
+      visible: false
+
+  OptionScrollbar
+    id: walkTeleportDelay
+    margin-top: 3
+    minimum: 0
+    maximum: 300
+    $mobile:
+      visible: false
+      
+  Panel
+    height: 30
+    margin-top: 10
+
+    Button
+      id: changeLocale
+      !text: tr('Change language')
+      @onClick: modules.client_locales.createWindow()
+      anchors.left: parent.left
+      anchors.top: parent.top
+      width: 150

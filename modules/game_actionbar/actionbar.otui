@@ -1,0 +1,145 @@
+ActionButton < Panel
+  font: cipsoftFont
+  anchors.top: parent.top
+  anchors.bottom: parent.bottom
+  width: 40
+  padding: 1 1 1 1
+  margin-left: 1
+  
+  $first:
+    anchors.left: parent.left
+
+  $!first:
+    anchors.left: prev.right
+    
+  Item
+    id: item
+    anchors.fill: parent
+    &selectable: true
+    &editable: false
+    virtual: true
+    border-width: 1
+    
+    border-color: #00000000
+    
+    $!on:
+      image-source: /images/game/actionbarslot
+
+  Label
+    id: text
+    anchors.fill: parent
+    text-auto-resize: true
+    text-wrap: true
+    phantom: true
+    text-align: center
+    font: verdana-9px
+
+  Label
+    id: hotkeyLabel
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin: 2 3 3 3
+    text-auto-resize: true
+    text-wrap: false
+    phantom: true
+    font: small-9px
+    color: yellow
+
+  UIProgressRect
+    id: cooldown
+    background: #585858AA
+    percent: 100
+    focusable: false
+    phantom: true
+    anchors.fill: parent
+    margin: 1 1 1 1
+    
+Panel
+  id: actionBar
+  focusable: false
+  image-source: /images/ui/panel_side
+  image-border: 4
+  margin-top: -1
+  
+  $on:
+    height: 40
+    visible: true
+    
+  $!on:
+    height: 0
+    visible: false
+
+  TabButton
+    id: prevButton
+    icon: /images/game/console/leftarrow
+    anchors.left: parent.left
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    margin-left: 1
+    margin-top: 1
+    margin-bottom: 2
+    
+  Panel
+    id: tabBar
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.left: prev.right
+    anchors.right: next.left
+    margin-right: 3
+    clipping: true
+    
+  TabButton
+    id: nextButton
+    icon: /images/game/console/rightarrow
+    anchors.right: parent.right
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    margin-right: 1
+    margin-top: 1
+    margin-bottom: 2
+
+
+ActionAssignWindow < MainWindow
+  id: assignWindow
+  !text: tr('Button Assign')
+  size: 360 150
+  @onEscape: self:destroy()
+
+  Label
+    !text: tr('Please, press the key you wish to use for action')
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+    text-auto-resize: true
+    text-align: left
+
+  Label
+    id: comboPreview
+    !text: tr('Current action hotkey: %s', 'none')
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    margin-top: 10
+    text-auto-resize: true
+
+  HorizontalSeparator
+    id: separator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin-bottom: 10
+
+  Button
+    id: addButton
+    !text: tr('Add')
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin-right: 10
+
+  Button
+    id: cancelButton
+    !text: tr('Cancel')
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: self:getParent():destroy()

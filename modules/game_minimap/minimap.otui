@@ -1,0 +1,7 @@
+MinimapWindow
+  id: minimapWindow
+  !text: tr('Minimap')
+  icon: /images/topbuttons/minimap
+  @onClose: modules.game_minimap.onMiniWindowClose()
+  &save: true
+  &autoOpen: 1

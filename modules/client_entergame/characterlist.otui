@@ -1,0 +1,130 @@
+CharacterWidget < UIWidget
+  height: 14
+  background-color: alpha
+  &updateOnStates: |
+    function(self)
+      local children = self:getChildren()
+      for i=1,#children do
+        children[i]:setOn(self:isFocused())
+      end
+    end
+  @onFocusChange: self:updateOnStates()
+  @onSetup: self:updateOnStates()
+
+  $focus:
+    background-color: #ffffff22
+
+  Label
+    id: name
+    color: #bbbbbb
+    anchors.top: parent.top
+    anchors.left: parent.left
+    font: verdana-11px-monochrome
+    text-auto-resize: true
+    background-color: alpha
+    text-offset: 2 0
+
+    $on:
+      color: #ffffff
+
+  Label
+    id: worldName
+    color: #bbbbbb
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin-right: 5
+    font: verdana-11px-monochrome
+    text-auto-resize: true
+    background-color: alpha
+    &baseText: '(%s)'
+
+    $on:
+      color: #ffffff
+
+StaticMainWindow
+  id: charactersWindow
+  !text: tr('Character List')
+  visible: false
+  size: 350 400
+  $mobile:
+    size: 350 280
+  @onEnter: CharacterList.doLogin()
+  @onEscape: CharacterList.hide(true)
+  @onSetup: |
+    g_keyboard.bindKeyPress('Up', function() self:getChildById('characters'):focusPreviousChild(KeyboardFocusReason) end, self)
+    g_keyboard.bindKeyPress('Down', function() self:getChildById('characters'):focusNextChild(KeyboardFocusReason) end, self)  
+
+  TextList
+    id: characters
+    background-color: #565656
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: characterListScrollBar.left
+    anchors.bottom: accountStatusCaption.top
+    margin-bottom: 5
+    padding: 1
+    focusable: false
+    vertical-scrollbar: characterListScrollBar
+    auto-focus: first
+
+  VerticalScrollBar
+    id: characterListScrollBar
+    anchors.top: parent.top
+    anchors.bottom: accountStatusCaption.top
+    anchors.right: parent.right
+    margin-bottom: 5
+    step: 14
+    pixels-scroll: true
+
+  Label
+    id: accountStatusCaption
+    !text: tr('Account Status') .. ':'
+    anchors.left: parent.left
+    anchors.bottom: separator.top
+    margin-bottom: 5
+
+  Label
+    id: accountStatusLabel
+    !text: tr('Free Account')
+    anchors.right: parent.right
+    anchors.bottom: separator.top
+    margin-bottom: 5
+    text-auto-resize: true
+
+    $on:
+      color: #FF0000
+
+  HorizontalSeparator
+    id: separator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin-bottom: 10
+
+  Button
+    id: autoReconnect
+    !text: tr('Auto reconnect: On')
+    width: 140
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    image-color: green
+    $!on:
+      image-color: red    
+      !text: tr('Auto reconnect: Off')
+
+  Button
+    id: buttonOk
+    !text: tr('Ok')
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin-right: 10
+    @onClick: CharacterList.doLogin()
+
+  Button
+    id: buttonCancel
+    !text: tr('Cancel')
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: CharacterList.hide(true)
