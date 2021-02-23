@@ -131,8 +131,10 @@ void Creature::drawOutfit(const Rect& destRect, Otc::Direction direction, const 
 
 void Creature::drawInformation(const Point& point, bool useGray, const Rect& parentRect, int drawFlags)
 {
-    if (m_healthPercent < 1) // creature is dead
-        return;
+    if (!g_game.getFeature(Otc::GameOldInformationBar) && g_game.getClientVersion() >= 760) {
+        if (m_healthPercent < 1)  // creature is dead, we get rid of its information bar
+            return;
+    }
 
     Color fillColor = Color(96, 96, 96);
 
@@ -610,7 +612,7 @@ void Creature::setHealthPercent(uint8 healthPercent)
         else if (healthPercent > 3)
             m_informationColor = Color(0x91, 0x0F, 0x0F);
         else
-            m_informationColor = Color(0x85, 0x0C, 0x0C);
+            m_informationColor = Color(0x2C, 0x0F, 0x0F);
     }
 
     bool changed = m_healthPercent != healthPercent;
