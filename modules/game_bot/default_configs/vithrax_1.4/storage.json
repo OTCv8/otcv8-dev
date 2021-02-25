@@ -1,0 +1,250 @@
+{
+  "rope": 9596,
+  "castle": {
+    "enabled": false,
+    "around": false,
+    "id": 2983
+  },
+  "supplyRetries": 0,
+  "foodItems": [
+    {
+      "id": 3582,
+      "count": 1
+    },
+    {
+      "id": 3577,
+      "count": 1
+    }
+  ],
+  "killSteal": {
+    "setting": true,
+    "enabled": false,
+    "hp": 20,
+    "id": 3155
+  },
+  "healbot": {
+    "spellTable": [
+
+    ],
+    "enabled": false,
+    "itemTable": [
+
+    ]
+  },
+  "supplies": {
+    "imbues": false,
+    "item6": 0,
+    "item1Max": 0,
+    "item3Min": 0,
+    "item1Min": 0,
+    "item4": 0,
+    "item6Max": 0,
+    "item2": 0,
+    "item2Min": 0,
+    "item6Min": 0,
+    "potionBp": 0,
+    "SoftBoots": false,
+    "item2Max": 0,
+    "item1": 0,
+    "item5Min": 0,
+    "runeBp": 0,
+    "item4Max": 0,
+    "capValue": 0,
+    "item4Min": 0,
+    "item3Max": 0,
+    "staminaSwitch": false,
+    "item5": 0,
+    "staminaValue": 900,
+    "capSwitch": false,
+    "item3": 0,
+    "item5Max": 0,
+    "sortSupplies": false,
+    "ammoBp": 0
+  },
+  "shovel": 9596,
+  "buySuppliesCap": 0,
+  "jewelleryEquipper": {
+    "pzCheck": true,
+    "valueAmmy": false,
+    "ringMin": 30,
+    "ammyMin": 30,
+    "ringMax": 80,
+    "valueRing": false,
+    "ringId": 3048,
+    "ringValue": "HP",
+    "ammyId": 3081,
+    "ammySwitch": true,
+    "ringSwitch": true,
+    "ammyMax": 80,
+    "ammyValue": "HP"
+  },
+  "attackbot": {
+    "attackTable": [
+
+    ],
+    "pvpMode": false,
+    "pvpSafe": true,
+    "enabled": false,
+    "ignoreMana": true
+  },
+  "scythe": 9596,
+  "inboxContainerOpen": false,
+  "advancedFriendHealer": {
+    "itemHeal": true,
+    "minFriendHp": 40,
+    "id": 3160,
+    "spellName": "exura sio",
+    "distance": 8,
+    "spellHeal": true,
+    "minMana": 60
+  },
+  "autoTradeMessage": "I'm using OTClientV8!",
+  "BotServerChannel": "2877489769077",
+  "combobot": {
+    "attackSpellEnabled": false,
+    "attackLeaderTargetEnabled": false,
+    "shootLeader": "",
+    "serverTriggers": true,
+    "serverLeaderTarget": false,
+    "commandsEnabled": true,
+    "serverEnabled": false,
+    "onSayEnabled": false,
+    "attack": "",
+    "enabled": false,
+    "spell": "",
+    "onShootEnabled": false,
+    "attackItemToggle": false,
+    "onCastEnabled": false,
+    "item": 3155,
+    "sayPhrase": "",
+    "followLeaderEnabled": false,
+    "serverLeader": "",
+    "sayLeader": "",
+    "follow": "",
+    "castLeader": ""
+  },
+  "antiPushPanel": {
+    "items": [
+      3031,
+      3035,
+      0,
+      0,
+      0
+    ]
+  },
+  "_macros": {
+    "": false
+  },
+  "lootStatus": "",
+  "lootContainerOpen": false,
+  "sellAllCap": 0,
+  "_configs": {
+    "cavebot_configs": {
+      "enabled": false
+    },
+    "targetbot_configs": {
+      "enabled": false
+    }
+  },
+  "serverMembers": "[\"Chad\",\"Dizzey\",\"Lord Byron\",\"Xiis Jota\",\"Xizeta\"]",
+  "isUsing": false,
+  "ConditionPanel": {
+    "cureBurn": false,
+    "curseCost": 80,
+    "electrifyCost": 22,
+    "ignoreInPz": true,
+    "bleedCost": 45,
+    "cureCurse": false,
+    "holdHaste": false,
+    "curePosion": false,
+    "hasteSpell": "utani hur",
+    "uturaType": "",
+    "burnCost": 30,
+    "cureBleed": false,
+    "holdUtura": false,
+    "paralyseSpell": "utani hur",
+    "hasteCost": 40,
+    "cureParalyse": false,
+    "poisonCost": 20,
+    "utamoCost": 40,
+    "enabled": false,
+    "uturaCost": 100,
+    "cureElectrify": false,
+    "holdUtamo": false,
+    "paralyseCost": 40,
+    "utanaCost": 440,
+    "holdUtana": false,
+    "stopHaste": false
+  },
+  "BOTserver": {
+    "manaInfo": true,
+    "mwallInfo": true,
+    "mwalls": {
+      "32362,32233,7": 1272003,
+      "32363,32229,7": 1272170
+    }
+  },
+  "stopSearch": false,
+  "autoEquip": [
+    {
+      "item1": 3052,
+      "title": "Auto Equip",
+      "item2": 3089,
+      "on": false,
+      "slot": 9
+    },
+    {
+      "item1": 0,
+      "title": "Auto Equip",
+      "item2": 0,
+      "on": false,
+      "slot": 0
+    }
+  ],
+  "alarms": {
+    "playerDetected": false,
+    "creatureDetected": false,
+    "healthBelow": false,
+    "playerAttack": false,
+    "manaBelow": false,
+    "healthValue": 40,
+    "manaValue": 50,
+    "enabled": false,
+    "playerDetectedLogout": false,
+    "privateMessage": false
+  },
+  "posCheckRetries": 0,
+  "playerList": {
+    "enemyList": [
+
+    ],
+    "outfits": false,
+    "groupMembers": true,
+    "marks": false,
+    "friendList": [
+
+    ]
+  },
+  "pushmax": {
+    "pushMaxRuneId": 3188,
+    "mwallBlockId": 2128,
+    "pushDelay": 1060,
+    "enabled": true,
+    "pushMaxKey": "PageUp"
+  },
+  "machete": 9596,
+  "trashItems": [
+    {
+      "id": 283,
+      "count": 1
+    },
+    {
+      "id": 284,
+      "count": 1
+    },
+    {
+      "id": 285,
+      "count": 1
+    }
+  ]
+}
