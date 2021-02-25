@@ -469,6 +469,9 @@ namespace Otc
         GamePacketSizeU32 = 110,
         GamePacketCompression = 111,
 
+        // OTCv8-dev features
+        GameOldInformationBar = 112,
+
         LastGameFeature = 130
     };
 
