@@ -1,6 +1,5 @@
-data/shaders/*
-!data/shaders/*default*
 build*
+data/things
 pdbs
 CMakeCache.txt
 CMakeFiles
@@ -13,6 +12,12 @@ Makefile
 *.gch
 *.a
 *.exe
+*.apk
+*.recipe*
+*.gz
+*.7z
+!tests.7z
+!android_libs.7z
 *.spr
 *.dat
 *.kdev*
@@ -46,10 +51,10 @@ vc16/.vs/
 vc16/DirectX/
 vc16/OpenGL/
 vc16/Debug/
+vc16/Debug_lib/
 /*.lib
 *.exp
 *.zip
-records
 
 #################
 ## Visual Studio
