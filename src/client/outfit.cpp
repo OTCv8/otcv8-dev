@@ -272,6 +272,7 @@ void DrawQueueItemOutfitWithShader::draw()
     if (useFramebuffer) {
         g_framebuffers.getTemporaryFrameBuffer()->resize(m_src.size());
         g_framebuffers.getTemporaryFrameBuffer()->bind();
+        g_painter->clear(Color::alpha);
     }
 
     Matrix4 mat4;
