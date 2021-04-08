@@ -83,7 +83,8 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
     if (!canBeSeen())
         return;
 
-    Point creatureCenter = dest + m_walkOffset - getDisplacement() + Point(Otc::TILE_PIXELS / 2, Otc::TILE_PIXELS / 2);
+    Point jumpOffset = Point(m_jumpOffset.x, m_jumpOffset.y);
+    Point creatureCenter = dest - jumpOffset + m_walkOffset - getDisplacement() + Point(Otc::TILE_PIXELS / 2, Otc::TILE_PIXELS / 2);
     drawBottomWidgets(creatureCenter, m_walking ? m_walkDirection : m_direction);
 
     Point animationOffset = animate ? m_walkOffset : Point(0, 0);
@@ -91,15 +92,15 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
         animationOffset -= getDisplacement();
 
     if (m_showTimedSquare && animate) {
-        g_drawQueue->addBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 2), Size(28, 28)), 2, m_timedSquareColor);
+        g_drawQueue->addBoundingRect(Rect(dest - jumpOffset + (animationOffset - getDisplacement() + 2), Size(28, 28)), 2, m_timedSquareColor);
     }
 
     if (m_showStaticSquare && animate) {
-        g_drawQueue->addBoundingRect(Rect(dest + (animationOffset - getDisplacement()), Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS)), 2, m_staticSquareColor);
+        g_drawQueue->addBoundingRect(Rect(dest - jumpOffset + (animationOffset - getDisplacement()), Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS)), 2, m_staticSquareColor);
     }
 
     size_t drawQueueSize = g_drawQueue->size();
-    m_outfit.draw(dest + animationOffset, m_walking ? m_walkDirection : m_direction, m_walkAnimationPhase, true, lightView);
+    m_outfit.draw(dest - jumpOffset + animationOffset, m_walking ? m_walkDirection : m_direction, m_walkAnimationPhase, true, lightView);
     if (m_marked) {
         g_drawQueue->setMark(drawQueueSize, updatedMarkedColor());
     }

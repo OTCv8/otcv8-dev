@@ -179,7 +179,7 @@ void MapView::drawForeground(const Rect& rect)
         Point creatureOffset = Point(16 - creature->getDisplacementX(), -creature->getDisplacementY() - 2);
         Position pos = creature->getPrewalkingPosition();
         Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
-        p += (creature->getDrawOffset() + creatureOffset) - Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
+        p += (creature->getDrawOffset() + creatureOffset) - Point(jumpOffset.x, jumpOffset.y);
         p.x = p.x * horizontalStretchFactor;
         p.y = p.y * verticalStretchFactor;
         p += rect.topLeft();

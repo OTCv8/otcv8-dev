@@ -83,7 +83,7 @@ public:
     void hideStaticSquare() { m_showStaticSquare = false; }
 
     void setInformationColor(const Color& color) { m_useCustomInformationColor = true; m_informationColor = color; }
-    void resetInformationColor() { m_useCustomInformationColor = false; }
+    void resetInformationColor() { m_useCustomInformationColor = false; setHealthPercent(getHealthPercent());  }
 
     Point getInformationOffset() { return m_informationOffset; }
     void setInformationOffset(int x, int y) { m_informationOffset = Point(x, y); }
