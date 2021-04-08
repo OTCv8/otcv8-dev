@@ -837,12 +837,16 @@ void ProtocolGame::sendChangeOutfit(const Outfit& outfit)
     }
     if(g_game.getFeature(Otc::GameOutfitShaders))
         msg->addString(outfit.getShader());
+    if (g_game.getFeature(Otc::GameHealthInfoBackground)) {
+        msg->addU16(outfit.getHealthBar());
+        msg->addU16(outfit.getManaBar());
+    }
     send(msg);
 }
 
-void ProtocolGame::sendOutfitExtensionStatus(int mount, int wings, int aura, int shader)
+void ProtocolGame::sendOutfitExtensionStatus(int mount, int wings, int aura, int shader, int healthBar, int manaBar)
 {
-    if(g_game.getFeature(Otc::GamePlayerMounts) || g_game.getFeature(Otc::GameWingsAndAura) || g_game.getFeature(Otc::GameOutfitShaders)) {
+    if(g_game.getFeature(Otc::GamePlayerMounts) || g_game.getFeature(Otc::GameWingsAndAura) || g_game.getFeature(Otc::GameOutfitShaders) || g_game.getFeature(Otc::GameHealthInfoBackground)) {
         OutputMessagePtr msg(new OutputMessage);
         msg->addU8(Proto::ClientMount);
         if (g_game.getFeature(Otc::GamePlayerMounts)) {
@@ -854,6 +858,10 @@ void ProtocolGame::sendOutfitExtensionStatus(int mount, int wings, int aura, int
         }
         if (g_game.getFeature(Otc::GameOutfitShaders)) {
             msg->addU8(shader);
+        }
+        if (g_game.getFeature(Otc::GameHealthInfoBackground)) {
+            msg->addU8(healthBar);
+            msg->addU8(manaBar);
         }
         send(msg);
     } else {

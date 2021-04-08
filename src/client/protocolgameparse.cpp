@@ -2422,6 +2422,8 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
     std::vector<std::tuple<int, std::string> > wingList;
     std::vector<std::tuple<int, std::string> > auraList;
     std::vector<std::tuple<int, std::string> > shaderList;
+    std::vector<std::tuple<int, std::string> > healthBarList;
+    std::vector<std::tuple<int, std::string> > manaBarList;
     if (g_game.getFeature(Otc::GamePlayerMounts)) {
         int mountCount = g_game.getFeature(Otc::GameTibia12Protocol) ? msg->getU16() : msg->getU8();
         for (int i = 0; i < mountCount; ++i) {
@@ -2462,12 +2464,28 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
         }
     }
 
+    if (g_game.getFeature(Otc::GameHealthInfoBackground)) {
+        int count = msg->getU8();
+        for (int i = 0; i < count; ++i) {
+            int id = msg->getU16();
+            std::string name = msg->getString();
+            healthBarList.push_back(std::make_tuple(id, name));
+        }
+
+        count = msg->getU8();
+        for (int i = 0; i < count; ++i) {
+            int id = msg->getU16();
+            std::string name = msg->getString();
+            manaBarList.push_back(std::make_tuple(id, name));
+        }
+    }
+
     if (g_game.getFeature(Otc::GameTibia12Protocol)) {
         msg->getU8(); // tryOnMount, tryOnOutfit
         msg->getU8(); // mounted?
     }
 
-    g_game.processOpenOutfitWindow(currentOutfit, outfitList, mountList, wingList, auraList, shaderList);
+    g_game.processOpenOutfitWindow(currentOutfit, outfitList, mountList, wingList, auraList, shaderList, healthBarList, manaBarList);
 }
 
 void ProtocolGame::parseVipAdd(const InputMessagePtr& msg)
@@ -3281,6 +3299,10 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg, bool ignoreMount)
         }
         if (g_game.getFeature(Otc::GameOutfitShaders)) {
             outfit.setShader(msg->getString());
+        }
+        if (g_game.getFeature(Otc::GameHealthInfoBackground)) {
+            outfit.setHealthBar(msg->getU16());
+            outfit.setManaBar(msg->getU16());
         }
     }
 

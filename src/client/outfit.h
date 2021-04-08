@@ -52,6 +52,8 @@ public:
     void setAura(int aura) { m_aura = aura; }
     void setCategory(ThingCategory category) { m_category = category; }
     void setShader(const std::string& shader) { m_shader = shader; }
+    void setHealthBar(uint8 id) { m_healthBar = id; }
+    void setManaBar(uint8 id) { m_manaBar = id; }
 
     void resetClothes();
     void resetShader() { m_shader = ""; }
@@ -68,10 +70,13 @@ public:
     int getAura() const { return m_aura; }
     ThingCategory getCategory() const { return m_category; }
     std::string getShader() const { return m_shader; }
+    int getHealthBar() const { return m_healthBar; }
+    int getManaBar() const { return m_manaBar; }
 
 private:
     ThingCategory m_category;
     int m_id, m_auxId, m_head, m_body, m_legs, m_feet, m_addons, m_mount = 0, m_wings = 0, m_aura = 0;
+    int m_healthBar = 0, m_manaBar = 0;
     std::string m_shader;
 };
 

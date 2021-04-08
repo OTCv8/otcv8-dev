@@ -30,6 +30,7 @@
 #include "effect.h"
 #include "luavaluecasts_client.h"
 #include "lightview.h"
+#include "healthbars.h"
 
 #include <framework/graphics/graphics.h>
 #include <framework/core/eventdispatcher.h>
@@ -172,6 +173,23 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     if (backgroundRect.bottom() == parentRect.bottom())
         textRect.moveTop(backgroundRect.top() - offset);
 
+    HealthBarPtr healthBar = nullptr;
+    HealthBarPtr manaBar = nullptr;
+    if (g_game.getFeature(Otc::GameHealthInfoBackground)) {
+        if (m_outfit.getHealthBar() > 0) {
+            healthBar = g_healthBars.getHealthBar(m_outfit.getHealthBar());
+        }
+        if (m_outfit.getManaBar() > 0) {
+            manaBar = g_healthBars.getManaBar(m_outfit.getManaBar());
+        }
+    }
+
+    if (healthBar) {
+        backgroundRect.setHeight(healthBar->getHeight());
+        backgroundRect.moveTop(backgroundRect.top() + healthBar->getBarOffset().y);
+        backgroundRect.moveLeft(backgroundRect.left() + healthBar->getBarOffset().x);
+    }
+
     // health rect is based on background rect, so no worries
     Rect healthRect = backgroundRect.expanded(-1);
     healthRect.setWidth((m_healthPercent / 100.0) * 25);
@@ -181,6 +199,11 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
         fillColor = Color(0x66, 0xcc, 0xff);
 
     if (drawFlags & Otc::DrawBars && (!isNpc() || !g_game.getFeature(Otc::GameHideNpcNames))) {
+        if (healthBar) {
+            TexturePtr barTexture = healthBar->getTexture();
+            Rect barRect = Rect(backgroundRect.x() + healthBar->getOffset().x, backgroundRect.y() + healthBar->getOffset().y, barTexture->getSize());
+            g_drawQueue->addTexturedRect(barRect, barTexture, Rect(0, 0, barTexture->getSize()));
+        }
         g_drawQueue->addFilledRect(backgroundRect, Color::black);
         g_drawQueue->addFilledRect(healthRect, fillColor);
 
@@ -199,6 +222,21 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
             }
             if (manaPercent >= 0) {
                 backgroundRect.moveTop(backgroundRect.bottom());
+                if (healthBar) {
+                    backgroundRect.moveTop(backgroundRect.top() + healthBar->getBarOffset().y + 1);
+                }
+                if (manaBar) {
+                    if (!healthBar) {
+                        backgroundRect.moveTop(backgroundRect.top() + 1);
+                    }
+                    backgroundRect.setHeight(manaBar->getHeight());
+                    backgroundRect.moveTop(backgroundRect.top() + manaBar->getBarOffset().y);
+                    backgroundRect.moveLeft(backgroundRect.left() + manaBar->getBarOffset().x);
+
+                    TexturePtr barTexture = manaBar->getTexture();
+                    Rect barRect = Rect(backgroundRect.x() + manaBar->getOffset().x, backgroundRect.y() + manaBar->getOffset().y, barTexture->getSize());
+                    g_drawQueue->addTexturedRect(barRect, barTexture, Rect(0, 0, barTexture->getSize()));
+                }
                 g_drawQueue->addFilledRect(backgroundRect, Color::black);
 
                 Rect manaRect = backgroundRect.expanded(-1);

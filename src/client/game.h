@@ -135,11 +135,13 @@ protected:
     void processRemoveAutomapFlag(const Position& pos, int icon, const std::string& message);
 
     // outfit
-    void processOpenOutfitWindow(const Outfit& currentOutfit, const std::vector<std::tuple<int, std::string, int> >& outfitList,
-                                 const std::vector<std::tuple<int, std::string> >& mountList,
-                                 const std::vector<std::tuple<int, std::string> >& wingList,
-                                 const std::vector<std::tuple<int, std::string> >& auraList,
-                                 const std::vector<std::tuple<int, std::string> >& shaderList);
+    void processOpenOutfitWindow(const Outfit& currentOutfit, const std::vector<std::tuple<int, std::string, int>>& outfitList,
+                                 const std::vector<std::tuple<int, std::string>>& mountList,
+                                 const std::vector<std::tuple<int, std::string>>& wingList,
+                                 const std::vector<std::tuple<int, std::string>>& auraList,
+                                 const std::vector<std::tuple<int, std::string>>& shaderList,
+                                 const std::vector<std::tuple<int, std::string>>& healthBarList,
+                                 const std::vector<std::tuple<int, std::string>>& manaBarList);
 
     // npc trade
     void processOpenNpcTrade(const std::vector<std::tuple<ItemPtr, std::string, int, int64_t, int64_t> >& items);
@@ -287,7 +289,7 @@ public:
     void equipItem(const ItemPtr& item);
     void equipItemId(int itemId, int subType);
     void mount(bool mount);
-    void setOutfitExtensions(int mount, int wings, int aura, int shader);
+    void setOutfitExtensions(int mount, int wings, int aura, int shader, int healthBar, int manaBar);
 
     // 910 only
     void requestItemInfo(const ItemPtr& item, int index);

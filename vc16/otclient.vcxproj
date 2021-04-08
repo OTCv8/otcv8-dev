@@ -122,6 +122,7 @@
     <ClCompile Include="..\src\client\game.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\src\client\healthbars.cpp" />
     <ClCompile Include="..\src\client\houses.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
@@ -235,6 +236,7 @@
     <ClInclude Include="..\src\client\effect.h" />
     <ClInclude Include="..\src\client\game.h" />
     <ClInclude Include="..\src\client\global.h" />
+    <ClInclude Include="..\src\client\healthbars.h" />
     <ClInclude Include="..\src\client\houses.h" />
     <ClInclude Include="..\src\client\item.h" />
     <ClInclude Include="..\src\client\itemtype.h" />
