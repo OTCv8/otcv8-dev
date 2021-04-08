@@ -18,6 +18,7 @@ Makefile
 *.7z
 !tests.7z
 !android_libs.7z
+!lib.7z
 *.spr
 *.dat
 *.kdev*
