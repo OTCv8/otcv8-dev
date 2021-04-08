@@ -39,7 +39,6 @@
 #include "minimap.h"
 #include "thingtypemanager.h"
 #include "spritemanager.h"
-#include "shadermanager.h"
 #include "protocolgame.h"
 #include "uiitem.h"
 #include "uicreature.h"
@@ -348,11 +347,6 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "isTileThingLuaCallbackEnabled", &Game::isTileThingLuaCallbackEnabled, &g_game);
     g_lua.bindSingletonFunction("g_game", "getRecivedPacketsCount", &Game::getRecivedPacketsCount, &g_game);
     g_lua.bindSingletonFunction("g_game", "getRecivedPacketsSize", &Game::getRecivedPacketsSize, &g_game);
-
-    g_lua.registerSingletonClass("g_shaders");
-    g_lua.bindSingletonFunction("g_shaders", "createShader", &ShaderManager::createShader, &g_shaders);
-    g_lua.bindSingletonFunction("g_shaders", "createOutfitShader", &ShaderManager::createOutfitShader, &g_shaders);
-    g_lua.bindSingletonFunction("g_shaders", "addTexture", &ShaderManager::addTexture, &g_shaders);
 
     g_lua.bindGlobalFunction("getOutfitColor", Outfit::getColor);
     g_lua.bindGlobalFunction("getAngleFromPos", Position::getAngleFromPositions);

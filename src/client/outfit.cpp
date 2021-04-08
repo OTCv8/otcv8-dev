@@ -23,7 +23,6 @@
 #include "outfit.h"
 #include "game.h"
 #include "spritemanager.h"
-#include "shadermanager.h"
 
 #include <framework/graphics/painter.h>
 #include <framework/graphics/drawcache.h>
@@ -32,6 +31,7 @@
 #include <framework/graphics/texturemanager.h>
 #include <framework/graphics/image.h>
 #include <framework/graphics/framebuffermanager.h>
+#include <framework/graphics/shadermanager.h>
 
 Outfit::Outfit()
 {

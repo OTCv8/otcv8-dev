@@ -27,8 +27,8 @@
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
 #include <framework/util/extras.h>
+#include <framework/graphics/shadermanager.h>
 #include "localplayer.h"
-#include "shadermanager.h"
 
 UIMap::UIMap()
 {
@@ -66,7 +66,7 @@ void UIMap::drawSelf(Fw::DrawPane drawPane)
     } else if(drawPane == Fw::MapBackgroundPane) {
         m_mapView->drawBackground(m_mapRect, getTile(m_mousePosition));
         if (!m_shader.empty()) {
-            g_drawQueue->setShader(g_shaders.getShader(m_shader));
+            g_drawQueue->setShader(m_shader);
         }
     } else if (drawPane == Fw::MapForegroundPane) {
         m_mapView->drawForeground(m_mapRect);

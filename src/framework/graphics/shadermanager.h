@@ -20,38 +20,33 @@
  * THE SOFTWARE.
  */
 
-#include "client.h"
-#include <framework/core/modulemanager.h>
-#include <framework/core/resourcemanager.h>
-#include <framework/graphics/graphics.h>
-#include <framework/graphics/shadermanager.h>
-#include "game.h"
-#include "map.h"
-#include "spritemanager.h"
-#include "minimap.h"
-#include <framework/core/configmanager.h>
+#ifndef SHADERMANAGER_H
+#define SHADERMANAGER_H
 
-Client g_client;
+#include "declarations.h"
+#include <framework/graphics/paintershaderprogram.h>
 
-void Client::init(std::vector<std::string>& args)
+//@bindsingleton g_shaders
+class ShaderManager
 {
-    // register needed lua functions
-    registerLuaFunctions();
+public:
+    void init();
+    void terminate();
 
-    g_map.init();
-    g_minimap.init();
-    g_game.init();
-    g_shaders.init();
-    g_things.init();
-}
+    void createShader(const std::string& name, std::string vertex, std::string fragment, bool colorMatrix = false);
+    void createOutfitShader(const std::string& name, std::string vertex, std::string fragment)
+    {
+        return createShader(name, vertex, fragment, true);
+    }
+    void addTexture(const std::string& name, const std::string& file);
+    PainterShaderProgramPtr getShader(const std::string& name);
 
-void Client::terminate()
-{
-    g_creatures.terminate();
-    g_game.terminate();
-    g_map.terminate();
-    g_minimap.terminate();
-    g_things.terminate();
-    g_sprites.terminate();
-    g_shaders.terminate();
-}
+private:
+    std::unordered_map<std::string, PainterShaderProgramPtr> m_shaders;
+};
+
+
+extern ShaderManager g_shaders;
+
+#endif
+

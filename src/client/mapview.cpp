@@ -28,7 +28,6 @@
 #include "statictext.h"
 #include "animatedtext.h"
 #include "missile.h"
-#include "shadermanager.h"
 #include "lightview.h"
 #include "localplayer.h"
 #include "game.h"
@@ -42,6 +41,7 @@
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/graphics/atlas.h>
+#include <framework/graphics/shadermanager.h>
 
 #include <framework/util/extras.h>
 #include <framework/core/adaptiverenderer.h>
