@@ -115,4 +115,9 @@ typedef stdext::shared_object_ptr<UIProgressRect> UIProgressRectPtr;
 typedef stdext::shared_object_ptr<UIMapAnchorLayout> UIMapAnchorLayoutPtr;
 typedef stdext::shared_object_ptr<UIPositionAnchor> UIPositionAnchorPtr;
 
+// custom
+class HealthBar;
+
+typedef stdext::shared_object_ptr<HealthBar> HealthBarPtr;
+
 #endif

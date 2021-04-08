@@ -192,6 +192,9 @@
     <ClCompile Include="..\src\client\luavaluecasts_client.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\client\healthbars.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\framework\const.h">
@@ -748,6 +751,9 @@
     </ClInclude>
     <ClInclude Include="..\src\framework\graphics\shadermanager.h">
       <Filter>Header Files\framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\client\healthbars.h">
+      <Filter>Header Files\client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

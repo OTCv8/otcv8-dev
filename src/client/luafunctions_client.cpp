@@ -48,6 +48,7 @@
 #include "uiprogressrect.h"
 #include "uisprite.h"
 #include "outfit.h"
+#include "healthbars.h"
 
 #include <framework/luaengine/luainterface.h>
 
@@ -347,6 +348,12 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "isTileThingLuaCallbackEnabled", &Game::isTileThingLuaCallbackEnabled, &g_game);
     g_lua.bindSingletonFunction("g_game", "getRecivedPacketsCount", &Game::getRecivedPacketsCount, &g_game);
     g_lua.bindSingletonFunction("g_game", "getRecivedPacketsSize", &Game::getRecivedPacketsSize, &g_game);
+
+    g_lua.registerSingletonClass("g_healthBars");
+    g_lua.bindSingletonFunction("g_healthBars", "addHealthBackground", &HealthBars::addHealthBackground, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "addManaBackground", &HealthBars::addManaBackground, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getHealthBarPath", &HealthBars::getHealthBarPath, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getManaBarPath", &HealthBars::getManaBarPath, &g_healthBars);
 
     g_lua.bindGlobalFunction("getOutfitColor", Outfit::getColor);
     g_lua.bindGlobalFunction("getAngleFromPos", Position::getAngleFromPositions);

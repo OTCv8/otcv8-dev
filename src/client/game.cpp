@@ -459,13 +459,15 @@ void Game::processRemoveAutomapFlag(const Position& pos, int icon, const std::st
     g_lua.callGlobalField("g_game", "onRemoveAutomapFlag", pos, icon, message);
 }
 
-void Game::processOpenOutfitWindow(const Outfit& currentOutfit, const std::vector<std::tuple<int, std::string, int> >& outfitList,
-                                   const std::vector<std::tuple<int, std::string> >& mountList,
-                                   const std::vector<std::tuple<int, std::string> >& wingList,
-                                   const std::vector<std::tuple<int, std::string> >& auraList,
-                                   const std::vector<std::tuple<int, std::string> >& shaderList)
+void Game::processOpenOutfitWindow(const Outfit& currentOutfit, const std::vector<std::tuple<int, std::string, int>>& outfitList,
+                                   const std::vector<std::tuple<int, std::string>>& mountList,
+                                   const std::vector<std::tuple<int, std::string>>& wingList,
+                                   const std::vector<std::tuple<int, std::string>>& auraList,
+                                   const std::vector<std::tuple<int, std::string>>& shaderList,
+                                   const std::vector<std::tuple<int, std::string>>& healthBarList,
+                                   const std::vector<std::tuple<int, std::string>>& manaBarList)
 {
-    g_lua.callGlobalField("g_game", "onOpenOutfitWindow", currentOutfit, outfitList, mountList, wingList, auraList, shaderList);
+    g_lua.callGlobalField("g_game", "onOpenOutfitWindow", currentOutfit, outfitList, mountList, wingList, auraList, shaderList, healthBarList, manaBarList);
 }
 
 void Game::processOpenNpcTrade(const std::vector<std::tuple<ItemPtr, std::string, int, int64_t, int64_t> >& items)
@@ -1408,11 +1410,11 @@ void Game::mount(bool mount)
     m_protocolGame->sendOutfitExtensionStatus(mount ? 1 : 0);
 }
 
-void Game::setOutfitExtensions(int mount, int wings, int aura, int shader)
+void Game::setOutfitExtensions(int mount, int wings, int aura, int shader, int healthBar, int manaBar)
 {
     if (!canPerformGameAction())
         return;
-    m_protocolGame->sendOutfitExtensionStatus(mount, wings, aura, shader);
+    m_protocolGame->sendOutfitExtensionStatus(mount, wings, aura, shader, healthBar, manaBar);
 }
 
 void Game::requestItemInfo(const ItemPtr& item, int index)
