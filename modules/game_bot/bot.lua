@@ -183,7 +183,7 @@ function refresh()
 
   -- storage
   botStorage = {}
-  botStorageFile = "/bot/" .. configName .. "/" .. g_game.getCharacterName() .. " storage.json"
+  botStorageFile = "/bot/" .. configName .. "/storage.json"
   if g_resources.fileExists(botStorageFile) then
     local status, result = pcall(function() 
       return json.decode(g_resources.readFileContents(botStorageFile)) 
