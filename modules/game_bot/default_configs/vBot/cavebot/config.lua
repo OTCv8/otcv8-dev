@@ -44,7 +44,7 @@ end
 
 CaveBot.Config.add = function(id, title, defaultValue)
   if CaveBot.Config.values[id] then
-    return error("Duplicated config key: " .. id)
+    return warn("Duplicated config key: " .. id)
   end
     
   local panel
@@ -76,7 +76,7 @@ CaveBot.Config.add = function(id, title, defaultValue)
       CaveBot.save()
     end
   else
-    return error("Invalid default value of config for key " .. id .. ", should be number or boolean")      
+    return warn("Invalid default value of config for key " .. id .. ", should be number or boolean")      
   end
   
   panel.title:setText(tr(title) .. ":")
@@ -88,7 +88,7 @@ end
 
 CaveBot.Config.get = function(id)
   if CaveBot.Config.values[id] == nil then
-    return error("Invalid CaveBot.Config.get, id: " .. id)
+    return warn("Invalid CaveBot.Config.get, id: " .. id)
   end
   return CaveBot.Config.values[id]
 end

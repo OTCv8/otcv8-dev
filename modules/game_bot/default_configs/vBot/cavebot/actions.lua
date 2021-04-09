@@ -5,7 +5,7 @@ CaveBot.addAction = function(action, value, focus)
   action = action:lower()
   local raction = CaveBot.Actions[action]
   if not raction then
-    return error("Invalid cavebot action: " .. action)
+    return warn("Invalid cavebot action: " .. action)
   end
   if type(value) == 'number' then
     value = tostring(value)
@@ -39,11 +39,11 @@ CaveBot.editAction = function(widget, action, value)
   action = action:lower()
   local raction = CaveBot.Actions[action]
   if not raction then
-    return error("Invalid cavebot action: " .. action)
+    return warn("Invalid cavebot action: " .. action)
   end
   
   if not widget.action or not widget.value then
-    return error("Invalid cavebot action widget, has missing action or value")  
+    return warn("Invalid cavebot action widget, has missing action or value")  
   end
   
   widget:setText(action .. ":" .. value:split("\n")[1])
@@ -66,7 +66,7 @@ it can also return string "retry", then the function will be called again in 20 
 CaveBot.registerAction = function(action, color, callback) 
   action = action:lower()
   if CaveBot.Actions[action] then
-    return error("Duplicated acction: " .. action)
+    return warn("Duplicated acction: " .. action)
   end
   CaveBot.Actions[action] = {
     color=color,
@@ -110,7 +110,7 @@ end)
 
 CaveBot.registerAction("function", "red", function(value, retries, prev)
   local prefix = "local retries = " .. retries .. "\nlocal prev = " .. tostring(prev) .. "\nlocal delay = CaveBot.delay\nlocal gotoLabel = CaveBot.gotoLabel\n"
-  prefix = prefix .. "local macro = function() error('Macros inside cavebot functions are not allowed') end\n"
+  prefix = prefix .. "local macro = function() warn('Macros inside cavebot functions are not allowed') end\n"
   for extension, callbacks in pairs(CaveBot.Extensions) do
     prefix = prefix .. "local " .. extension .. " = CaveBot.Extensions." .. extension .. "\n"
   end
@@ -118,7 +118,7 @@ CaveBot.registerAction("function", "red", function(value, retries, prev)
     return assert(load(prefix .. value, "cavebot_function"))()
   end)
   if not status then
-    error("Error in cavebot function:\n" .. result)
+    warn("warn in cavebot function:\n" .. result)
     return false
   end  
   return result
@@ -127,7 +127,7 @@ end)
 CaveBot.registerAction("goto", "green", function(value, retries, prev)
   local pos = regexMatch(value, "\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+),?\\s*([0-9]?)")
   if not pos[1] then
-    error("Invalid cavebot goto action value. It should be position (x,y,z), is: " .. value)
+    warn("Invalid cavebot goto action value. It should be position (x,y,z), is: " .. value)
     return false
   end
   
@@ -260,7 +260,7 @@ CaveBot.registerAction("use", "#FFB272", function(value, retries, prev)
   if not pos[1] then
     local itemid = tonumber(value)
     if not itemid then
-      error("Invalid cavebot use action value. It should be (x,y,z) or item id, is: " .. value)
+      warn("Invalid cavebot use action value. It should be (x,y,z) or item id, is: " .. value)
       return false
     end
     use(itemid)
@@ -296,7 +296,7 @@ CaveBot.registerAction("usewith", "#EEB292", function(value, retries, prev)
   local pos = regexMatch(value, "\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)")
   if not pos[1] then
     if not itemid then
-      error("Invalid cavebot usewith action value. It should be (itemid,x,y,z) or item id, is: " .. value)
+      warn("Invalid cavebot usewith action value. It should be (itemid,x,y,z) or item id, is: " .. value)
       return false
     end
     use(itemid)

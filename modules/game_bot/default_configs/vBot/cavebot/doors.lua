@@ -8,7 +8,7 @@ CaveBot.Extensions.OpenDoors.setup = function()
       key = tonumber(pos[4])
     end
     if not pos[1] then
-      error("CaveBot[OpenDoors]: invalid value. It should be position (x,y,z), is: " .. value)
+      warn("CaveBot[OpenDoors]: invalid value. It should be position (x,y,z), is: " .. value)
       return false
     end
 

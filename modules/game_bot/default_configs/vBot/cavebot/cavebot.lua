@@ -55,13 +55,13 @@ cavebotMacro = macro(20, function()
         actionRetries = 0
         prevActionResult = result
       else
-        error("Invalid return from cavebot action (" .. currentAction.action .. "), should be \"retry\", false or true, is: " .. tostring(result))
+        warn("Invalid return from cavebot action (" .. currentAction.action .. "), should be \"retry\", false or true, is: " .. tostring(result))
       end
     else
-      error("Error while executing cavebot action (" .. currentAction.action .. "):\n" .. result)
+      warn("warn while executing cavebot action (" .. currentAction.action .. "):\n" .. result)
     end    
   else
-    error("Invalid cavebot action: " .. currentAction.action)
+    warn("Invalid cavebot action: " .. currentAction.action)
   end
   
   if retry then
@@ -102,7 +102,7 @@ config = Config.setup("cavebot_configs", configWidget, "cfg", function(name, ena
           return json.decode(v[2])
         end)
         if not status then
-          error("Error while parsing CaveBot extensions from config:\n" .. result)
+          warn("warn while parsing CaveBot extensions from config:\n" .. result)
         else
           cavebotConfig = result
         end
@@ -111,7 +111,7 @@ config = Config.setup("cavebot_configs", configWidget, "cfg", function(name, ena
           return json.decode(v[2])
         end)
         if not status then
-          error("Error while parsing CaveBot extensions from config:\n" .. result)
+          warn("warn while parsing CaveBot extensions from config:\n" .. result)
         else
           for extension, callbacks in pairs(CaveBot.Extensions) do
             if callbacks.onConfigChange then

@@ -18,7 +18,7 @@ CaveBot.Extensions.InWithdraw.setup = function()
 		local itemCount = 0
 		local depotAmount = 0
 		if #data ~= 2 then
-			error("CaveBot[InboxWithdraw]: incorrect withdraw value")
+			warn("CaveBot[InboxWithdraw]: incorrect withdraw value")
 			return false
 		else
 			withdrawId = tonumber(data[1])

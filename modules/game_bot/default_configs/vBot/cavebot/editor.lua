@@ -14,7 +14,7 @@ CaveBot.Editor.registerAction = function(action, text, params)
   if type(params) ~= 'function' then
     local raction = CaveBot.Actions[action]
     if not raction then
-      return error("CaveBot editor error: action " .. action .. " doesn't exist")
+      return warn("CaveBot editor warn: action " .. action .. " doesn't exist")
     end
     CaveBot.Editor.Actions[action] = params
     color = raction.color

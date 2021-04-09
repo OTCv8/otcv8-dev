@@ -7,7 +7,7 @@ CaveBot.Extensions.PosCheck.setup = function()
     local tilePos
     local data = string.split(value, ",")
     if #data ~= 5 then
-     error("wrong travel format, should be: label, distance, x, y, z")
+     warn("wrong travel format, should be: label, distance, x, y, z")
      return false
     end
 

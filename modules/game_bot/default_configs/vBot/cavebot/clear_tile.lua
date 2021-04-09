@@ -4,7 +4,7 @@ CaveBot.Extensions.ClearTile.setup = function()
   CaveBot.registerAction("ClearTile", "#00FFFF", function(value, retries)
     local pos = regexMatch(value, "\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)")
     if not pos[1] then
-      error("CaveBot[ClearTile]: invalid value. It should be position (x,y,z), is: " .. value)
+      warn("CaveBot[ClearTile]: invalid value. It should be position (x,y,z), is: " .. value)
       return false
     end
 
