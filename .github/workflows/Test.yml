@@ -53,6 +53,7 @@ jobs:
           *.dll
           data
           modules
+          mods
           layouts
           init.lua
         
