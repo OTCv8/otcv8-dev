@@ -34,7 +34,7 @@ void Effect::draw(const Point& dest, int offsetX, int offsetY, bool animate, Lig
     if(animate) {
         if(g_game.getFeature(Otc::GameEnhancedAnimations) && rawGetThingType()->getAnimator()) {
             // This requires a separate getPhaseAt method as using getPhase would make all magic effects use the same phase regardless of their appearance time
-            m_animationPhase = rawGetThingType()->getAnimator()->getPhaseAt(m_animationTimer, m_animationPhase);
+            m_animationPhase = std::max<int>(0, rawGetThingType()->getAnimator()->getPhaseAt(m_animationTimer, m_animationPhase));
         } else {
             // hack to fix some animation phases duration, currently there is no better solution
             int ticks = EFFECT_TICKS_PER_FRAME;
@@ -42,7 +42,7 @@ void Effect::draw(const Point& dest, int offsetX, int offsetY, bool animate, Lig
                 ticks <<= 2;
             }
 
-            m_animationPhase = std::min<int>((int)(m_animationTimer.ticksElapsed() / ticks), getAnimationPhases() - 1);
+            m_animationPhase = std::max<int>(0, std::min<int>((int)(m_animationTimer.ticksElapsed() / ticks), getAnimationPhases() - 1));
         }
     }
 
