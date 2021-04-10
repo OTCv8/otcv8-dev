@@ -30,7 +30,9 @@ local ServerPackets = {
 	CyclopediaCharacterInfo = 0xDA,
 	Tutorial = 0xDC,
 	Highscores = 0xB1,
-	Inspection = 0x76
+	Inspection = 0x76,
+	TeamFinderList = 0x2D,
+	TeamFinderLeader = 0x2C
 }
 
 -- Server Types
@@ -70,6 +72,55 @@ function registerProtocol()
   end
   
   registredOpcodes = {}
+
+  registerOpcode(ServerPackets.TeamFinderLeader, function(protocol, msg)
+	local bool = msg:getU8() -- reset
+	if bool > 0 then
+		return -- Server internal changes
+	end
+
+	msg:getU16() -- Min level
+	msg:getU16() -- Max level
+	msg:getU8() -- Vocation flag
+	msg:getU16() -- Slots
+	msg:getU16() -- Free slots
+	msg:getU32() -- Timestamp
+	local type = msg:getU8() -- Team type
+	msg:getU16() -- Type flag
+	if type == 2 then
+		msg:getU16() -- Hunt area
+	end
+
+	local size = msg:getU16() -- Members size
+	for i = 1, size do
+		msg:getU32() -- Character id
+		msg:getString() -- Character name
+		msg:getU16() -- Character level
+		msg:getU8() -- Vocation
+		msg:getU8() -- Member type (Leader == 3)
+	end
+  end)
+
+  registerOpcode(ServerPackets.TeamFinderList, function(protocol, msg)
+	msg:getU8()
+	local size = msg:getU32() -- List size
+	for i = 1, size do
+		msg:getU32() -- Leader Id
+		msg:addString() -- Leader name
+		msg:getU16() -- Min level
+		msg:getU16() -- Max level
+		msg:getU8() -- Vocations flag
+		msg:getU16() -- Slots
+		msg:getU16() -- Used slots
+		msg:getU32() -- Timestamp
+		local type = msg:getU8() -- Team type [1]: Boss, [2]: Hunt and [3]: Quest
+		msg:getU16() -- Type flag
+		if type == 2 then
+			msg:getU16() -- Hunt area
+		end
+		msg:getU8() -- Player status
+	end
+  end)
 
   registerOpcode(ServerPackets.Inspection, function(protocol, msg)
 	local bool = msg:getU8() -- IsPlayer
