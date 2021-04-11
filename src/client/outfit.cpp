@@ -105,11 +105,19 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         auto wingsType = g_things.rawGetThingType(m_wings, ThingCategoryCreature);
         int wingsZPattern = m_mount > 0 ? std::min<int>(1, wingsType->getNumPatternZ() - 1) : 0;
         auto idleAnimator = wingsType->getIdleAnimator();
-        if (idleAnimator && animate) {
-            if (walkAnimationPhase > 0) {
-                wingAnimationPhase += idleAnimator->getAnimationPhases() - 1;
-            } else {
-                wingAnimationPhase = idleAnimator->getPhase();
+        if (animate) {
+            if (idleAnimator) {
+                if (walkAnimationPhase > 0) {
+                    wingAnimationPhase += idleAnimator->getAnimationPhases() - 1;
+                }
+                else {
+                    wingAnimationPhase = idleAnimator->getPhase();
+                }
+            }
+            else if (wingsType->isAnimateAlways()) {
+                int phases = wingsType->getAnimator() ? wingsType->getAnimator()->getAnimationPhases() : wingsType->getAnimationPhases();
+                int ticksPerFrame = 1000 / phases;
+                wingAnimationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
             }
         }
         wingsType->draw(dest, 0, direction, 0, wingsZPattern, wingAnimationPhase, Color::white, lightView);
