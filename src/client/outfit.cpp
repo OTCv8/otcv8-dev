@@ -147,6 +147,12 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
     }
 
     if (m_wings && (direction == Otc::South || direction == Otc::East)) {
+        if (g_game.getFeature(Otc::GameWingOffset) && zPattern > 0) {
+            if (direction == Otc::East)
+                wingDest -= Point(6, 2);
+            else
+                wingDest -= Point(0, 6);
+        }
         drawWings();
     }
 
