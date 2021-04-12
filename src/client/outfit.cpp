@@ -51,6 +51,10 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
     else if (direction == Otc::NorthWest || direction == Otc::SouthWest)
         direction = Otc::West;
 
+    Point wingDest = dest;
+    if(g_game.getFeature(Otc::GameWingOffset) && m_wings)
+        dest -= Point(6, 6);
+
     auto type = g_things.rawGetThingType(m_category == ThingCategoryCreature ? m_id : m_auxId, m_category);
     if (!type) return;
     int animationPhase = walkAnimationPhase;
@@ -120,7 +124,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
                 wingAnimationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
             }
         }
-        wingsType->draw(dest, 0, direction, 0, wingsZPattern, wingAnimationPhase, Color::white, lightView);
+        wingsType->draw(wingDest, 0, direction, 0, wingsZPattern, wingAnimationPhase, Color::white, lightView);
     };
 
     auto drawAura = [&] {
@@ -184,6 +188,9 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
     }
 
     if (m_wings && (direction == Otc::North || direction == Otc::West)) {
+        if (g_game.getFeature(Otc::GameWingOffset) && zPattern > 0)
+            wingDest += Point(4, 6);
+
         drawWings();
     }
 

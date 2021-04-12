@@ -472,6 +472,7 @@ namespace Otc
         // OTCv8-dev features
         GameOldInformationBar = 112,
         GameHealthInfoBackground = 113,
+        GameWingOffset = 114,
 
         LastGameFeature = 130
     };
