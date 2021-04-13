@@ -65,9 +65,6 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         int tick = (g_clock.millis() % (1000)) / (1000 / floatingTicks);
         int offset = 0;
         if (walkAnimationPhase > 0) {
-            offset = walkAnimationPhase <= floatingTicks / 2 ? walkAnimationPhase * (maxoffset / (floatingTicks / 2)) : (2 * maxoffset) - walkAnimationPhase * (maxoffset / (floatingTicks / 2));
-            dest -= Point(offset, offset);
-            wingDest -= Point(offset, offset);
             auto idleAnimator = type->getIdleAnimator();
             if (idleAnimator) {
                 animationPhase = idleAnimator->getPhase();
@@ -76,11 +73,9 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
                 animationPhase = 0;
             }
         }
-        else {
-            offset = tick <= floatingTicks / 2 ? tick * (maxoffset / (floatingTicks / 2)) : (2 * maxoffset) - tick * (maxoffset / (floatingTicks / 2));
-            dest -= Point(offset, offset);
-            wingDest -= Point(offset, offset);
-        }
+        offset = tick <= floatingTicks / 2 ? tick * (maxoffset / (floatingTicks / 2)) : (2 * maxoffset) - tick * (maxoffset / (floatingTicks / 2));
+        dest -= Point(offset, offset);
+        wingDest -= Point(offset, offset);
     };
 
     if (animate && m_category == ThingCategoryCreature) {
