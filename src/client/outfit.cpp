@@ -151,11 +151,16 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
     auto drawTopAura = [&] {
         int auraAnimationPhase = 0;
         auto auraType = g_things.rawGetThingType(m_aura, ThingCategoryCreature);
-        auto idleAnimator = auraType->getIdleAnimator();
-        if (idleAnimator) {
-            auraAnimationPhase = idleAnimator->getPhase() + idleAnimator->getAnimationPhases();
+        auto auraAnimator = auraType->getAnimator();
+        if (animate) {
+            if (auraAnimator) {
+                auraAnimationPhase = auraAnimator->getPhase();
+            }
+            else {
+                auraAnimationPhase = (stdext::millis() / 75) % auraType->getAnimationPhases();
+            }
         }
-        auraType->draw(topAuraDest, 0, direction, 0, 0, auraAnimationPhase, Color::white, lightView);
+        auraType->draw(topAuraDest, 1, direction, 0, 0, auraAnimationPhase, Color::white, lightView);
     };
 
     if (m_aura && (!g_game.getFeature(Otc::GameDrawAuraOnTop) or g_game.getFeature(Otc::GameAuraFrontAndBack)) ) {
