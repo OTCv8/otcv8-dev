@@ -199,7 +199,7 @@ GamePacketCompression = 111
 GameOldInformationBar = 112
 GameHealthInfoBackground = 113
 GameWingOffset = 114
-GameAuraFrontAndBack = 115 -- To use that, make the Back aura as idle and the front aura as walking in object builder
+GameAuraFrontAndBack = 115 -- To use that: First layer is bottom/back, second (blend layer) is top/front
 
 LastGameFeature = 130
         
