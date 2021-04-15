@@ -474,6 +474,10 @@ namespace Otc
         GameHealthInfoBackground = 113,
         GameWingOffset = 114,
 
+        GameMapDrawGroundFirst = 116,
+        GameMapIgnoreCorpseCorrection = 117,
+        GameDontCacheFiles = 118,
+
         LastGameFeature = 130
     };
 

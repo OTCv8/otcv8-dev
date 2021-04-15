@@ -52,7 +52,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         direction = Otc::West;
 
     Point wingDest = dest;
-    if(g_game.getFeature(Otc::GameWingOffset) && m_wings)
+    if (g_game.getFeature(Otc::GameWingOffset) && m_wings)
         dest -= Point(6, 6);
 
     auto type = g_things.rawGetThingType(m_category == ThingCategoryCreature ? m_id : m_auxId, m_category);
@@ -62,14 +62,13 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
     auto wingBounce = [&] {
         int maxoffset = 4;
         uint floatingTicks = 8;
-        int tick = (g_clock.millis() % (1000)) / (1000 / floatingTicks);
+        uint tick = (g_clock.millis() % (1000)) / (1000 / floatingTicks);
         int offset = 0;
         if (walkAnimationPhase > 0) {
             auto idleAnimator = type->getIdleAnimator();
             if (idleAnimator) {
                 animationPhase = idleAnimator->getPhase();
-            }
-            else {
+            }             else {
                 animationPhase = 0;
             }
         }
@@ -94,7 +93,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         if (g_game.getFeature(Otc::GameWingOffset) && m_wings) {
             wingBounce();
         }
-    } else if(animate) {
+    } else if (animate) {
         int animationPhases = type->getAnimationPhases();
         int animateTicks = g_game.getFeature(Otc::GameEnhancedAnimations) ? Otc::ITEM_TICKS_PER_FRAME_FAST : Otc::ITEM_TICKS_PER_FRAME;
 
@@ -110,22 +109,24 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
     }
 
     int zPattern = m_mount > 0 ? std::min<int>(1, type->getNumPatternZ() - 1) : 0;
-    if (zPattern > 0) {
-        int mountAnimationPhase = walkAnimationPhase;
-        auto mountType = g_things.rawGetThingType(m_mount, ThingCategoryCreature);
-        auto idleAnimator = mountType->getIdleAnimator();
-        if (idleAnimator && animate) {
-            if (walkAnimationPhase > 0) {
-                mountAnimationPhase += idleAnimator->getAnimationPhases() - 1;
-            } else {
-                mountAnimationPhase = idleAnimator->getPhase();
+    auto drawMount = [&] {
+        if (zPattern > 0) {
+            int mountAnimationPhase = walkAnimationPhase;
+            auto mountType = g_things.rawGetThingType(m_mount, ThingCategoryCreature);
+            auto idleAnimator = mountType->getIdleAnimator();
+            if (idleAnimator && animate) {
+                if (walkAnimationPhase > 0) {
+                    mountAnimationPhase += idleAnimator->getAnimationPhases() - 1;
+                } else {
+                    mountAnimationPhase = idleAnimator->getPhase();
+                }
             }
-        }
 
-        dest -= mountType->getDisplacement();
-        mountType->draw(dest, 0, direction, 0, 0, mountAnimationPhase, Color::white, lightView);
-        dest += type->getDisplacement();
-    }
+            dest -= mountType->getDisplacement();
+            mountType->draw(dest, 0, direction, 0, 0, mountAnimationPhase, Color::white, lightView);
+            dest += type->getDisplacement();
+        }
+    };
 
     auto drawWings = [&] {
         int wingAnimationPhase = walkAnimationPhase;
@@ -136,12 +137,10 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
             if (idleAnimator) {
                 if (walkAnimationPhase > 0) {
                     wingAnimationPhase += idleAnimator->getAnimationPhases() - 1;
-                }
-                else {
+                }                 else {
                     wingAnimationPhase = idleAnimator->getPhase();
                 }
-            }
-            else if (wingsType->isAnimateAlways()) {
+            }             else if (wingsType->isAnimateAlways()) {
                 int phases = wingsType->getAnimator() ? wingsType->getAnimator()->getAnimationPhases() : wingsType->getAnimationPhases();
                 int ticksPerFrame = 1000 / phases;
                 wingAnimationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
@@ -168,6 +167,8 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
     if (m_aura && !g_game.getFeature(Otc::GameDrawAuraOnTop)) {
         drawAura();
     }
+
+    drawMount();
 
     if (m_wings && (direction == Otc::South || direction == Otc::East)) {
         if (g_game.getFeature(Otc::GameWingOffset) && zPattern > 0) {
@@ -206,7 +207,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
             continue;
 
         DrawQueueItemTexturedRect* outfit = nullptr;
-        if(m_shader.empty())
+        if (m_shader.empty())
             outfit = new DrawQueueItemOutfit(outfitParams->dest, outfitParams->texture, outfitParams->src, outfitParams->offset, colors, outfitParams->color);
         else {
             if (yPattern == 0)

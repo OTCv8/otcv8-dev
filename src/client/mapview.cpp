@@ -70,22 +70,21 @@ void MapView::drawTileTexts(const Rect& rect, const Rect& srcRect)
     float verticalStretchFactor = rect.height() / (float)srcRect.height();
 
     auto player = g_game.getLocalPlayer();
-    for (auto& tile : m_cachedVisibleTiles) {
-        Position tilePos = tile.first->getPosition();
-        if (tilePos.z != player->getPosition().z) continue;        
-
+    auto floor = player->getPosition().z;
+    for (auto& tile : m_cachedVisibleTiles[floor]) {
+        Position tilePos = tile->getPosition();
         Point p = transformPositionTo2D(tilePos, cameraPosition) - drawOffset;
         p.x *= horizontalStretchFactor;
         p.y *= verticalStretchFactor;
         p += rect.topLeft();
         p.y += 5;
 
-        tile.first->drawTexts(p);
+        tile->drawTexts(p);
     }
 }
 
 
-void MapView::drawBackground(const Rect& rect, const TilePtr& crosshairTile) {
+void MapView::drawMapBackground(const Rect& rect, const TilePtr& crosshairTile) {
     Position cameraPosition = getCameraPosition();
     if (m_mustUpdateVisibleTilesCache) {
         updateVisibleTilesCache();
@@ -109,8 +108,6 @@ void MapView::drawBackground(const Rect& rect, const TilePtr& crosshairTile) {
                                                   std::max<int>(m_minimumAmbientLight * 255, ambientLight.intensity));
     }
 
-    auto itm = m_cachedVisibleTiles.begin();
-    auto end = m_cachedVisibleTiles.end();
     for (int z = m_cachedLastVisibleFloor; z >= m_cachedFirstFadingFloor; --z) {
         float fading = 1.0;
         if (m_floorFading > 0) {
@@ -124,40 +121,86 @@ void MapView::drawBackground(const Rect& rect, const TilePtr& crosshairTile) {
         }
 
         size_t floorStart = g_drawQueue->size();
-        size_t lightFloorStart = m_lightView ? m_lightView->size() : 0;
-        for (; itm != end; ++itm) {
-            Position tilePos = itm->first->getPosition();
-            if (tilePos.z != z)
-                break;
+        drawFloor(z, cameraPosition, crosshairTile);
 
-
-            Point tileDrawPos = transformPositionTo2D(tilePos, cameraPosition);
-
-            if (m_lightView) {
-                ItemPtr ground = itm->first->getGround();
-                if (ground && ground->isGround() && !ground->isTranslucent()) {
-                    m_lightView->setFieldBrightness(tileDrawPos, lightFloorStart, 0);
-                }
-            }
-
-            itm->first->drawBottom(tileDrawPos, m_lightView.get());
-            if (m_crosshair && itm->first == crosshairTile) 
-            {
-                g_drawQueue->addTexturedRect(Rect(tileDrawPos, tileDrawPos + Otc::TILE_PIXELS - 1),
-                                             m_crosshair, Rect(0, 0, m_crosshair->getSize()));
-            }
-            itm->first->drawTop(tileDrawPos, m_lightView.get());
-        }
-        for (const MissilePtr& missile : g_map.getFloorMissiles(z)) {
-            missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), true, m_lightView.get());
-        }
         if (fading < 0.99)
             g_drawQueue->setOpacity(floorStart, fading);
     }
 
 } 
 
-void MapView::drawForeground(const Rect& rect)
+void MapView::drawFloor(short floor, const Position& cameraPosition, const TilePtr& crosshairTile)
+{
+    if (floor < 0 || floor > Otc::MAX_Z)
+        return;
+
+    auto& tiles = m_cachedVisibleTiles[floor];
+    size_t lightFloorStart = m_lightView ? m_lightView->size() : 0;
+
+    // light
+    if (m_lightView) {
+        for (auto& tile : tiles) {
+            Point tileDrawPos = transformPositionTo2D(tile->getPosition(), cameraPosition);
+            ItemPtr ground = tile->getGround();
+            if (ground && ground->isGround() && !ground->isTranslucent()) {
+                m_lightView->setFieldBrightness(tileDrawPos, lightFloorStart, 0);
+            }
+        }
+    }
+
+    if (g_game.getFeature(Otc::GameMapDrawGroundFirst)) {
+        // ground
+        for (auto& tile : tiles) {
+            Point tileDrawPos = transformPositionTo2D(tile->getPosition(), cameraPosition);
+            tile->drawGround(tileDrawPos, m_lightView.get());
+        }
+        // bottom, creatures, top
+        for (auto& tile : tiles) {
+            Point tileDrawPos = transformPositionTo2D(tile->getPosition(), cameraPosition);
+
+            tile->drawBottom(tileDrawPos, m_lightView.get());
+
+            if (m_crosshair && tile == crosshairTile) {
+                g_drawQueue->addTexturedRect(Rect(tileDrawPos, tileDrawPos + Otc::TILE_PIXELS - 1),
+                                             m_crosshair, Rect(0, 0, m_crosshair->getSize()));
+            }
+
+            tile->drawCreatures(tileDrawPos, m_lightView.get());
+            tile->drawTop(tileDrawPos, m_lightView.get());
+        }
+    } else {
+        // ground, bottom, creatures, top
+        for (auto& tile : tiles) {
+            Point tileDrawPos = transformPositionTo2D(tile->getPosition(), cameraPosition);
+
+            if (m_lightView) {
+                ItemPtr ground = tile->getGround();
+                if (ground && ground->isGround() && !ground->isTranslucent()) {
+                    m_lightView->setFieldBrightness(tileDrawPos, lightFloorStart, 0);
+                }
+            }
+
+            tile->drawGround(tileDrawPos, m_lightView.get());
+
+            tile->drawBottom(tileDrawPos, m_lightView.get());
+
+            if (m_crosshair && tile == crosshairTile) {
+                g_drawQueue->addTexturedRect(Rect(tileDrawPos, tileDrawPos + Otc::TILE_PIXELS - 1),
+                                             m_crosshair, Rect(0, 0, m_crosshair->getSize()));
+            }
+
+            tile->drawCreatures(tileDrawPos, m_lightView.get());
+            tile->drawTop(tileDrawPos, m_lightView.get());
+        }
+    }
+
+    for (const MissilePtr& missile : g_map.getFloorMissiles(floor)) {
+        missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), true, m_lightView.get());
+    }
+}
+
+
+void MapView::drawMapForeground(const Rect& rect)
 {
     // this could happen if the player position is not known yet
     Position cameraPosition = getCameraPosition();
@@ -275,7 +318,6 @@ void MapView::updateVisibleTilesCache()
     // there is no tile to render on invalid positions
     Position cameraPosition = getCameraPosition();
     if (!cameraPosition.isValid()) {
-        m_mustDrawVisibleTilesCache = true;
         return;
     }
 
@@ -299,37 +341,9 @@ void MapView::updateVisibleTilesCache()
     m_lastCameraPosition = cameraPosition;
 
     const int numDiagonals = m_drawDimension.width() + m_drawDimension.height() - 1;
-    m_mustDrawVisibleTilesCache = true;
-
-    size_t i = 0;
-    for (int iz = m_cachedLastVisibleFloor; iz >= (m_floorFading ? m_cachedFirstFadingFloor : m_cachedFirstVisibleFloor); --iz) {
-        for (int diagonal = 0; diagonal < numDiagonals; ++diagonal) {
-            int advance = std::max<int>(diagonal - m_drawDimension.height(), 0);
-            for (int iy = diagonal - advance, ix = advance; iy >= 0 && ix < m_drawDimension.width(); --iy, ++ix) {
-                Position tilePos = cameraPosition.translated(ix - m_virtualCenterOffset.x, iy - m_virtualCenterOffset.y);
-                tilePos.coveredUp(cameraPosition.z - iz);
-                if (const TilePtr& tile = g_map.getTile(tilePos)) {
-                    if (!tile->isDrawable())
-                        continue;
-                    if (i >= m_cachedVisibleTiles.size()) {
-                        break;
-                    }
-                    if (m_cachedVisibleTiles[i].first != tile || m_cachedVisibleTiles[i].second != g_map.isCompletelyCovered(tilePos, m_cachedFirstVisibleFloor)) {
-                        break;
-                    }
-                    i += 1;
-                }
-
-            }
-        }
+    for (auto& cachedVisibleTiles : m_cachedVisibleTiles) {
+        cachedVisibleTiles.clear();
     }
-    if (i != m_cachedVisibleTiles.size())
-        m_mustDrawVisibleTilesCache = true;
-
-    if (!m_mustDrawVisibleTilesCache)
-        return;
-
-    m_cachedVisibleTiles.clear();
 
     // draw from last floor (the lower) to first floor (the higher)
     for(int iz = m_cachedLastVisibleFloor; iz >= (m_floorFading ? m_cachedFirstFadingFloor : m_cachedFirstVisibleFloor); --iz) {
@@ -345,7 +359,7 @@ void MapView::updateVisibleTilesCache()
                 if (const TilePtr& tile = g_map.getTile(tilePos)) {
                     if (!tile->isDrawable())
                         continue;
-                    m_cachedVisibleTiles.push_back(std::make_pair(tile, g_map.isCompletelyCovered(tilePos, m_cachedFirstVisibleFloor)));
+                    m_cachedVisibleTiles[tilePos.z].push_back(tile);
                     tile->calculateCorpseCorrection();
                 }
             }

@@ -23,6 +23,7 @@
 
 #include "minimap.h"
 #include "tile.h"
+#include "game.h"
 
 #include <framework/graphics/image.h>
 #include <framework/graphics/texture.h>
@@ -316,7 +317,7 @@ void Minimap::saveImage(const std::string& fileName, const Rect& mapRect)
 bool Minimap::loadOtmm(const std::string& fileName)
 {
     try {
-        FileStreamPtr fin = g_resources.openFile(fileName);
+        FileStreamPtr fin = g_resources.openFile(fileName, g_game.getFeature(Otc::GameDontCacheFiles));
         if(!fin)
             stdext::throw_exception("unable to open file");
 

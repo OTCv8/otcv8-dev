@@ -64,12 +64,12 @@ void UIMap::drawSelf(Fw::DrawPane drawPane)
         g_drawQueue->addBoundingRect(m_mapRect.expanded(1), 1, Color::black);
         g_drawQueue->markMapPosition();
     } else if(drawPane == Fw::MapBackgroundPane) {
-        m_mapView->drawBackground(m_mapRect, getTile(m_mousePosition));
+        m_mapView->drawMapBackground(m_mapRect, getTile(m_mousePosition));
         if (!m_shader.empty()) {
             g_drawQueue->setShader(m_shader);
         }
     } else if (drawPane == Fw::MapForegroundPane) {
-        m_mapView->drawForeground(m_mapRect);
+        m_mapView->drawMapForeground(m_mapRect);
     }
 }
 
