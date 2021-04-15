@@ -52,7 +52,7 @@ bool SpriteManager::loadSpr(std::string file)
     try {
         file = g_resources.guessFilePath(file, "spr");
 
-        m_spritesFile = g_resources.openFile(file);
+        m_spritesFile = g_resources.openFile(file, g_game.getFeature(Otc::GameDontCacheFiles));
 
         m_signature = m_spritesFile->getU32();
         if (m_signature == *((uint32_t*)"OTV8")) {

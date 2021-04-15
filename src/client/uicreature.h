@@ -46,12 +46,16 @@ public:
     void setScale(float scale) { m_scale = scale; }
     float getScale() { return m_scale; }
 
+    void setAnimate(bool value) { m_animate = value; }
+    bool isAnimating() { return m_animate; }
+
 protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
     void onGeometryChange(const Rect& oldRect, const Rect& newRect) override;
 
     CreaturePtr m_creature;
     stdext::boolean<false> m_autoRotating;
+    stdext::boolean<false> m_animate;
     Otc::Direction m_direction = Otc::South;
     float m_scale = 0;
 };

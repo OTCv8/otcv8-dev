@@ -475,6 +475,10 @@ namespace Otc
         GameWingOffset = 114,
         GameAuraFrontAndBack = 115,
 
+        GameMapDrawGroundFirst = 116,
+        GameMapIgnoreCorpseCorrection = 117,
+        GameDontCacheFiles = 118,
+
         LastGameFeature = 130
     };
 

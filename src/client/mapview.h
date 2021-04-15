@@ -36,11 +36,12 @@ class MapView : public LuaObject
 public:
     MapView();
     ~MapView();
-    void drawBackground(const Rect& rect, const TilePtr& crosshairTile = nullptr);
-    void drawForeground(const Rect& rect);
+    void drawMapBackground(const Rect& rect, const TilePtr& crosshairTile = nullptr);
+    void drawMapForeground(const Rect& rect);
     void drawTexts(const Rect& rect, const Rect& srcRect);
 
 private:
+    void drawFloor(short floor, const Position& cameraPosition, const TilePtr& crosshairTile = nullptr);
     void drawTileTexts(const Rect& rect, const Rect& srcRect);
     void updateGeometry(const Size& visibleDimension, const Size& optimizedSize);
     void updateVisibleTilesCache();
@@ -145,7 +146,6 @@ private:
     Position m_customCameraPosition;
     Position m_lastCameraPosition;
     stdext::boolean<true> m_mustUpdateVisibleTilesCache;
-    stdext::boolean<true> m_mustDrawVisibleTilesCache;
     stdext::boolean<true> m_multifloor;
     stdext::boolean<true> m_animated;
     stdext::boolean<true> m_drawTexts;
@@ -159,7 +159,7 @@ private:
     stdext::timer m_fadingFloorTimers[Otc::MAX_Z + 1];
 
     stdext::boolean<true> m_follow;
-    std::vector<std::pair<TilePtr, bool>> m_cachedVisibleTiles;
+    std::vector<TilePtr> m_cachedVisibleTiles[Otc::MAX_Z + 1];
     CreaturePtr m_followingCreature;
     Otc::DrawFlags m_drawFlags;
     bool m_drawLight = false;
