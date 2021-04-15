@@ -164,10 +164,26 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         auraType->draw(dest, 0, direction, 0, auraZPattern, auraAnimationPhase, Color::white, lightView);
     };
 
-    if (m_aura && !g_game.getFeature(Otc::GameDrawAuraOnTop)) {
+    Point topAuraDest = dest;
+    auto drawTopAura = [&] {
+        int auraAnimationPhase = 0;
+        auto auraType = g_things.rawGetThingType(m_aura, ThingCategoryCreature);
+        auto auraAnimator = auraType->getAnimator();
+        if (animate) {
+            if (auraAnimator) {
+                auraAnimationPhase = auraAnimator->getPhase();
+            }
+            else {
+                auraAnimationPhase = (stdext::millis() / 75) % auraType->getAnimationPhases();
+            }
+        }
+        auraType->draw(topAuraDest, 1, direction, 0, 0, auraAnimationPhase, Color::white, lightView);
+    };
+
+    if (m_aura && (!g_game.getFeature(Otc::GameDrawAuraOnTop) or g_game.getFeature(Otc::GameAuraFrontAndBack)) ) {
         drawAura();
     }
-
+  
     drawMount();
 
     if (m_wings && (direction == Otc::South || direction == Otc::East)) {
@@ -223,9 +239,22 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
 
         drawWings();
     }
-
-    if (m_aura && g_game.getFeature(Otc::GameDrawAuraOnTop)) {
-        drawAura();
+    
+    if (m_aura && (g_game.getFeature(Otc::GameDrawAuraOnTop) || g_game.getFeature(Otc::GameAuraFrontAndBack))) {
+        if (g_game.getFeature(Otc::GameAuraFrontAndBack)){
+            if (zPattern > 0) {
+                if (direction == Otc::East)
+                    topAuraDest -= Point(12, 6);
+                else if (direction == Otc::South)
+                    topAuraDest -= Point(1, 12);
+                else
+                    topAuraDest -= Point(4, 6);
+            }
+            drawTopAura();
+        }
+        else {
+            drawAura();
+        }
     }
 }
 
