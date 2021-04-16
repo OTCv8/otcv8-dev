@@ -478,6 +478,7 @@ namespace Otc
         GameMapDrawGroundFirst = 116,
         GameMapIgnoreCorpseCorrection = 117,
         GameDontCacheFiles = 118,
+        GameBigAurasCenter = 119,
 
         LastGameFeature = 130
     };

@@ -121,6 +121,14 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
                     mountAnimationPhase = idleAnimator->getPhase();
                 }
             }
+            if (m_wings && g_game.getFeature(Otc::GameWingOffset)) {
+                if (idleAnimator) {
+                    mountAnimationPhase = idleAnimator->getPhase();
+                }
+                else {
+                    mountAnimationPhase = 0;
+                }
+            }
 
             dest -= mountType->getDisplacement();
             mountType->draw(dest, 0, direction, 0, 0, mountAnimationPhase, Color::white, lightView);
@@ -149,6 +157,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         wingsType->draw(wingDest, 0, direction, 0, wingsZPattern, wingAnimationPhase, Color::white, lightView);
     };
 
+    Point auraDest = dest;
     auto drawAura = [&] {
         int auraAnimationPhase = 0;
         auto auraType = g_things.rawGetThingType(m_aura, ThingCategoryCreature);
@@ -161,7 +170,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
                 auraAnimationPhase = (stdext::millis() / 75) % auraType->getAnimationPhases();
             }
         }
-        auraType->draw(dest, 0, direction, 0, auraZPattern, auraAnimationPhase, Color::white, lightView);
+        auraType->draw(auraDest, 0, direction, 0, auraZPattern, auraAnimationPhase, Color::white, lightView);
     };
 
     Point topAuraDest = dest;
@@ -179,6 +188,16 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         }
         auraType->draw(topAuraDest, 1, direction, 0, 0, auraAnimationPhase, Color::white, lightView);
     };
+    if (m_aura && g_game.getFeature(Otc::GameBigAurasCenter)) {
+        auto auraType = g_things.rawGetThingType(m_aura, ThingCategoryCreature);
+        int auraHeight = auraType->getHeight();
+        int auraWidth = auraType->getWidth();
+        if (auraHeight > 1 || auraWidth > 1) {
+            Point offset = Point (auraWidth > 1 ? (auraWidth - 1) * 16 : 0, auraHeight > 1 ? (auraHeight - 1) * 16 : 0);
+            topAuraDest += offset;
+            auraDest += offset;
+        }
+    }
 
     if (m_aura && (!g_game.getFeature(Otc::GameDrawAuraOnTop) or g_game.getFeature(Otc::GameAuraFrontAndBack)) ) {
         drawAura();
