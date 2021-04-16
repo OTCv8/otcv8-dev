@@ -247,9 +247,9 @@ function string.starts(String,Start)
  return string.sub(String,1,string.len(Start))==Start
 end
 
-local cachedFriends = {}
-local cachedNeutrals = {}
-local cachedEnemies = {}
+CachedFriends = {}
+CachedNeutrals = {}
+CachedEnemies = {}
 function isFriend(c)
     local name = c
     if type(c) ~= "string" then
@@ -258,35 +258,36 @@ function isFriend(c)
         if name == name() then return true end
     end
 
-    if table.find(cachedFriends, c) then return true end
-    if table.find(cachedNeutrals, c) or table.find(cachedEnemies, c) then return false end 
+    if CachedFriends[c] then return true end
+    if CachedNeutrals[c] or CachedEnemies[c] then return false end 
 
     if table.find(storage.playerList.friendList, name) then
-        table.insert(cachedFriends, c)
+        CachedFriends[c] = true
         return true
     elseif string.find(storage.serverMembers, name) then
-        table.insert(cachedFriends, c)
+        CachedFriends[c] = true
         return true
     elseif storage.playerList.groupMembers then
         local p = c
         if type(c) == "string" then 
             p = getCreatureByName(c, true)
         end
+        if not p then return false end
         if p:isLocalPlayer() then return true end
         if p:isPlayer() then
             if ((p:getShield() >= 3 and p:getShield() <= 10) or p:getEmblem() == 2) then
-                table.insert(cachedFriends, c)
-                table.insert(cachedFriends, p)
+                CachedFriends[c] = true
+                CachedFriends[p] = true
                 return true
             else
-                table.insert(cachedNeutrals, c)
-                table.insert(cachedNeutrals, p)
+                CachedNeutrals[c] = true
+                CachedNeutrals[p] = true
                 return false
             end
         end
     else
-        table.insert(cachedNeutrals, c)
-        table.insert(cachedNeutrals, p)
+        CachedNeutrals[c] = true
+        CachedNeutrals[p] = true
         return false
     end
 end
@@ -294,6 +295,7 @@ end
 function isEnemy(name)
     if not name then return false end
     local p = getCreatureByName(name, true)
+    if not p then return end
     if p:isLocalPlayer() then return end
 
     if p:isPlayer() and table.find(storage.playerList.enemyList, name) or (storage.playerList.marks and not isFriend(name)) then
@@ -532,6 +534,13 @@ function itemAmount(id)
     return totalItemCount
 end
 
+function useOnInvertoryItem(a,b)
+    local item = findItem(b)
+    if not item then return end
+  
+    return useWith(a, item)
+end
+
 function hasSupplies()
     local items = {
         {ID = storage.supplies.item1, minAmount = storage.supplies.item1Min},
@@ -548,8 +557,8 @@ function hasSupplies()
     local hasSupplies = true
 
     for i, supply in pairs(items) do
-        if supply.min and supply.ID then
-            if supply.ID > 100 and itemAmount(supply.ID) < supply.min then
+        if supply.minAmount and supply.ID then
+            if supply.ID > 100 and itemAmount(supply.ID) < (supply.minAmount/2) then
                 hasSupplies = false
             end
         end
@@ -569,38 +578,69 @@ function cordsToPos(x, y, z)
     return tilePos
 end
 
-function reachGroundItem(id)
-    if not id then return nil end
-    local targetTile
-    for _, tile in ipairs(g_map.getTiles(posz())) do
-        if tile:getTopUseThing():getId() == id then
-            targetTile = tile:getPosition()
+function useGroundItem(id)
+    if not id then return false end
+  
+    local dest = nil
+    for i, tile in ipairs(g_map.getTiles(posz())) do
+        for j, item in ipairs(tile:getItems()) do
+            if item:getId() == id then
+                dest = item
+                break
+            end
         end
     end
-    if targetTile then
-        CaveBot.walkTo(targetTile, 10, {ignoreNonPathable = true, precision=1})
-        delay(500*getDistanceBetween(targetTile, pos()))
-        return true
+
+    if dest then
+        return use(dest)
     else
-        return nil
+        return false
     end
 end
 
-function useGroundItem(id)
-    if not id then
-        return nil
-    end
-    local targetTile = nil
-    for _, tile in ipairs(g_map.getTiles(posz())) do
-        if tile:getTopUseThing():getId() == id then
-            targetTile = tile:getPosition()
+function reachGroundItem(id)
+    if not id then return false end
+  
+    local dest = nil
+    for i, tile in ipairs(g_map.getTiles(posz())) do
+        for j, item in ipairs(tile:getItems()) do
+            local iPos = item:getPosition()
+            local iId = item:getId()
+            if iId == id then
+                if findPath(pos(), iPos, 20, {ignoreNonPathable = true, precision = 1}) then
+                    dest = item
+                    break
+                end
+            end
         end
     end
-    if targetTile then
-        g_game.use(g_map.getTile(targetTile):getTopUseThing())
-        delay(500*getDistanceBetween(targetTile, pos()))
+
+    if dest then
+        return autoWalk(iPos, 20, {ignoreNonPathable = true, precision = 1})
     else
-        return nil
+        return false
+    end
+end
+
+function useOnGroundItem(a,b)
+    if not id then return false end
+    local item = findItem(a)
+    if not item then return false end
+  
+    local dest = nil
+    for i, tile in ipairs(g_map.getTiles(posz())) do
+        for j, item in ipairs(tile:getItems()) do
+            if item:getId() == id then
+                dest = item
+                break
+            end
+        end
+    end
+
+    if dest then
+        return useWith(item, dest)
+    else
+        return false
     end
 end
 
@@ -727,7 +767,7 @@ function getContainerByName(name)
 end
 
 function getContainerByItem(id)
-    if type(name) ~= "number" then return nil end
+    if type(id) ~= "number" then return nil end
 
     local d = nil
     for i, c in pairs(getContainers()) do

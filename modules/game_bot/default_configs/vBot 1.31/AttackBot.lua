@@ -587,7 +587,7 @@ if rootWidget then
     attackWindow.PvpMode:setChecked(currentSettings.pvpMode)
     attackWindow.PvpSafe:setChecked(currentSettings.PvpSafe)
     attackWindow.BlackListSafe:setChecked(currentSettings.BlackListSafe)
-    attackWindow.AntiRsRange:setValue(currentSettings.AntiRsRnage)
+    attackWindow.AntiRsRange:setValue(currentSettings.AntiRsRange)
   end
   loadSettings()
 
@@ -972,7 +972,7 @@ macro(100, function()
             else
               if (g_game.getClientVersion() < 960 or not currentSettings.Kills or killsToRs() > currentSettings.KillsAmount) and (not currentSettings.BlackListSafe or not isBlackListedPlayerInRange(currentSettings.AntiRsRange)) then
                 if entry.category == 8 then
-                  bestTile = getBestTileByPatern(patterns[5], 2, entry.dist, not currentSettings.PvpSafe)
+                  bestTile = getBestTileByPatern(patterns[5], 2, entry.dist, currentSettings.PvpSafe)
                 end
                 if entry.category == 4 and (not currentSettings.PvpSafe or isSafe(2, false)) and bestSide >= entry.minMonsters then
                   cast(entry.attack, entry.cd)

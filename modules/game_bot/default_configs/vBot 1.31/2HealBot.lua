@@ -553,7 +553,7 @@ macro(100, function()
   if not currentSettings.enabled or modules.game_cooldown.isGroupCooldownIconActive(2) or #currentSettings.spellTable == 0 then return end
 
   for _, entry in pairs(currentSettings.spellTable) do
-    if canCast(entry.spell, not currentSettings.Conditions, currentSettings.Cooldown) and entry.enabled and entry.cost < mana() then
+    if canCast(entry.spell, not currentSettings.Conditions, not currentSettings.Cooldown) and entry.enabled and entry.cost < mana() then
       if entry.origin == "HP%" then
         if entry.sign == "=" and hppercent() == entry.value then
           say(entry.spell)

@@ -3,7 +3,10 @@
 -- [[  small mod, added many doors id's and diagonal walking and switch ]] --
 
 local wsadWalking = modules.game_walking.wsadWalking
-local doorsIds = { 5007, 8265, 1629, 1632, 5129, 6252, 6249, 7715, 7712, 7714, 7719, 6256, 1669, 1672, 5125, 5115, 5124, 17701, 17710, 1642, 6260, 5107, 4912, 6251, 5291, 1683, 1696, 1692, 5006, 2179, 5116, 11705, 30772, 30774 }
+local doorsIds = { 5007, 8265, 1629, 1632, 5129, 6252, 6249, 7715, 7712, 7714, 
+                   7719, 6256, 1669, 1672, 5125, 5115, 5124, 17701, 17710, 1642, 
+                   6260, 5107, 4912, 6251, 5291, 1683, 1696, 1692, 5006, 2179, 5116, 
+                   1632, 11705, 30772, 30774 }
 
 setDefaultTab("Tools")
 local m = macro(1000, "Auto open doors", function() end)

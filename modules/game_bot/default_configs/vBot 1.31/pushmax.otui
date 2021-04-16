@@ -67,18 +67,6 @@ PushMaxWindow < MainWindow
     margin-top: 5
     text-align: center
 
-  Label
-    id: label    
-    anchors.top: hotkey.bottom
-    anchors.horizontalCenter: parent.horizontalCenter
-    margin-top: 10
-    text-align: center
-    text: Made by Frosty  
-    font: cipsoftFont
-    image-source: /images/ui/window
-    image-border: 1    
-    width: 100
-
   HorizontalSeparator
     id: separator
     anchors.right: parent.right

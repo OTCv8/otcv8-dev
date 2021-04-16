@@ -81,7 +81,6 @@ Panel
       end
       label:setText(friendName)
       playerListWindow.FriendName:setText('')
-      refreshStatus()
     end
   end
 
@@ -107,7 +106,6 @@ Panel
       end
       label:setText(friendName)
       playerListWindow.FriendName:setText('')
-      refreshStatus()
     end
   end
   
@@ -122,7 +120,6 @@ Panel
       end
       label:setText(enemyName)
       playerListWindow.EnemyName:setText('')
-      refreshStatus()
     end
   end 
 
@@ -150,20 +147,20 @@ Panel
     playerListWindow:hide()
   end
 
-function refreshStatus()
+local refreshStatus = function()
   for _, spec in ipairs(getSpectators()) do
     if spec:isPlayer() and not spec:isLocalPlayer() then
       if storage[listPanelName].outfits then
-        specOutfit = spec:getOutfit()
-        if isEnemy(spec:getName()) then
-          spec:setMarked('#FF0000')
-          specOutfit.head = 112
-          specOutfit.body = 112
-          specOutfit.legs = 112
-          specOutfit.feet = 112
-          spec:setOutfit(specOutfit)
-        elseif isFriend(spec:getName()) then
+        local specOutfit = spec:getOutfit()
+        if isFriend(spec:getName()) then
           spec:setMarked('#0000FF')
+          specOutfit.head = 88
+          specOutfit.body = 88
+          specOutfit.legs = 88
+          specOutfit.feet = 88
+          spec:setOutfit(specOutfit)
+        elseif isEnemy(spec:getName()) then
+          spec:setMarked('#FF0000')
           specOutfit.head = 94
           specOutfit.body = 94
           specOutfit.legs = 94
@@ -176,8 +173,37 @@ function refreshStatus()
 end
 refreshStatus()
 
+local checkStatus = function(creature)
+  if not creature:isPlayer() or creature:isLocalPlayer() then return end
+
+  local specName = creature:getName()
+  local specOutfit = creature:getOutfit()
+
+  if isFriend(specName) then
+    creature:setMarked('#0000FF')
+    specOutfit.head = 88
+    specOutfit.body = 88
+    specOutfit.legs = 88
+    specOutfit.feet = 88
+    creature:setOutfit(specOutfit)
+  elseif isEnemy(specName) then
+    creature:setMarked('#FF0000')
+    specOutfit.head = 94
+    specOutfit.body = 94
+    specOutfit.legs = 94
+    specOutfit.feet = 94
+    creature:setOutfit(specOutfit)
+  end
+end
+
 onCreatureAppear(function(creature)
-  if creature:isPlayer() then
-   refreshStatus()
+  checkStatus(creature)
+end)
+
+onPlayerPositionChange(function(x,y)
+  if x.z ~= y.z then
+    schedule(20, function()
+      refreshStatus()
+    end)
   end
 end)
