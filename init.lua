@@ -109,7 +109,7 @@ local function getLoginInfo(configName)
       end
     end
   else
-    g_logger.error("Not found login configs file.")
+    g_logger.info("Not found login configs file.")
   end
 
   return false
