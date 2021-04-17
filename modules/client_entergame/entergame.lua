@@ -592,3 +592,35 @@ function EnterGame.onLoginError(err)
     EnterGame.clearAccountFields()
   end
 end
+
+--- Logs in character based on login configuration.
+-- @param loginInfo initial login configuration
+-- @return void
+function EnterGame.initialLogin(loginInfo)
+  local function onCharacterList(protocol, characters, account, otui)
+    g_game.loginWorld(G.account, G.password, loginInfo.worldName, loginInfo.worldHost, loginInfo.worldPort, loginInfo.characterName, nil, G.sessionKey)
+  end
+
+  scheduleEvent(function()
+    EnterGame.hide()
+  end, 100)
+
+  protocolLogin = ProtocolLogin.create()
+  protocolLogin.onLoginError = onProtocolError
+  protocolLogin.onSessionKey = onSessionKey
+  protocolLogin.onCharacterList = onCharacterList
+  protocolLogin.onUpdateNeeded = onUpdateNeeded
+  protocolLogin.onProxyList = onProxyList
+
+  if tonumber(loginInfo.clientVersion) == 1000 then
+    -- some people don't understand that tibia 10 uses 1100 protocol
+    loginInfo.clientVersion = 1100
+  end
+
+  g_game.setClientVersion(tonumber(loginInfo.clientVersion))
+  g_game.setProtocolVersion(g_game.getClientProtocolVersion(tonumber(loginInfo.clientVersion)))
+  g_game.setCustomProtocolVersion(0)
+  g_game.setCustomOs(2)
+  g_game.chooseRsa(loginInfo.serverHost)
+  protocolLogin:login(loginInfo.serverHost, loginInfo.serverPort, loginInfo.accountName, loginInfo.accountPassword, nil, true)
+end

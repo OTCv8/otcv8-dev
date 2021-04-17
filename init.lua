@@ -90,3 +90,47 @@ if type(Services.updater) == 'string' and Services.updater:len() > 4
   return Updater.init(loadModules)
 end
 loadModules()
+
+--- Parses login configs file and returns login info when config name matches.
+-- @param configName name of configuration in login configs file
+-- @return boolean or table containing login information
+local function getLoginInfo(configName)
+  local loginConfigsPath = "/login/loginConfigs.json"
+
+  if g_resources.fileExists(loginConfigsPath) then
+    local fileContents = g_resources.readFileContents(loginConfigsPath)
+    if string.len(fileContents) > 0 then
+      -- maybe validate fileContents json structure
+      local fileJsonContents = json.decode(fileContents)
+      for characterConfigName, loginInfo in pairs(fileJsonContents) do
+        if characterConfigName == configName then
+          return loginInfo
+        end
+      end
+    end
+  else
+    g_logger.error("Not found login configs file.")
+  end
+
+  return false
+end
+
+--- Handles OTClient .exe startup options.
+-- Splits arguments by space and reads first as login configuration name saving it to Globals.
+-- FIXME replace this implementation to one with argument name handling to extend possibilities and make it more flexible.
+-- FIXME maybe due to not flexible way of handling argument cover it with enabled/disabled feature flag.
+-- @return boolean whether handled any argument
+local function handleStartupOptions()
+  local loginInfo = string.split(g_app.getStartupOptions(), " ")
+  if #loginInfo < 1 then
+    g_logger.info("No startup arguments.")
+    return false
+  end
+  G.initialLoginInfo = getLoginInfo(loginInfo[1])
+  return G.initialLoginInfo
+end
+
+-- initial log in handling
+if handleStartupOptions() then
+  EnterGame.initialLogin(G.initialLoginInfo)
+end
