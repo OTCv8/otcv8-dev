@@ -53,7 +53,7 @@ local function getAutoLoginConfigFromStartupOptions()
 end
 
 --- Logs in character based on login configuration.
--- @param loginInfo initial login configuration
+-- @param loginConfiguration initial login configuration
 -- @return void
 local function initialLogin(loginConfiguration)
     local function onCharacterList(protocol, characters, account, otui)

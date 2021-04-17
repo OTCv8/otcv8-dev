@@ -4,7 +4,7 @@ Module
   author: Nythai
   website: http://otclient.ovh
   scripts: [ autologin ]
-  autoload: true
+  autoload: false
   sandboxed: true
   @onLoad: init()
   @onUnload: terminate()
