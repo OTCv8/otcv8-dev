@@ -33,10 +33,10 @@ class ShaderProgram : public LuaObject {
     };
 
 public:
-    ShaderProgram();
+    ShaderProgram(const std::string& name);
     ~ShaderProgram();
 
-    static PainterShaderProgramPtr create(const std::string& vertexShader, const std::string& fragmentShader, bool colorMatrix = false);
+    static PainterShaderProgramPtr create(const std::string& name, const std::string& vertexShader, const std::string& fragmentShader, bool colorMatrix = false);
 
     bool addShader(const ShaderPtr& shader);
     bool addShaderFromSourceCode(Shader::ShaderType shaderType, const std::string& sourceCode);
@@ -44,7 +44,7 @@ public:
     void removeShader(const ShaderPtr& shader);
     void removeAllShaders();
 
-    virtual void link();
+    virtual bool link();
     bool bind();
     static void release();
     std::string log();
@@ -92,7 +92,10 @@ public:
     uint getProgramId() { return m_programId; }
     ShaderList getShaders() { return m_shaders; }
 
+    std::string getName() { return m_name; }
+
 private:
+    std::string m_name;
     bool m_linked;
     uint m_programId;
     static uint m_currentProgram;

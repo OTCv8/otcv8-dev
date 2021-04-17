@@ -61,9 +61,9 @@ protected:
     virtual void setupUniforms();
 
 public:
-    PainterShaderProgram();
+    PainterShaderProgram(const std::string& name);
 
-    void link();
+    bool link();
 
     void setTransformMatrix(const Matrix3& transformMatrix);
     void setProjectionMatrix(const Matrix3& projectionMatrix);
