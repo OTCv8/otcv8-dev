@@ -1,0 +1,24 @@
+{
+  "configExample": {
+    "accountName": "myaccountname",
+    "accountPassword": "mysecretpassword",
+    "characterName": "Eternal Oblivion",
+    "serverHost": "anyloginserver.net",
+    "serverPort": 7171,
+    "worldHost": "anyloginserver.net",
+    "worldPort": 7172,
+    "worldName": "world name",
+    "clientVersion": "1000"
+  },
+  "configExample2": {
+    "accountName": "myaccountname",
+    "accountPassword": "mysecretpassword",
+    "characterName": "Eternal Oblivion",
+    "serverHost": "anyloginserver.net",
+    "serverPort": 7171,
+    "worldHost": "anyloginserver.net",
+    "worldPort": 7172,
+    "worldName": "world name",
+    "clientVersion": "1000"
+  }
+}

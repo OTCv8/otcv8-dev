@@ -1,0 +1,10 @@
+Module
+  name: client_autologin
+  description: Allows to auto login character
+  author: Nythai
+  website: http://otclient.ovh
+  scripts: [ autologin ]
+  autoload: true
+  sandboxed: true
+  @onLoad: init()
+  @onUnload: terminate()
