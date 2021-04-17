@@ -241,10 +241,22 @@ void Tile::drawTexts(Point dest)
     }
 }
 
+void Tile::drawWidget(Point dest)
+{
+    if (m_widget) {
+        Rect dest_rect = m_widget->getRect();
+        dest_rect = Rect(dest - Point(dest_rect.width() / 2 - Otc::TILE_PIXELS, dest_rect.height() / 2 - Otc::TILE_PIXELS), dest_rect.width(), dest_rect.height());
+        m_widget->setRect(dest_rect);
+        m_widget->draw(dest_rect, Fw::ForegroundPane);
+    }
+}
+
 void Tile::clean()
 {
     while(!m_things.empty())
         removeThing(m_things.front());
+
+    clearWidget();
 }
 
 void Tile::addWalkingCreature(const CreaturePtr& creature)
@@ -889,4 +901,20 @@ bool Tile::canShoot(int distance)
     if(distance > 0 && std::max<int>(std::abs<int>(m_position.x - playerPos.x), std::abs<int>(m_position.y - playerPos.y)) > distance)
        return false;
     return g_map.isSightClear(playerPos, m_position);
+}
+
+UIWidgetPtr Tile::setWidget(UIWidgetPtr widget)
+{
+    clearWidget();
+    m_widget = widget;
+
+    return m_widget;
+}
+
+void Tile::clearWidget()
+{
+    if (m_widget) {
+        m_widget->destroy();
+        m_widget = nullptr;
+    }
 }
