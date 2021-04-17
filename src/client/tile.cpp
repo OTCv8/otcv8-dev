@@ -241,6 +241,16 @@ void Tile::drawTexts(Point dest)
     }
 }
 
+void Tile::drawWidget(Point dest)
+{
+    if (m_widget) {
+        Rect dest_rect = m_widget->getRect();
+        dest_rect = Rect(dest - Point(dest_rect.width() / 2 - Otc::TILE_PIXELS, dest_rect.height() / 2 - Otc::TILE_PIXELS), dest_rect.width(), dest_rect.height());
+        m_widget->setRect(dest_rect);
+        m_widget->draw(dest_rect, Fw::ForegroundPane);
+    }
+}
+
 void Tile::clean()
 {
     while(!m_things.empty())

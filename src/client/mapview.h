@@ -26,6 +26,7 @@
 #include "declarations.h"
 #include <framework/graphics/paintershaderprogram.h>
 #include <framework/graphics/declarations.h>
+#include <framework/graphics/cachedtext.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/core/declarations.h>
 #include "lightview.h"
@@ -43,6 +44,7 @@ public:
 private:
     void drawFloor(short floor, const Position& cameraPosition, const TilePtr& crosshairTile = nullptr);
     void drawTileTexts(const Rect& rect, const Rect& srcRect);
+    void drawTileWidget(const Rect& rect, const Rect& srcRect);
     void updateGeometry(const Size& visibleDimension, const Size& optimizedSize);
     void updateVisibleTilesCache();
     void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
