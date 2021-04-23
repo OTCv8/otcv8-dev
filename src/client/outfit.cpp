@@ -164,9 +164,15 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         int auraZPattern = m_mount > 0 ? std::min<int>(1, auraType->getNumPatternZ() - 1) : 0;
         auto auraAnimator = auraType->getAnimator();
         if (animate) {
-            if (auraAnimator) {
+            if (auraType->isAnimateAlways()) {
+                int phases = auraType->getAnimator() ? auraType->getAnimator()->getAnimationPhases() : auraType->getAnimationPhases();
+                int ticksPerFrame = 1000 / phases;
+                auraAnimationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
+            }
+            else if (auraAnimator) {
                 auraAnimationPhase = auraAnimator->getPhase();
-            } else {
+            }
+            else {
                 auraAnimationPhase = (stdext::millis() / 75) % auraType->getAnimationPhases();
             }
         }
@@ -179,7 +185,12 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         auto auraType = g_things.rawGetThingType(m_aura, ThingCategoryCreature);
         auto auraAnimator = auraType->getAnimator();
         if (animate) {
-            if (auraAnimator) {
+            if (auraType->isAnimateAlways()) {
+                int phases = auraType->getAnimator() ? auraType->getAnimator()->getAnimationPhases() : auraType->getAnimationPhases();
+                int ticksPerFrame = 1000 / phases;
+                auraAnimationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
+            }
+            else if (auraAnimator) {
                 auraAnimationPhase = auraAnimator->getPhase();
             }
             else {
@@ -188,6 +199,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         }
         auraType->draw(topAuraDest, 1, direction, 0, 0, auraAnimationPhase, Color::white, lightView);
     };
+
     if (m_aura && g_game.getFeature(Otc::GameBigAurasCenter)) {
         auto auraType = g_things.rawGetThingType(m_aura, ThingCategoryCreature);
         int auraHeight = auraType->getHeight();
