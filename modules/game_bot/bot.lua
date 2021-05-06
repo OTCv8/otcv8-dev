@@ -722,5 +722,5 @@ end
 
 function botOnAttackingCreatureChange(creature, oldCreature)
   if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onAttackingCreatureChange(creature, oldCreature) end)
+  safeBotCall(function() botExecutor.callbacks.onAttackingCreatureChange(creature,oldCreature) end)
 end
