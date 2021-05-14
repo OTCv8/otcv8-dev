@@ -20,7 +20,7 @@ local leftPanel = extrasWindow.content.left
 
 -- objects made by Kondrah - taken from creature editor, minor changes to adapt
 local addCheckBox = function(id, title, defaultValue, dest)
-  local widget = UI.createWidget('TargetBotCreatureEditorCheckBox', dest)
+  local widget = UI.createWidget('ExtrasCheckBox', dest)
   widget.onClick = function()
     widget:setOn(not widget:isOn())
     settings[id] = widget:isOn()
@@ -35,7 +35,7 @@ local addCheckBox = function(id, title, defaultValue, dest)
 end
 
 local addItem = function(id, title, defaultItem, dest)
-  local widget = UI.createWidget('TargetBotCreatureEditorItem', dest)
+  local widget = UI.createWidget('ExtrasItem', dest)
   widget.text:setText(title)
   widget.item:setItemId(settings[id] or defaultItem)
   widget.item.onItemChange = function(widget)
@@ -45,7 +45,7 @@ local addItem = function(id, title, defaultItem, dest)
 end
 
 local addTextEdit = function(id, title, defaultValue, dest)
-  local widget = UI.createWidget('TargetBotCreatureEditorTextEdit', dest)
+  local widget = UI.createWidget('ExtrasTextEdit', dest)
   widget.text:setText(title)
   widget.textEdit:setText(settings[id] or defaultValue or "")
   widget.textEdit.onTextChange = function(widget,text)
@@ -55,7 +55,7 @@ local addTextEdit = function(id, title, defaultValue, dest)
 end
 
 local addScrollBar = function(id, title, min, max, defaultValue, dest)
-  local widget = UI.createWidget('TargetBotCreatureEditorScrollBar', dest)
+  local widget = UI.createWidget('ExtrasScrollBar', dest)
   widget.scroll.onValueChange = function(scroll, value)
     widget.text:setText(title .. ": " .. value)
     if value == 0 then

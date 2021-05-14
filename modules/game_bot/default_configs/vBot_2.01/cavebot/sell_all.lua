@@ -16,7 +16,8 @@ CaveBot.Extensions.SellAll.setup = function()
       wait = false
     end
 
-    local npc = getCreatureByName(val[1])
+    local npcName = val[1]
+    local npc = getCreatureByName(npcName)
     if not npc then 
       print("CaveBot[SellAll]: NPC not found! skipping")
       return false 
