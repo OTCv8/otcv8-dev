@@ -185,11 +185,6 @@ context.onModalDialog = function(callback)
   return context.callback("onModalDialog", callback)
 end
 
--- onAttackingCreatureChange -- callback = function(creature, oldCreature)
-context.onAttackingCreatureChange = function(callback)
-  return context.callback("onAttackingCreatureChange", callback)
-end
-
 -- CUSTOM CALLBACKS
 
 -- listen(name, callback) -- callback = function(text, channelId, pos)

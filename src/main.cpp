@@ -65,9 +65,7 @@ int main(int argc, const char* argv[]) {
     // initialize application framework and otclient
     g_app.init(args);
     g_client.init(args);
-#ifdef FW_NET
     g_http.init();
-#endif
 
     bool testMode = std::find(args.begin(), args.end(), "--test") != args.end();
     if (testMode) {
@@ -114,9 +112,7 @@ int main(int argc, const char* argv[]) {
     g_app.deinit();
 
     // terminate everything and free memory
-#ifdef FW_NET
     g_http.terminate();
-#endif
     g_client.terminate();
     g_app.terminate();
     return 0;

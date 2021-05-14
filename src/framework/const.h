@@ -292,13 +292,6 @@ namespace Fw
         MapBackgroundPane = 2,
         MapForegroundPane = 3,
     };
-
-#ifdef FW_SQL
-    enum DatabaseEngine {
-        DatabaseNone = 0,
-        DatabaseMySQL
-    };
-#endif
 }
 
 #endif
