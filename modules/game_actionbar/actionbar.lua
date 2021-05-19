@@ -29,16 +29,14 @@ function init()
   bottomPanel:moveChildToIndex(actionPanel1, 1)
   actionPanel2 = g_ui.loadUI('actionbar', bottomPanel)
   bottomPanel:moveChildToIndex(actionPanel2, 1)
-  
-  actionConfig = g_configs.create("/actionbar.otml")
-    
+
   connect(g_game, {
     onGameStart = online,
     onGameEnd = offline,
     onSpellGroupCooldown = onSpellGroupCooldown,
     onSpellCooldown = onSpellCooldown
   })
-  
+
   if g_game.isOnline() then
     online()
   end
@@ -83,6 +81,7 @@ function switchMode(newMode)
 end
 
 function online()
+  actionConfig = g_configs.create("/actionbar.otml")
   setupActionPanel(1, actionPanel1)
   setupActionPanel(2, actionPanel2)
   show()
@@ -319,7 +318,7 @@ function onSpellGroupCooldown(groupId, duration)
   for index, panel in ipairs({actionPanel1, actionPanel2}) do
     for i, child in ipairs(panel.tabBar:getChildren()) do
       if child.spell and child.spell.group then
-        for group, duration in pairs(child.spell.group) do
+        for group, dur in pairs(child.spell.group) do
           if groupId == group then
             startCooldown(child, duration)
           end
