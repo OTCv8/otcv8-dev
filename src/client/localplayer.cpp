@@ -552,7 +552,7 @@ void LocalPlayer::setMana(double mana, double maxMana)
 {
     if(m_mana != mana || m_maxMana != maxMana) {
         double oldMana = m_mana;
-        double oldMaxMana;
+        double oldMaxMana = m_maxMana;
         m_mana = mana;
         m_maxMana = maxMana;
 
