@@ -30,6 +30,8 @@ function init()
   actionPanel2 = g_ui.loadUI('actionbar', bottomPanel)
   bottomPanel:moveChildToIndex(actionPanel2, 1)
 
+  actionConfig = g_configs.create("/actionbar.otml")
+
   connect(g_game, {
     onGameStart = online,
     onGameEnd = offline,
@@ -81,7 +83,6 @@ function switchMode(newMode)
 end
 
 function online()
-  actionConfig = g_configs.create("/actionbar.otml")
   setupActionPanel(1, actionPanel1)
   setupActionPanel(2, actionPanel2)
   show()
