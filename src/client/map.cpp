@@ -1273,6 +1273,17 @@ std::map<std::string, std::tuple<int, int, int, std::string>> Map::findEveryPath
         }
     }
 
+    Position maxDistanceFromPos;
+    int maxDistanceFrom = 0;
+    it = params.find("maxDistanceFrom");
+    if (it != params.end()) {
+        std::vector<int32> pos = stdext::split<int32>(it->second, ",");
+        if (pos.size() == 4) {
+            maxDistanceFromPos = Position(pos[0], pos[1], pos[2]);
+            maxDistanceFrom = pos[3];
+        }
+    }
+
     std::map<std::string, std::tuple<int, int, int, std::string>> ret;
     std::unordered_map<Position, Node*, PositionHasher> nodes;
     std::priority_queue<Node*, std::vector<Node*>, LessNode> searchList;
@@ -1330,7 +1341,10 @@ std::map<std::string, std::tuple<int, int, int, std::string>> Map::findEveryPath
                         speed = mtile.getSpeed();
                     }
                     bool hasStairs = isNotPathable && mapColor >= 210 && mapColor <= 213;
-                    if ((!wasSeen && !allowUnseen) || (hasStairs && !ignoreStairs && neighbor != destPos) || (isNotPathable && !ignoreNonPathable && neighbor != destPos) || (isNotWalkable && !ignoreNonWalkable)) {
+                    bool hasReachedMaxDistance = maxDistanceFrom && maxDistanceFromPos.isValid() && maxDistanceFromPos.distance(neighbor) > maxDistanceFrom;
+                    if ((!wasSeen && !allowUnseen) || (hasStairs && !ignoreStairs && neighbor != destPos) || 
+                        (isNotPathable && !ignoreNonPathable && neighbor != destPos) || (isNotWalkable && !ignoreNonWalkable) ||
+                        hasReachedMaxDistance) {
                         it = nodes.emplace(neighbor, nullptr).first;
                     } else if ((hasCreature && !ignoreCreatures)) {
                         it = nodes.emplace(neighbor, nullptr).first;
