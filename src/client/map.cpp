@@ -542,8 +542,10 @@ void Map::removeUnawareThings()
 
                     const Position& pos = tile->getPosition();
 
-                    if(!isAwareOfPositionForClean(pos, extended))
+                    if (!isAwareOfPositionForClean(pos, extended)) {
+                        tile->clearWidget();
                         block.remove(pos);
+                    }
                     else
                         blockEmpty = false;
                 }
