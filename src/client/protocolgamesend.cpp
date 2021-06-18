@@ -760,7 +760,7 @@ void ProtocolGame::sendShareExperience(bool active)
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientShareExperience);
     msg->addU8(active ? 0x01 : 0x00);
-    if(g_game.getClientVersion() < 910)
+    if(g_game.getProtocolVersion() < 910)
         msg->addU8(0);
     send(msg);
 }
@@ -815,7 +815,7 @@ void ProtocolGame::sendChangeOutfit(const Outfit& outfit)
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientChangeOutfit);
 
-    if (g_game.getFeature(Otc::GameTibia12Protocol) && g_game.getClientVersion() >= 1220) {
+    if (g_game.getFeature(Otc::GameTibia12Protocol) && g_game.getProtocolVersion() >= 1220) {
         msg->addU8(0); // outfit type
     }
 
@@ -925,7 +925,7 @@ void ProtocolGame::sendBugReport(const std::string& comment)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientBugReport);
-    if (g_game.getClientVersion() > 1000) {
+    if (g_game.getProtocolVersion() > 1000) {
         msg->addU8(3); // other
     }
     msg->addString(comment);
@@ -1044,7 +1044,7 @@ void ProtocolGame::sendRequestTransactionHistory(int page, int entriesPerPage)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientRequestTransactionHistory);
-    if(g_game.getClientVersion() <= 1096) {
+    if(g_game.getProtocolVersion() <= 1096) {
         msg->addU16(page);
         msg->addU32(entriesPerPage);
     } else {
