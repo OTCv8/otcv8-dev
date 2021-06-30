@@ -476,9 +476,9 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
 
     int footAnimPhases = getWalkAnimationPhases() - 1;
     // TODO, should be /2 for <= 810
-    int footDelay = getStepDuration(true);
+    uint16_t footDelay = getStepDuration(true);
     if (footAnimPhases > 0) {
-        footDelay = ((getStepDuration(true) + 20) / (g_game.getFeature(Otc::GameFasterAnimations) ? footAnimPhases * 2 : footAnimPhases));
+        footDelay = std::ceil<uint16_t>((float)(getStepDuration(true)) / (g_game.getFeature(Otc::GameFasterAnimations) ? footAnimPhases * 2 : footAnimPhases));
     }
     if (!g_game.getFeature(Otc::GameFasterAnimations))
         footDelay += 10;
@@ -488,7 +488,7 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
     // Since mount is a different outfit we need to get the mount animation phases
     if (m_outfit.getMount() != 0) {
         ThingType* type = g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
-        footAnimPhases = std::min<int>(footAnimPhases, type->getAnimationPhases() - 1);
+        footAnimPhases = std::min<uint16_t>(footAnimPhases, type->getAnimationPhases() - 1);
     }
 
     if (footAnimPhases == 0) {
@@ -574,24 +574,21 @@ void Creature::nextWalkUpdate()
         m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
             self->m_walkUpdateEvent = nullptr;
             self->nextWalkUpdate();
-        }, getStepDuration(true) / 32);
+        }, std::ceil<uint_fast16_t>(getStepDuration(true) / 32.0f));
     }
 }
 
 void Creature::updateWalk()
 {
-    float walkTicksPerPixel = ((float)(getStepDuration(true) + 10)) / 32.0f;
-    int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
-    int totalPixelsWalkedInNextFrame = std::min<int>((m_walkTimer.ticksElapsed() + 15) / walkTicksPerPixel, 32.0f);
+    float walkTicksPerPixel = getStepDuration(true) / 32.0f;
+    uint_fast16_t totalPixelsWalked = std::min<uint_fast16_t>(std::floor((m_walkTimer.ticksElapsed() / walkTicksPerPixel) + 0.5f), 32);
 
     // needed for paralyze effect
-    m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
-    int walkedPixelsInNextFrame = std::max<int>(m_walkedPixels, totalPixelsWalkedInNextFrame);
+    m_walkedPixels = std::max<uint_fast16_t>(m_walkedPixels, totalPixelsWalked);
 
     // update walk animation and offsets
     updateWalkAnimation(totalPixelsWalked);
     updateWalkOffset(m_walkedPixels);
-    updateWalkOffset(walkedPixelsInNextFrame, true);
     updateWalkingTile();
 
     // terminate walk
@@ -858,55 +855,61 @@ Point Creature::getDrawOffset()
     return drawOffset;
 }
 
-int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
+uint_fast16_t Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 {
     int speed = m_speed;
     if (speed < 1)
         return 0;
 
-    if (g_game.getFeature(Otc::GameNewSpeedLaw))
-        speed *= 2;
+    uint_fast16_t interval = 1000;
+    if (m_stepDuration == 0 or !g_game.getFeature(Otc::GameNewWalking)) {
+        if (g_game.getFeature(Otc::GameNewSpeedLaw))
+            speed *= 2;
 
-    int groundSpeed = 0;
-    Position tilePos;
+        uint_fast16_t groundSpeed = 0;
+        Position tilePos;
 
-    if (dir == Otc::InvalidDirection)
-        tilePos = m_lastStepToPosition;
-    else
-        tilePos = getPrewalkingPosition(true).translatedToDirection(dir);
+        if (dir == Otc::InvalidDirection)
+            tilePos = m_lastStepToPosition;
+        else
+            tilePos = getPrewalkingPosition(true).translatedToDirection(dir);
 
-    if (!tilePos.isValid())
-        tilePos = getPrewalkingPosition(true);
+        if (!tilePos.isValid())
+            tilePos = getPrewalkingPosition(true);
 
-    const TilePtr& tile = g_map.getTile(tilePos);
-    if (tile) {
-        groundSpeed = tile->getGroundSpeed();
-        if (groundSpeed == 0)
-            groundSpeed = 150;
-    }
-
-    int interval = 1000;
-    if (groundSpeed > 0 && speed > 0)
-        interval = 1000 * groundSpeed;
-
-    if (g_game.getFeature(Otc::GameNewSpeedLaw) && hasSpeedFormula()) {
-        int formulatedSpeed = 1;
-        if (speed > -m_speedFormula[Otc::SpeedFormulaB]) {
-            formulatedSpeed = std::max<int>(1, (int)floor((m_speedFormula[Otc::SpeedFormulaA] * log((speed / 2)
-                                                                                                    + m_speedFormula[Otc::SpeedFormulaB]) + m_speedFormula[Otc::SpeedFormulaC]) + 0.5));
+        const TilePtr& tile = g_map.getTile(tilePos);
+        if (tile) {
+            groundSpeed = tile->getGroundSpeed();
+            if (groundSpeed == 0)
+                groundSpeed = 150;
         }
-        interval = std::floor(interval / (double)formulatedSpeed);
-    } else
-        interval /= speed;
 
-    if (g_game.getClientVersion() >= 900 && !g_game.getFeature(Otc::GameNewWalking))
-        interval = std::ceil((float)interval / (float)g_game.getServerBeat()) * g_game.getServerBeat();
+        if (groundSpeed > 0 && speed > 0)
+            interval = 1000 * groundSpeed;
+
+        if (g_game.getFeature(Otc::GameNewSpeedLaw) && hasSpeedFormula()) {
+            uint_fast16_t formulatedSpeed = 1;
+            if (speed > -m_speedFormula[Otc::SpeedFormulaB]) {
+                formulatedSpeed = std::max<uint_fast16_t>(1, (uint_fast16_t)floor((m_speedFormula[Otc::SpeedFormulaA] * log((speed / 2)
+                    + m_speedFormula[Otc::SpeedFormulaB]) + m_speedFormula[Otc::SpeedFormulaC]) + 0.5));
+            }
+            interval = std::floor(interval / (double)formulatedSpeed);
+        }
+        else
+            interval /= speed;
+
+        if (g_game.getClientVersion() >= 900 && !g_game.getFeature(Otc::GameNewWalking))
+            interval = std::ceil((float)interval / (float)g_game.getServerBeat()) * g_game.getServerBeat();
+
+        interval = std::max<uint_fast16_t>(interval, g_game.getServerBeat());
+    }
+    else {  // just use server value
+        interval = m_stepDuration;
+    }
 
     float factor = 3;
     if (g_game.getClientVersion() <= 810)
         factor = 2;
-
-    interval = std::max<int>(interval, g_game.getServerBeat());
 
     if (!ignoreDiagonal && (m_lastStepDirection == Otc::NorthWest || m_lastStepDirection == Otc::NorthEast ||
                             m_lastStepDirection == Otc::SouthWest || m_lastStepDirection == Otc::SouthEast))
@@ -914,10 +917,6 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 
     if (!isServerWalking() && g_game.getFeature(Otc::GameSlowerManualWalking)) {
         interval += 25;
-    }
-    if (isServerWalking() && g_game.getFeature(Otc::GameNewWalking) && m_stepDuration > 0) // just use server value
-    {
-        interval = m_stepDuration;
     }
 
     return interval;

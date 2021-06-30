@@ -109,7 +109,7 @@ public:
     uint8 getIcon() { return m_icon; }
     bool isPassable() { return m_passable; }
     Point getDrawOffset();
-    int getStepDuration(bool ignoreDiagonal = false, Otc::Direction dir = Otc::InvalidDirection);
+    uint_fast16_t getStepDuration(bool ignoreDiagonal = false, Otc::Direction dir = Otc::InvalidDirection);
     Point getWalkOffset(bool inNextFrame = false) { return inNextFrame ? m_walkOffsetInNextFrame : m_walkOffset; }
     Position getLastStepFromPosition() { return m_lastStepFromPosition; }
     Position getLastStepToPosition() { return m_lastStepToPosition; }
@@ -242,7 +242,7 @@ protected:
 
     // walk related
     int m_walkAnimationPhase;
-    int m_walkedPixels;
+    uint16_t m_walkedPixels;
     uint m_footStep;
     Timer m_walkTimer;
     ticks_t m_footLastStep;

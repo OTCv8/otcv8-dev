@@ -366,27 +366,24 @@ void LocalPlayer::updateWalk()
     if (!m_walking)
         return;
 
-    float walkTicksPerPixel = ((float)(getStepDuration(true) + 10)) / 32.0f;
-    int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
-    int totalPixelsWalkedInNextFrame = std::min<int>((m_walkTimer.ticksElapsed() + 15) / walkTicksPerPixel, 32.0f);
+    float walkTicksPerPixel = getStepDuration(true) / 32.0f;
+    uint_fast8_t totalPixelsWalked = std::min<uint_fast8_t>(std::floor((m_walkTimer.ticksElapsed() / walkTicksPerPixel) + 0.5f), 32);
 
     // needed for paralyze effect
-    m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
-    int walkedPixelsInNextFrame = std::max<int>(m_walkedPixels, totalPixelsWalkedInNextFrame);
+    m_walkedPixels = std::max<uint_fast8_t>(m_walkedPixels, totalPixelsWalked);
 
     // update walk animation and offsets
     updateWalkAnimation(totalPixelsWalked);
     updateWalkOffset(m_walkedPixels);
-    updateWalkOffset(walkedPixelsInNextFrame, true);
     updateWalkingTile();
 
-    int stepDuration = getStepDuration();
-
     // terminate walk only when client and server side walk are completed
-    if (m_walking && m_walkTimer.ticksElapsed() >= stepDuration)
+    if (m_walking && m_walkTimer.ticksElapsed() >= getStepDuration()) {
         m_lastPrewalkDone = true;
-    if(m_walking && m_walkTimer.ticksElapsed() >= stepDuration && !isPreWalking())
-        terminateWalk();
+        if (!isPreWalking()) {
+            terminateWalk();
+        }
+    }
 }
 
 void LocalPlayer::terminateWalk()
@@ -400,11 +397,10 @@ void LocalPlayer::terminateWalk()
     m_preWalking.clear();
     m_walking = false;
 
-    auto self = asLocalPlayer();
-
     if(m_serverWalking) {
         if(m_serverWalkEndEvent)
             m_serverWalkEndEvent->cancel();
+        const auto self = asLocalPlayer();
         m_serverWalkEndEvent = g_dispatcher.scheduleEvent([self] {
             self->m_serverWalking = false;
         }, 100);
