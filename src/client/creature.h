@@ -242,7 +242,7 @@ protected:
 
     // walk related
     int m_walkAnimationPhase;
-    uint16_t m_walkedPixels;
+    uint_fast8_t m_walkedPixels;
     uint m_footStep;
     Timer m_walkTimer;
     ticks_t m_footLastStep;
@@ -259,7 +259,7 @@ protected:
     Position m_lastStepToPosition;
     Position m_oldPosition;
     uint8 m_elevation = 0;
-    uint16 m_stepDuration = 0;
+    uint_fast16_t m_stepDuration = 0;
 
     // jump related
     float m_jumpHeight = 0;

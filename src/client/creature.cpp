@@ -476,9 +476,9 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
 
     int footAnimPhases = getWalkAnimationPhases() - 1;
     // TODO, should be /2 for <= 810
-    uint16_t footDelay = getStepDuration(true);
+    uint_fast16_t footDelay = getStepDuration(true);
     if (footAnimPhases > 0) {
-        footDelay = std::ceil<uint16_t>((float)(getStepDuration(true)) / (g_game.getFeature(Otc::GameFasterAnimations) ? footAnimPhases * 2 : footAnimPhases));
+        footDelay = std::ceil<uint_fast16_t>((float)(getStepDuration(true)) / (g_game.getFeature(Otc::GameFasterAnimations) ? footAnimPhases * 2 : footAnimPhases));
     }
     if (!g_game.getFeature(Otc::GameFasterAnimations))
         footDelay += 10;
@@ -488,7 +488,7 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
     // Since mount is a different outfit we need to get the mount animation phases
     if (m_outfit.getMount() != 0) {
         ThingType* type = g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
-        footAnimPhases = std::min<uint16_t>(footAnimPhases, type->getAnimationPhases() - 1);
+        footAnimPhases = std::min<uint_fast16_t>(footAnimPhases, type->getAnimationPhases() - 1);
     }
 
     if (footAnimPhases == 0) {
