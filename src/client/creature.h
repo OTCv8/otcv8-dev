@@ -100,7 +100,7 @@ public:
     Otc::Direction getWalkDirection() { return m_walkDirection; }
     Outfit getOutfit() { return m_outfit; }
     Light getLight() { return m_light; }
-    uint16 getSpeed() { return m_speed; }
+    uint_fast16_t getSpeed() { return m_speed; }
     double getBaseSpeed() { return m_baseSpeed; }
     uint8 getSkull() { return m_skull; }
     uint8 getShield() { return m_shield; }
@@ -209,7 +209,7 @@ protected:
     Otc::Direction m_walkDirection;
     Outfit m_outfit;
     Light m_light;
-    int m_speed;
+    uint_fast16_t m_speed;
     double m_baseSpeed;
     uint8 m_skull;
     uint8 m_shield;

@@ -581,14 +581,18 @@ void Creature::nextWalkUpdate()
 void Creature::updateWalk()
 {
     float walkTicksPerPixel = getStepDuration(true) / 32.0f;
-    uint_fast16_t totalPixelsWalked = std::min<uint_fast16_t>(std::floor((m_walkTimer.ticksElapsed() / walkTicksPerPixel) + 0.5f), 32);
+    uint_fast8_t totalPixelsWalked = std::min<uint_fast8_t>(std::floor(m_walkTimer.ticksElapsed() / walkTicksPerPixel), 32);
+    uint_fast16_t frameLifetime = std::max<uint_fast16_t>(std::floor((1000.f / g_app.getFps()) + 0.5f), 1);
+    uint_fast8_t totalPixelsWalkedInNextFrame = std::min<uint_fast8_t>(std::floor((m_walkTimer.ticksElapsed() + frameLifetime) / walkTicksPerPixel), 32);
 
     // needed for paralyze effect
     m_walkedPixels = std::max<uint_fast16_t>(m_walkedPixels, totalPixelsWalked);
+    uint_fast8_t walkedPixelsInNextFrame = std::max<uint_fast8_t>(m_walkedPixels, totalPixelsWalkedInNextFrame);
 
     // update walk animation and offsets
     updateWalkAnimation(totalPixelsWalked);
     updateWalkOffset(m_walkedPixels);
+    updateWalkOffset(walkedPixelsInNextFrame, true);
     updateWalkingTile();
 
     // terminate walk
@@ -716,7 +720,7 @@ void Creature::updateOutfitColor(Color color, Color finalColor, Color delta, int
 
 void Creature::setSpeed(uint16 speed)
 {
-    uint16 oldSpeed = m_speed;
+    uint_fast16_t oldSpeed = m_speed;
     m_speed = speed;
 
     // speed can change while walking (utani hur, paralyze, etc..)
@@ -857,7 +861,7 @@ Point Creature::getDrawOffset()
 
 uint_fast16_t Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 {
-    int speed = m_speed;
+    uint_fast16_t speed = m_speed;
     if (speed < 1)
         return 0;
 
