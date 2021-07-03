@@ -26,7 +26,6 @@
 #include "tile.h"
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/graphics.h>
-#include <framework/core/application.h>
 #include <framework/util/extras.h>
 
 LocalPlayer::LocalPlayer()
@@ -343,7 +342,7 @@ void LocalPlayer::stopWalk() {
     m_preWalking.clear();
 }
 
-void LocalPlayer::updateWalkOffset(int totalPixelsWalked, bool inNextFrame)
+void LocalPlayer::updateWalkOffset(uint8 totalPixelsWalked, bool inNextFrame)
 {
     // pre walks offsets are calculated in the oposite direction
     if(isPreWalking()) {
@@ -367,20 +366,7 @@ void LocalPlayer::updateWalk()
     if (!m_walking)
         return;
 
-    float walkTicksPerPixel = getStepDuration(true) / 32.0f;
-    uint_fast8_t totalPixelsWalked = std::min<uint_fast8_t>(std::floor(m_walkTimer.ticksElapsed() / walkTicksPerPixel), 32);
-    uint_fast16_t frameLifetime = std::max<uint_fast16_t>(std::floor((1000.f / g_app.getFps()) + 0.5f), 1);
-    uint_fast8_t totalPixelsWalkedInNextFrame = std::min<uint_fast8_t>(std::floor((m_walkTimer.ticksElapsed() + frameLifetime) / walkTicksPerPixel), 32);
-
-    // needed for paralyze effect
-    m_walkedPixels = std::max<uint_fast8_t>(m_walkedPixels, totalPixelsWalked);
-    uint_fast8_t walkedPixelsInNextFrame = std::max<uint_fast8_t>(m_walkedPixels, totalPixelsWalkedInNextFrame);
-
-    // update walk animation and offsets
-    updateWalkAnimation(totalPixelsWalked);
-    updateWalkOffset(m_walkedPixels);
-    updateWalkOffset(walkedPixelsInNextFrame, true);
-    updateWalkingTile();
+    Creature::updateWalk();
 
     // terminate walk only when client and server side walk are completed
     if (m_walking && m_walkTimer.ticksElapsed() >= getStepDuration()) {
@@ -405,7 +391,7 @@ void LocalPlayer::terminateWalk()
     if(m_serverWalking) {
         if(m_serverWalkEndEvent)
             m_serverWalkEndEvent->cancel();
-        const auto self = asLocalPlayer();
+        auto self = asLocalPlayer();
         m_serverWalkEndEvent = g_dispatcher.scheduleEvent([self] {
             self->m_serverWalking = false;
         }, 100);

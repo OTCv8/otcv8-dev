@@ -100,7 +100,7 @@ public:
     Otc::Direction getWalkDirection() { return m_walkDirection; }
     Outfit getOutfit() { return m_outfit; }
     Light getLight() { return m_light; }
-    uint_fast16_t getSpeed() { return m_speed; }
+    uint16 getSpeed() { return m_speed; }
     double getBaseSpeed() { return m_baseSpeed; }
     uint8 getSkull() { return m_skull; }
     uint8 getShield() { return m_shield; }
@@ -109,7 +109,7 @@ public:
     uint8 getIcon() { return m_icon; }
     bool isPassable() { return m_passable; }
     Point getDrawOffset();
-    uint_fast16_t getStepDuration(bool ignoreDiagonal = false, Otc::Direction dir = Otc::InvalidDirection);
+    uint16 getStepDuration(bool ignoreDiagonal = false, Otc::Direction dir = Otc::InvalidDirection);
     Point getWalkOffset(bool inNextFrame = false) { return inNextFrame ? m_walkOffsetInNextFrame : m_walkOffset; }
     Position getLastStepFromPosition() { return m_lastStepFromPosition; }
     Position getLastStepToPosition() { return m_lastStepToPosition; }
@@ -191,8 +191,8 @@ public:
     void updateProgressBar(uint32 duration, bool ltr);
 
 protected:
-    virtual void updateWalkAnimation(int totalPixelsWalked);
-    virtual void updateWalkOffset(int totalPixelsWalked, bool inNextFrame = false);
+    virtual void updateWalkAnimation(uint8 totalPixelsWalked);
+    virtual void updateWalkOffset(uint8 totalPixelsWalked, bool inNextFrame = false);
     void updateWalkingTile();
     virtual void nextWalkUpdate();
     virtual void updateWalk();
@@ -209,7 +209,7 @@ protected:
     Otc::Direction m_walkDirection;
     Outfit m_outfit;
     Light m_light;
-    uint_fast16_t m_speed;
+    uint16 m_speed;
     double m_baseSpeed;
     uint8 m_skull;
     uint8 m_shield;
@@ -242,7 +242,7 @@ protected:
 
     // walk related
     int m_walkAnimationPhase;
-    uint_fast8_t m_walkedPixels;
+    uint8 m_walkedPixels;
     uint m_footStep;
     Timer m_walkTimer;
     ticks_t m_footLastStep;
@@ -259,7 +259,7 @@ protected:
     Position m_lastStepToPosition;
     Position m_oldPosition;
     uint8 m_elevation = 0;
-    uint_fast16_t m_stepDuration = 0;
+    uint16 m_stepDuration = 0;
 
     // jump related
     float m_jumpHeight = 0;

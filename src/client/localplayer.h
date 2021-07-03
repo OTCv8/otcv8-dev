@@ -149,7 +149,7 @@ protected:
     friend class Game;
 
 protected:
-    void updateWalkOffset(int totalPixelsWalked, bool inNextFrame = false) override;
+    void updateWalkOffset(uint8 totalPixelsWalked, bool inNextFrame = false) override;
     void updateWalk() override;
     void terminateWalk() override;
 
