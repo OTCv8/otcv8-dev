@@ -479,6 +479,7 @@ namespace Otc
         GameMapIgnoreCorpseCorrection = 117,
         GameDontCacheFiles = 118,
         GameBigAurasCenter = 119,
+        GameNewUpdateWalk = 120,
 
         LastGameFeature = 130
     };
