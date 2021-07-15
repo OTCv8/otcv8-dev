@@ -190,6 +190,21 @@ context.onAttackingCreatureChange = function(callback)
   return context.callback("onAttackingCreatureChange", callback)
 end
 
+-- onManaChange -- callback = function(player, mana, maxMana, oldMana, oldMaxMana)
+context.onManaChange = function(callback)
+  return context.callback("onManaChange", callback)
+end
+
+-- onAddItem - callback = function(container, slot, item, oldItem)
+context.onAddItem = function(callback)
+  return context.callback("onAddItem", callback)
+end
+
+-- onStatesChange - callback = function(states, oldStates)
+context.onStatesChange = function(callback)
+  return context.callback("onStatesChange", callback)
+end
+
 -- CUSTOM CALLBACKS
 
 -- listen(name, callback) -- callback = function(text, channelId, pos)
