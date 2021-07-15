@@ -499,6 +499,7 @@ function initCallbacks()
     onHealthPercentChange = botCraetureHealthPercentChange,
     onTurn = botCreatureTurn,
     onWalk = botCreatureWalk,
+    onManaChange = botManaChange,
     onStatesChange = botStatesChange
   })
   
