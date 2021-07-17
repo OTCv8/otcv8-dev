@@ -38,7 +38,7 @@ void Map::loadOtbm(const std::string& fileName)
         if(!g_things.isOtbLoaded())
             stdext::throw_exception("OTB isn't loaded yet to load a map.");
 
-        FileStreamPtr fin = g_resources.openFile(fileName);
+        FileStreamPtr fin = g_resources.openFile(fileName, g_game.getFeature(Otc::GameDontCacheFiles));
         if(!fin)
             stdext::throw_exception(stdext::format("Unable to load map '%s'", fileName));
 
@@ -395,7 +395,7 @@ void Map::saveOtbm(const std::string& fileName)
 bool Map::loadOtcm(const std::string& fileName)
 {
     try {
-        FileStreamPtr fin = g_resources.openFile(fileName);
+        FileStreamPtr fin = g_resources.openFile(fileName, g_game.getFeature(Otc::GameDontCacheFiles));
         if(!fin)
             stdext::throw_exception("unable to open file");
 

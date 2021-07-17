@@ -140,7 +140,7 @@ int Animator::getPhaseAt(Timer& timer, int lastPhase)
         }
         time -= phaseDuration;
     }
-    return -1;
+    return 0;
     /*
     ticks_t total = 0;
 

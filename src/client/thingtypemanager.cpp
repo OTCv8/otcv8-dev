@@ -175,7 +175,7 @@ bool ThingTypeManager::loadDat(std::string file)
     try {
         file = g_resources.guessFilePath(file, "dat");
 
-        FileStreamPtr fin = g_resources.openFile(file);
+        FileStreamPtr fin = g_resources.openFile(file, g_game.getFeature(Otc::GameDontCacheFiles));
 
         m_datSignature = fin->getU32();
         m_contentRevision = static_cast<uint16_t>(m_datSignature);
@@ -249,7 +249,7 @@ bool ThingTypeManager::loadOtml(std::string file)
 void ThingTypeManager::loadOtb(const std::string& file)
 {
     try {
-        FileStreamPtr fin = g_resources.openFile(file);
+        FileStreamPtr fin = g_resources.openFile(file, g_game.getFeature(Otc::GameDontCacheFiles));
 
         uint signature = fin->getU32();
         if (signature != 0)

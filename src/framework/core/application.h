@@ -56,7 +56,7 @@ public:
     std::string getCharset() { return m_charset; }
     std::string getBuildCompiler() { return BUILD_COMPILER; }
     std::string getBuildDate() { return std::string(__DATE__); }
-    std::string getBuildRevision() { return BUILD_REVISION; }
+    std::string getBuildRevision() { return std::to_string(BUILD_REVISION); }
     std::string getBuildCommit() { return BUILD_COMMIT; }
 #ifdef FREE_VERSION
     std::string getBuildType() { return "FREE"; }
@@ -64,7 +64,7 @@ public:
     std::string getBuildType() { return "FULL"; }
 #endif
     std::string getBuildArch() { return BUILD_ARCH; }
-    std::string getAuthor() { return "otclient.ovh"; }
+    std::string getAuthor() { return "otclient.net"; }
     std::string getOs();
     std::string getStartupOptions() { return m_startupOptions; }
 

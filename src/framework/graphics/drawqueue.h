@@ -283,12 +283,12 @@ public:
     }
     void correctOutfit(const Rect& dest, int fromPos);
 
-    void setShader(const PainterShaderProgramPtr& shader)
+    void setShader(const std::string& shader)
     {
         m_shader = shader;
     }
 
-    PainterShaderProgramPtr getShader()
+    std::string getShader()
     {
         return m_shader;
     }
@@ -301,7 +301,7 @@ private:
     size_t mapPosition = 0;
     bool m_useFrameBuffer = false;
     float m_scaling = 1.f;
-    PainterShaderProgramPtr m_shader;
+    std::string m_shader;
 
     friend struct DrawQueueConditionMark;
 };

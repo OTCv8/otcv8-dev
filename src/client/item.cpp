@@ -25,7 +25,6 @@
 #include "spritemanager.h"
 #include "thing.h"
 #include "tile.h"
-#include "shadermanager.h"
 #include "container.h"
 #include "map.h"
 #include "houses.h"
@@ -36,6 +35,7 @@
 #include <framework/graphics/graphics.h>
 #include <framework/core/filestream.h>
 #include <framework/core/binarytree.h>
+#include <framework/graphics/shadermanager.h>
 
 #include <framework/util/stats.h>
 

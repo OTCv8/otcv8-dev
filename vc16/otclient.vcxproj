@@ -122,6 +122,7 @@
     <ClCompile Include="..\src\client\game.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\src\client\healthbars.cpp" />
     <ClCompile Include="..\src\client\houses.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
@@ -175,9 +176,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\src\client\protocolgamesend.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\src\client\shadermanager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\src\client\spritemanager.cpp">
@@ -238,6 +236,7 @@
     <ClInclude Include="..\src\client\effect.h" />
     <ClInclude Include="..\src\client\game.h" />
     <ClInclude Include="..\src\client\global.h" />
+    <ClInclude Include="..\src\client\healthbars.h" />
     <ClInclude Include="..\src\client\houses.h" />
     <ClInclude Include="..\src\client\item.h" />
     <ClInclude Include="..\src\client\itemtype.h" />
@@ -253,7 +252,6 @@
     <ClInclude Include="..\src\client\position.h" />
     <ClInclude Include="..\src\client\protocolcodes.h" />
     <ClInclude Include="..\src\client\protocolgame.h" />
-    <ClInclude Include="..\src\client\shadermanager.h" />
     <ClInclude Include="..\src\client\spritemanager.h" />
     <ClInclude Include="..\src\client\statictext.h" />
     <ClInclude Include="..\src\client\thing.h" />
@@ -313,6 +311,7 @@
     <ClInclude Include="..\src\framework\graphics\painter.h" />
     <ClInclude Include="..\src\framework\graphics\paintershaderprogram.h" />
     <ClInclude Include="..\src\framework\graphics\shader.h" />
+    <ClInclude Include="..\src\framework\graphics\shadermanager.h" />
     <ClInclude Include="..\src\framework\graphics\shaderprogram.h" />
     <ClInclude Include="..\src\framework\graphics\shaders\newshader.h" />
     <ClInclude Include="..\src\framework\graphics\shaders\outfits.h" />

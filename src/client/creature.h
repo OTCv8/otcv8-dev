@@ -47,7 +47,7 @@ public:
     virtual ~Creature();
 
     virtual void draw(const Point& dest, bool animate = true, LightView* lightView = nullptr);
-    virtual void drawOutfit(const Rect& destRect, Otc::Direction direction = Otc::InvalidDirection, const Color& color = Color::white);
+    virtual void drawOutfit(const Rect& destRect, Otc::Direction direction = Otc::InvalidDirection, const Color& color = Color::white, bool animate = false);
 
     void drawInformation(const Point& point, bool useGray, const Rect& parentRect, int drawFlags);
 
@@ -83,7 +83,7 @@ public:
     void hideStaticSquare() { m_showStaticSquare = false; }
 
     void setInformationColor(const Color& color) { m_useCustomInformationColor = true; m_informationColor = color; }
-    void resetInformationColor() { m_useCustomInformationColor = false; }
+    void resetInformationColor() { m_useCustomInformationColor = false; setHealthPercent(getHealthPercent());  }
 
     Point getInformationOffset() { return m_informationOffset; }
     void setInformationOffset(int x, int y) { m_informationOffset = Point(x, y); }
@@ -109,7 +109,7 @@ public:
     uint8 getIcon() { return m_icon; }
     bool isPassable() { return m_passable; }
     Point getDrawOffset();
-    int getStepDuration(bool ignoreDiagonal = false, Otc::Direction dir = Otc::InvalidDirection);
+    uint16 getStepDuration(bool ignoreDiagonal = false, Otc::Direction dir = Otc::InvalidDirection);
     Point getWalkOffset(bool inNextFrame = false) { return inNextFrame ? m_walkOffsetInNextFrame : m_walkOffset; }
     Position getLastStepFromPosition() { return m_lastStepFromPosition; }
     Position getLastStepToPosition() { return m_lastStepToPosition; }
@@ -191,8 +191,8 @@ public:
     void updateProgressBar(uint32 duration, bool ltr);
 
 protected:
-    virtual void updateWalkAnimation(int totalPixelsWalked);
-    virtual void updateWalkOffset(int totalPixelsWalked, bool inNextFrame = false);
+    virtual void updateWalkAnimation(uint8 totalPixelsWalked);
+    virtual void updateWalkOffset(uint8 totalPixelsWalked, bool inNextFrame = false);
     void updateWalkingTile();
     virtual void nextWalkUpdate();
     virtual void updateWalk();
@@ -209,7 +209,7 @@ protected:
     Otc::Direction m_walkDirection;
     Outfit m_outfit;
     Light m_light;
-    int m_speed;
+    uint16 m_speed;
     double m_baseSpeed;
     uint8 m_skull;
     uint8 m_shield;
@@ -242,7 +242,7 @@ protected:
 
     // walk related
     int m_walkAnimationPhase;
-    int m_walkedPixels;
+    uint8 m_walkedPixels;
     uint m_footStep;
     Timer m_walkTimer;
     ticks_t m_footLastStep;

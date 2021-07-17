@@ -56,6 +56,12 @@ int push_luavalue(const Outfit& outfit)
         g_lua.pushString(outfit.getShader());
         g_lua.setField("shader");
     }
+    if (g_game.getFeature(Otc::GameHealthInfoBackground)) {
+        g_lua.pushInteger(outfit.getHealthBar());
+        g_lua.setField("healthBar");
+        g_lua.pushInteger(outfit.getManaBar());
+        g_lua.setField("manaBar");
+    }
     return 1;
 }
 
@@ -92,6 +98,12 @@ bool luavalue_cast(int index, Outfit& outfit)
             g_lua.getField("shader", index);
             outfit.setShader(g_lua.popString());
         //}
+        if (g_game.getFeature(Otc::GameHealthInfoBackground)) {
+            g_lua.getField("healthBar", index);
+            outfit.setHealthBar(g_lua.popInteger());
+            g_lua.getField("manaBar", index);
+            outfit.setManaBar(g_lua.popInteger());
+        }
         return true;
     }
     return false;

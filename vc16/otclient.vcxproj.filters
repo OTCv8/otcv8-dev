@@ -138,9 +138,6 @@
     <ClCompile Include="..\src\client\protocolgamesend.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\client\shadermanager.cpp">
-      <Filter>Source Files\client</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\client\spritemanager.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
@@ -193,6 +190,9 @@
       <Filter>Source Files\client</Filter>
     </ClCompile>
     <ClCompile Include="..\src\client\luavaluecasts_client.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\client\healthbars.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
   </ItemGroup>
@@ -614,9 +614,6 @@
     <ClInclude Include="..\src\client\protocolgame.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\client\shadermanager.h">
-      <Filter>Header Files\client</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\client\spritemanager.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
@@ -751,6 +748,12 @@
     </ClInclude>
     <ClInclude Include="..\src\framework\proxy\proxy_client.h">
       <Filter>Header Files\framework\proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\framework\graphics\shadermanager.h">
+      <Filter>Header Files\framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\client\healthbars.h">
+      <Filter>Header Files\client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

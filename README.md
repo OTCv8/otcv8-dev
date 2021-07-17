@@ -4,7 +4,7 @@ Special version of OTCv8 allowing to edit src/client dir to help improving OTCv8
 Accepted pull requests will be added to official OTCv8 version, so if you want a new feature in OTCv8, just add it here and wait for approval.
 If you add custom feature, make sure it's optional and can be enabled via g_game.enableFeature function, otherwise your pull request will be rejected.
 
-This repository uses CI/CD to build and test OTCv8 automaticlly whenever you push changes to repository.
+This repository uses Github Actions to build and test OTCv8 automaticlly whenever you push changes to repository.
 
 Check Actions tab to see test results or to download latest binaries. 
 
@@ -29,7 +29,13 @@ Check Actions tab to see test results or to download latest binaries.
 - There's no access to framework .cpp files
 - Only DirectX is supported
 
-### Useful tips:
+### Useful tips
 
-- To run test manually use command `otclient_debug.exe --test`
+- To run tests manually, unpack tests.7z and use command `otclient_debug.exe --test`
 - To test mobile UI use command `otclient_debug.exe --mobile`
+
+### Links
+
+- Discord: https://discord.gg/feySup6
+- Forum: http://otclient.net
+- Email: otclient@otclient.ovh

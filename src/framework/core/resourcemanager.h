@@ -55,7 +55,7 @@ public:
     // @dontbind
     bool writeFileStream(const std::string& fileName, std::iostream& in);
 
-    FileStreamPtr openFile(const std::string& fileName);
+    FileStreamPtr openFile(const std::string& fileName, bool dontCache = false);
     FileStreamPtr appendFile(const std::string& fileName);
     FileStreamPtr createFile(const std::string& fileName);
     bool deleteFile(const std::string& fileName);

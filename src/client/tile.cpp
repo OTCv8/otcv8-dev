@@ -42,7 +42,7 @@ Tile::Tile(const Position& position) :
 {
 }
 
-void Tile::drawBottom(const Point& dest, LightView* lightView)
+void Tile::drawGround(const Point& dest, LightView* lightView)
 {
     m_topDraws = 0;
     m_drawElevation = 0;
@@ -51,15 +51,37 @@ void Tile::drawBottom(const Point& dest, LightView* lightView)
         return;
     }
 
-    // bottom things
+    // ground
     for (const ThingPtr& thing : m_things) {
-        if (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom())
+        if (!thing->isGround() && !thing->isGroundBorder() && (g_game.getFeature(Otc::GameMapDrawGroundFirst) || !thing->isOnBottom()))
             break;
         if (thing->isHidden())
             continue;
 
         thing->draw(dest - m_drawElevation, true, lightView);
         m_drawElevation = std::min<uint8_t>(m_drawElevation + thing->getElevation(), Otc::MAX_ELEVATION);
+    }
+}
+
+void Tile::drawBottom(const Point& dest, LightView* lightView)
+{
+    if (m_fill != Color::alpha)
+        return;
+
+    // bottom things, only when GameMapDrawGroundFirst is active
+    if (g_game.getFeature(Otc::GameMapDrawGroundFirst)) {
+        bool afterBottom = false;
+        for (const ThingPtr& thing : m_things) {
+            if (thing->isOnBottom())
+                afterBottom = true;
+            if (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom())
+                break;
+            if (thing->isHidden() || !afterBottom)
+                continue;
+
+            thing->draw(dest - m_drawElevation, true, lightView);
+            m_drawElevation = std::min<uint8_t>(m_drawElevation + thing->getElevation(), Otc::MAX_ELEVATION);
+        }
     }
 
     // common items, reverse order
@@ -80,17 +102,52 @@ void Tile::drawBottom(const Point& dest, LightView* lightView)
         }
     }
 
-    for (int x = -redrawPreviousTopW; x <= 0; ++x) {
-        for (int y = -redrawPreviousTopH; y <= 0; ++y) {
-            if (x == 0 && y == 0)
-                continue;
-            if(const TilePtr& tile = g_map.getTile(m_position.translated(x, y)))
-               tile->drawTop(dest + Point(x * Otc::TILE_PIXELS, y * Otc::TILE_PIXELS), lightView);
+    if (!g_game.getFeature(Otc::GameMapIgnoreCorpseCorrection)) {
+        for (int x = -redrawPreviousTopW; x <= 0; ++x) {
+            for (int y = -redrawPreviousTopH; y <= 0; ++y) {
+                if (x == 0 && y == 0)
+                    continue;
+                if (const TilePtr& tile = g_map.getTile(m_position.translated(x, y))) {
+                    tile->drawCreatures(dest + Point(x * Otc::TILE_PIXELS, y * Otc::TILE_PIXELS), lightView);
+                    tile->drawTop(dest + Point(x * Otc::TILE_PIXELS, y * Otc::TILE_PIXELS), lightView);
+                }
+            }
         }
     }
 
     if (lightView && hasTranslucentLight()) {
         lightView->addLight(dest + Point(16, 16), 215, 1);
+    }
+}
+
+void Tile::drawCreatures(const Point& dest, LightView* lightView)
+{
+    if (m_fill != Color::alpha)
+        return;
+    if (m_topDraws < m_topCorrection)
+        return;
+
+    // walking creatures
+    for (const CreaturePtr& creature : m_walkingCreatures) {
+        if (creature->isHidden())
+            continue;
+        Point creatureDest(dest.x + ((creature->getPrewalkingPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation),
+                           dest.y + ((creature->getPrewalkingPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation));
+        creature->draw(creatureDest, true, lightView);
+    }
+
+    // creatures
+    std::vector<CreaturePtr> creaturesToDraw;
+    int limit = g_adaptiveRenderer.creaturesLimit();
+    for (auto& thing : m_things) {
+        if (!thing->isCreature() || thing->isHidden())
+            continue;
+        if (limit-- <= 0)
+            break;
+        CreaturePtr creature = thing->static_self_cast<Creature>();
+        if (!creature || creature->isWalking())
+            continue;
+        creature->draw(dest - m_drawElevation, true, lightView);
     }
 }
 
@@ -143,6 +200,10 @@ void Tile::drawTop(const Point& dest, LightView* lightView)
 
 void Tile::calculateCorpseCorrection() {
     m_topCorrection = 0;
+
+    if (g_game.getFeature(Otc::GameMapIgnoreCorpseCorrection))
+        return;
+
     int redrawPreviousTopW = 0, redrawPreviousTopH = 0;
     for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
         const ThingPtr& thing = *it;

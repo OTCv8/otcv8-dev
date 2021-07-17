@@ -29,11 +29,11 @@
 #define RAD_TO_DEC (180.0/acos(-1))
 
 #ifndef BUILD_COMMIT
-#define BUILD_COMMIT "devel"
+#define BUILD_COMMIT "dev"
 #endif
 
 #ifndef BUILD_REVISION
-#define BUILD_REVISION "0"
+#define BUILD_REVISION 0
 #endif
 
 #ifndef BUILD_TYPE
@@ -292,13 +292,6 @@ namespace Fw
         MapBackgroundPane = 2,
         MapForegroundPane = 3,
     };
-
-#ifdef FW_SQL
-    enum DatabaseEngine {
-        DatabaseNone = 0,
-        DatabaseMySQL
-    };
-#endif
 }
 
 #endif

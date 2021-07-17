@@ -50,9 +50,9 @@ void UICreature::drawSelf(Fw::DrawPane drawPane)
         }
 
         if(m_scale >= 0.01) // TODO: make it correctly
-           m_creature->drawOutfit(Rect(getPaddingRect().topLeft(), Otc::TILE_PIXELS * m_scale, Otc::TILE_PIXELS * m_scale), m_direction, m_imageColor);
+           m_creature->drawOutfit(Rect(getPaddingRect().topLeft(), Otc::TILE_PIXELS * m_scale, Otc::TILE_PIXELS * m_scale), m_direction, m_imageColor, m_animate);
         else
-           m_creature->drawOutfit(getPaddingRect(), m_direction, m_imageColor);
+           m_creature->drawOutfit(getPaddingRect(), m_direction, m_imageColor, m_animate);
     }
 }
 
@@ -109,6 +109,8 @@ void UICreature::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
             setOutfit(outfit);
         } else if (node->tag() == "scale") {
             setScale(node->value<float>());
+        } else if (node->tag() == "animate") {
+            setAnimate(node->value<bool>());
         }
     }
 }

@@ -39,7 +39,6 @@
 #include "minimap.h"
 #include "thingtypemanager.h"
 #include "spritemanager.h"
-#include "shadermanager.h"
 #include "protocolgame.h"
 #include "uiitem.h"
 #include "uicreature.h"
@@ -49,6 +48,7 @@
 #include "uiprogressrect.h"
 #include "uisprite.h"
 #include "outfit.h"
+#include "healthbars.h"
 
 #include <framework/luaengine/luainterface.h>
 
@@ -349,10 +349,11 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "getRecivedPacketsCount", &Game::getRecivedPacketsCount, &g_game);
     g_lua.bindSingletonFunction("g_game", "getRecivedPacketsSize", &Game::getRecivedPacketsSize, &g_game);
 
-    g_lua.registerSingletonClass("g_shaders");
-    g_lua.bindSingletonFunction("g_shaders", "createShader", &ShaderManager::createShader, &g_shaders);
-    g_lua.bindSingletonFunction("g_shaders", "createOutfitShader", &ShaderManager::createOutfitShader, &g_shaders);
-    g_lua.bindSingletonFunction("g_shaders", "addTexture", &ShaderManager::addTexture, &g_shaders);
+    g_lua.registerSingletonClass("g_healthBars");
+    g_lua.bindSingletonFunction("g_healthBars", "addHealthBackground", &HealthBars::addHealthBackground, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "addManaBackground", &HealthBars::addManaBackground, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getHealthBarPath", &HealthBars::getHealthBarPath, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getManaBarPath", &HealthBars::getManaBarPath, &g_healthBars);
 
     g_lua.bindGlobalFunction("getOutfitColor", Outfit::getColor);
     g_lua.bindGlobalFunction("getAngleFromPos", Position::getAngleFromPositions);
@@ -850,6 +851,8 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UICreature>("setDirection", &UICreature::setDirection);
     g_lua.bindClassMemberFunction<UICreature>("setScale", &UICreature::setScale);
     g_lua.bindClassMemberFunction<UICreature>("getScale", &UICreature::getScale);
+    g_lua.bindClassMemberFunction<UICreature>("setAnimate", &UICreature::setAnimate);
+    g_lua.bindClassMemberFunction<UICreature>("isAnimating", &UICreature::isAnimating);
 
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", []{ return UIMapPtr(new UIMap); });
