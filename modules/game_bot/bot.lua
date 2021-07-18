@@ -666,9 +666,9 @@ function botContainerClose(container)
   safeBotCall(function() botExecutor.callbacks.onContainerClose(container) end)
 end
 
-function botContainerUpdateItem(container, slot, item)
+function botContainerUpdateItem(container, slot, item, oldItem)
   if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onContainerUpdateItem(container, slot, item) end)
+  safeBotCall(function() botExecutor.callbacks.onContainerUpdateItem(container, slot, item, oldItem) end)
 end
 
 function botOnMissle(missle)
@@ -741,7 +741,7 @@ function botStatesChange(states, oldStates)
   safeBotCall(function() botExecutor.callbacks.onStatesChange(states, oldStates) end)
 end
 
-function botContainerAddItem(container, slot, item, oldItem)
+function botContainerAddItem(container, slot, item)
   if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onAddItem(container, slot, item, oldItem) end)
+  safeBotCall(function() botExecutor.callbacks.onAddItem(container, slot, item) end)
 end

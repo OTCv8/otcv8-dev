@@ -125,7 +125,7 @@ context.onContainerClose = function(callback)
   return context.callback("onContainerClose", callback)
 end
 
--- onContainerUpdateItem -- callback = function(container, slot, item)
+-- onContainerUpdateItem -- callback = function(container, slot, item, oldItem)
 context.onContainerUpdateItem = function(callback)
   return context.callback("onContainerUpdateItem", callback)
 end
@@ -195,7 +195,7 @@ context.onManaChange = function(callback)
   return context.callback("onManaChange", callback)
 end
 
--- onAddItem - callback = function(container, slot, item, oldItem)
+-- onAddItem - callback = function(container, slot, item)
 context.onAddItem = function(callback)
   return context.callback("onAddItem", callback)
 end
