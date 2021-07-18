@@ -57,6 +57,11 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
 
     auto type = g_things.rawGetThingType(m_category == ThingCategoryCreature ? m_id : m_auxId, m_category);
     if (!type) return;
+
+    if (g_game.getFeature(Otc::GameCenteredOutfits)) {
+        dest.x += ((type->getWidth() - 1) * (Otc::TILE_PIXELS / 2));
+    }
+
     int animationPhase = walkAnimationPhase;
 
     auto wingBounce = [&] {
