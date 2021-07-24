@@ -480,6 +480,7 @@ namespace Otc
         GameDontCacheFiles = 118,
         GameBigAurasCenter = 119,
         GameNewUpdateWalk = 120,
+        GameNewCreatureStacking = 121,
 
         LastGameFeature = 130
     };
