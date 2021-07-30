@@ -1670,7 +1670,6 @@ void ProtocolGame::parseCreatureShields(const InputMessagePtr& msg)
         g_logger.traceError("could not get creature");
 }
 
-
 void ProtocolGame::parseCreatureEmblem(const InputMessagePtr& msg)
 {
     uint id = msg->getU32();
