@@ -184,6 +184,7 @@ namespace Proto {
         GameServerStoreError                = 224, // 1080
         GameServerRequestPurchaseData       = 225, // 1080
         GameServerOpenRewardWall            = 226,
+        GameServerCreatureEmblem            = 227,
         GameServerDailyReward               = 228,
         GameServerDailyRewardHistory        = 229,
         GameServerPreyFreeRolls             = 230,
