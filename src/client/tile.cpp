@@ -304,7 +304,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 
         m_things.insert(m_things.begin() + stackPos, thing);
 
-        if(m_things.size() > MAX_THINGS)
+        if(!g_game.getFeature(Otc::GameNewCreatureStacking) && m_things.size() > MAX_THINGS)
             removeThing(m_things[MAX_THINGS]);
 
         /*
