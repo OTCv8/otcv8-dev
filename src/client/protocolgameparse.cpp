@@ -1578,10 +1578,16 @@ void ProtocolGame::parseCreatureHealth(const InputMessagePtr& msg)
 {
     uint id = msg->getU32();
     int healthPercent = msg->getU8();
+    int manaPercent = 0;
+    if (g_game.getFeature(Otc::GameCreaturesMana)) {
+        manaPercent = msg->getU8();
+    }
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if (creature)
+    if (creature) {
         creature->setHealthPercent(healthPercent);
+        creature->setManaPercent(manaPercent);
+    }
 
     // some servers has a bug in get spectators and sends unknown creatures updates
     // so this code is disabled
@@ -3425,6 +3431,10 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         }
 
         int healthPercent = msg->getU8();
+        int manaPercent = 0;
+        if (g_game.getFeature(Otc::GameCreaturesMana)) {
+            manaPercent = msg->getU8();
+        }
         Otc::Direction direction = (Otc::Direction)msg->getU8();
         Outfit outfit = getOutfit(msg);
 
@@ -3482,6 +3492,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
 
         if (creature) {
             creature->setHealthPercent(healthPercent);
+            creature->setManaPercent(manaPercent);
             creature->setDirection(direction);
             creature->setOutfit(outfit);
             creature->setSpeed(speed);
