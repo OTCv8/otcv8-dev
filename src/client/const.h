@@ -481,6 +481,7 @@ namespace Otc
         GameBigAurasCenter = 119,
         GameNewUpdateWalk = 120,
         GameNewCreatureStacking = 121,
+        GameCreaturesMana = 122,
 
         LastGameFeature = 130
     };
