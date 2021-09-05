@@ -23,10 +23,12 @@
 #ifndef CLIENT_CONST_H
 #define CLIENT_CONST_H
 
+#include <cstdint>
+
 namespace Otc
 {
     enum : int {
-        TILE_PIXELS = 32,
+        TILE_PIXELS = 32, // change to 64 if you want to use 64x64 HD sprites
         MAX_ELEVATION = 24,
 
         SEA_FLOOR = 7,
@@ -575,9 +577,9 @@ namespace Otc
     };
 
     enum PreySlotNum_t : uint8_t {
-        PREY_SLOTNUM_FIRST,
-        PREY_SLOTNUM_SECOND,
-        PREY_SLOTNUM_THIRD,
+        PREY_SLOTNUM_FIRST = 0,
+        PREY_SLOTNUM_SECOND = 1,
+        PREY_SLOTNUM_THIRD = 2,
         PREY_SLOTNUM_LAST = PREY_SLOTNUM_THIRD
     };
     enum PreyState_t : uint8_t {

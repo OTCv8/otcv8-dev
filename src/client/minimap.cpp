@@ -169,7 +169,7 @@ Rect Minimap::getTileRect(const Position& pos, const Rect& screenRect, const Pos
     if(screenRect.isEmpty() || pos.z != mapCenter.z)
         return Rect();
 
-    int tileSize = 32 * scale;
+    int tileSize = Otc::TILE_PIXELS * scale;
     Rect tileRect(0,0,tileSize, tileSize);
     tileRect.moveCenter(getTilePoint(pos, screenRect, mapCenter, scale));
     return tileRect;

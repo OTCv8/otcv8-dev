@@ -46,7 +46,7 @@ void UIItem::drawSelf(Fw::DrawPane drawPane)
     if(m_itemVisible && m_item) {
         Rect drawRect = getPaddingRect();
 
-        int exactSize = std::max<int>(32, m_item->getExactSize());
+        int exactSize = std::max<int>(Otc::TILE_PIXELS, m_item->getExactSize());
         if(exactSize == 0)
             return;
 

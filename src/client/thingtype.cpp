@@ -288,10 +288,10 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         sizes.push_back(m_size);
         if(width > 1 || height > 1) {
             m_realSize = fin->getU8();
-            m_exactSize = std::min<int>(m_realSize, std::max<int>(width * 32, height * 32));
+            m_exactSize = std::min<int>(m_realSize, std::max<int>(width * Otc::TILE_PIXELS, height * Otc::TILE_PIXELS));
         }
         else
-            m_exactSize = 32;
+            m_exactSize = Otc::TILE_PIXELS;
 
         m_layers = fin->getU8();
         m_numPatternX = fin->getU8();
@@ -708,7 +708,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
 
 Size ThingType::getBestTextureDimension(int w, int h, int count)
 {
-    const int MAX = 32;
+    const int MAX = Otc::TILE_PIXELS;
 
     int k = 1;
     while(k < w)

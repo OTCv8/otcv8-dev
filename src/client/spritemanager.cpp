@@ -45,7 +45,7 @@ bool SpriteManager::loadSpr(std::string file)
 {
     m_spritesCount = 0;
     m_signature = 0;
-    m_spriteSize = 32;
+    m_spriteSize = Otc::TILE_PIXELS;
     m_loaded = false;
     m_sprites.clear();
 
@@ -74,7 +74,7 @@ bool SpriteManager::loadSpr(std::string file)
         m_loaded = true;
         g_lua.callGlobalField("g_sprites", "onLoadSpr", file);
         return true;
-    } catch(stdext::exception& e) {
+    } catch (stdext::exception& e) {
         g_logger.error(stdext::format("Failed to load sprites from '%s': %s", file, e.what()));
         return false;
     }
@@ -86,7 +86,7 @@ void SpriteManager::saveSpr(std::string fileName)
 {
     if (!m_loaded)
         stdext::throw_exception("failed to save, spr is not loaded");
-    if(!m_sprites.empty() || m_spritesFile)
+    if (!m_spritesFile)
         stdext::throw_exception("not allowed");
 
     try {
@@ -131,8 +131,88 @@ void SpriteManager::saveSpr(std::string fileName)
 
         fin->flush();
         fin->close();
+    } catch (std::exception& e) {
+        g_logger.error(stdext::format("Failed to save '%s': %s", fileName, e.what()));
     }
-    catch (std::exception& e) {
+}
+
+void SpriteManager::saveSpr64(std::string fileName)
+{
+    if (!m_loaded)
+        stdext::throw_exception("failed to save, spr is not loaded");
+    if (!m_spritesFile || m_spriteSize != 32)
+        stdext::throw_exception("not allowed");
+
+    try {
+        FileStreamPtr fin = g_resources.createFile(fileName);
+        if (!fin)
+            stdext::throw_exception(stdext::format("failed to open file '%s' for write", fileName));
+
+        fin->addU32(m_signature);
+        if (g_game.getFeature(Otc::GameSpritesU32))
+            fin->addU32(m_spritesCount);
+        else
+            fin->addU16(m_spritesCount);
+
+        uint32 offset = fin->tell();
+        for (int i = 1; i <= m_spritesCount; i++)
+            fin->addU32(0);
+
+        for (int i = 1; i <= m_spritesCount; i++) {
+            ImagePtr sprite = getSpriteImage(i);
+            if (!sprite) {
+                continue;
+            }
+            sprite = sprite->upscale();
+
+            uint32 spriteAddress = fin->tell();
+            fin->seek(offset + (i - 1) * 4);
+            fin->addU32(spriteAddress);
+            fin->seek(spriteAddress);
+
+            fin->addU8(0xff);
+            fin->addU8(0x00);
+            fin->addU8(0xff);
+
+            uint8_t* pixels = sprite->getPixelData();
+            int pixelCount = sprite->getPixelCount() * 4;
+            std::vector<uint8_t> buffer(pixelCount + 1024, 0);
+            int bufferPos = 0;
+
+            int skipedPixels = 0;
+            for (int i = 0; i < pixelCount; ) {
+                int transparent = 0, colored = 0;
+                for (int j = i; j < pixelCount; j += 4) {
+                    if (pixels[j + 3] == 0x00) {
+                        if (colored != 0) break;
+                        transparent += 1;
+                    } else {
+                        colored += 1;
+                    }
+                }
+
+                *(uint16_t*)(buffer.data() + bufferPos) = transparent;
+                bufferPos += 2;
+                *(uint16_t*)(buffer.data() + bufferPos) = colored;
+                bufferPos += 2;
+
+                i += transparent * 4;
+
+                for (int c = 0; c < colored; ++c) {
+                    buffer[bufferPos++] = pixels[i];
+                    buffer[bufferPos++] = pixels[i + 1];
+                    buffer[bufferPos++] = pixels[i + 2];
+                    i += 4;
+                }
+            }
+
+            fin->addU16(bufferPos);
+            fin->write(buffer.data(), bufferPos);
+        }
+
+        fin->flush();
+        fin->close();
+    } catch (std::exception& e) {
         g_logger.error(stdext::format("Failed to save '%s': %s", fileName, e.what()));
     }
 }
@@ -303,11 +383,9 @@ ImagePtr SpriteManager::getSpriteImage(int id)
         m_spritesFile->seek(spriteAddress);
 
         // color key
-        if (m_spriteSize == 32) {
-            m_spritesFile->getU8();
-            m_spritesFile->getU8();
-            m_spritesFile->getU8();
-        }
+        m_spritesFile->getU8();
+        m_spritesFile->getU8();
+        m_spritesFile->getU8();
 
         uint16 pixelDataSize = m_spritesFile->getU16();
 

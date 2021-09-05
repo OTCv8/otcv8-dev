@@ -493,15 +493,15 @@ void Creature::updateWalkAnimation(uint8 totalPixelsWalked)
 
     if (footAnimPhases == 0) {
         m_walkAnimationPhase = 0;
-    } else if (g_clock.millis() >= m_footLastStep + footDelay && totalPixelsWalked < 32) {
+    } else if (g_clock.millis() >= m_footLastStep + footDelay && totalPixelsWalked < Otc::TILE_PIXELS) {
         m_footStep++;
         m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
         m_footLastStep = (g_clock.millis() - m_footLastStep) > footDelay * 1.5 ? g_clock.millis() : m_footLastStep + footDelay;
-    } else if (m_walkAnimationPhase == 0 && totalPixelsWalked < 32) {
+    } else if (m_walkAnimationPhase == 0 && totalPixelsWalked < Otc::TILE_PIXELS) {
         m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
     }
 
-    if (totalPixelsWalked == 32 && !m_walkFinishAnimEvent) {
+    if (totalPixelsWalked == Otc::TILE_PIXELS && !m_walkFinishAnimEvent) {
         auto self = static_self_cast<Creature>();
         m_walkFinishAnimEvent = g_dispatcher.scheduleEvent([self] {
             self->m_footStep = 0;
@@ -517,14 +517,14 @@ void Creature::updateWalkOffset(uint8 totalPixelsWalked, bool inNextFrame)
     Point& walkOffset = inNextFrame ? m_walkOffsetInNextFrame : m_walkOffset;
     walkOffset = Point(0, 0);
     if (m_walkDirection == Otc::North || m_walkDirection == Otc::NorthEast || m_walkDirection == Otc::NorthWest)
-        walkOffset.y = 32 - totalPixelsWalked;
+        walkOffset.y = Otc::TILE_PIXELS - totalPixelsWalked;
     else if (m_walkDirection == Otc::South || m_walkDirection == Otc::SouthEast || m_walkDirection == Otc::SouthWest)
-        walkOffset.y = totalPixelsWalked - 32;
+        walkOffset.y = totalPixelsWalked - Otc::TILE_PIXELS;
 
     if (m_walkDirection == Otc::East || m_walkDirection == Otc::NorthEast || m_walkDirection == Otc::SouthEast)
-        walkOffset.x = totalPixelsWalked - 32;
+        walkOffset.x = totalPixelsWalked - Otc::TILE_PIXELS;
     else if (m_walkDirection == Otc::West || m_walkDirection == Otc::NorthWest || m_walkDirection == Otc::SouthWest)
-        walkOffset.x = 32 - totalPixelsWalked;
+        walkOffset.x = Otc::TILE_PIXELS - totalPixelsWalked;
 }
 
 void Creature::updateWalkingTile()
@@ -575,15 +575,15 @@ void Creature::nextWalkUpdate()
             self->m_walkUpdateEvent = nullptr;
             self->nextWalkUpdate();
         }, g_game.getFeature(Otc::GameNewUpdateWalk) && isLocalPlayer() ?
-            std::ceil<uint16>(((float)getStepDuration(true) / g_app.getFps()) * 2) : (float)getStepDuration() / 32);
+            std::ceil<uint16>(((float)getStepDuration(true) / g_app.getFps()) * 2) : (float)getStepDuration() / Otc::TILE_PIXELS);
     }
 }
 
 void Creature::updateWalk()
 {
-    float walkTicksPerPixel = ((float)(getStepDuration(true) + (g_game.getFeature(Otc::GameNewUpdateWalk) ? 0 : 10))) / 32.0f;
-    uint8 totalPixelsWalked = std::min<uint8>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
-    uint8 totalPixelsWalkedInNextFrame = std::min<uint8>((m_walkTimer.ticksElapsed() + (g_game.getFeature(Otc::GameNewUpdateWalk) ? std::max(1000.f / g_app.getFps(), 1.0f) : 15)) / walkTicksPerPixel, 32.0f);
+    float walkTicksPerPixel = ((float)(getStepDuration(true) + (g_game.getFeature(Otc::GameNewUpdateWalk) ? 0 : 10))) / (float)Otc::TILE_PIXELS;
+    uint8 totalPixelsWalked = std::min<uint8>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, Otc::TILE_PIXELS);
+    uint8 totalPixelsWalkedInNextFrame = std::min<uint8>((m_walkTimer.ticksElapsed() + (g_game.getFeature(Otc::GameNewUpdateWalk) ? std::max(1000.f / g_app.getFps(), 1.0f) : 15)) / walkTicksPerPixel, Otc::TILE_PIXELS);
 
     // needed for paralyze effect
     m_walkedPixels = std::max<uint8>(m_walkedPixels, totalPixelsWalked);

@@ -23,6 +23,7 @@
 #ifndef SPRITEMANAGER_H
 #define SPRITEMANAGER_H
 
+#include "const.h"
 #include <framework/core/declarations.h>
 #include <framework/graphics/declarations.h>
 
@@ -30,7 +31,7 @@
 class SpriteManager
 {
     enum {
-        SPRITE_SIZE = 32,
+        SPRITE_SIZE = Otc::TILE_PIXELS,
         SPRITE_DATA_SIZE = SPRITE_SIZE*SPRITE_SIZE * 4
     };
 
@@ -44,6 +45,7 @@ public:
 
 #ifdef WITH_ENCRYPTION
     void saveSpr(std::string fileName);
+    void saveSpr64(std::string fileName);
     void encryptSprites(std::string fileName);
     void dumpSprites(std::string dir);
 #endif
@@ -57,11 +59,11 @@ public:
     int spriteSize() { return m_spriteSize; }
 
 private:
-    stdext::boolean<false> m_loaded;
+    bool m_loaded = false;
     uint32 m_signature;
     int m_spritesCount;
     int m_spritesOffset;
-    int m_spriteSize = 32;
+    int m_spriteSize = Otc::TILE_PIXELS;
     FileStreamPtr m_spritesFile;
     std::vector<std::vector<uint8_t>> m_sprites;
 };
