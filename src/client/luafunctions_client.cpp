@@ -42,6 +42,7 @@
 #include "protocolgame.h"
 #include "uiitem.h"
 #include "uicreature.h"
+#include "uigraph.h"
 #include "uimap.h"
 #include "uiminimap.h"
 #include "uimapanchorlayout.h"
@@ -930,9 +931,18 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMinimap>("centerInPosition", &UIMinimap::centerInPosition);
 
     g_lua.registerClass<UIProgressRect, UIWidget>();
-    g_lua.bindClassStaticFunction<UIProgressRect>("create", []{ return UIProgressRectPtr(new UIProgressRect); } );
+    g_lua.bindClassStaticFunction<UIProgressRect>("create", [] { return UIProgressRectPtr(new UIProgressRect); });
     g_lua.bindClassMemberFunction<UIProgressRect>("setPercent", &UIProgressRect::setPercent);
     g_lua.bindClassMemberFunction<UIProgressRect>("getPercent", &UIProgressRect::getPercent);
+
+    g_lua.registerClass<UIGraph, UIWidget>();
+    g_lua.bindClassStaticFunction<UIGraph>("create", [] { return UIGraphPtr(new UIGraph); });
+    g_lua.bindClassMemberFunction<UIGraph>("addValue", &UIGraph::addValue);
+    g_lua.bindClassMemberFunction<UIGraph>("clear", &UIGraph::clear);
+    g_lua.bindClassMemberFunction<UIGraph>("setLineWidth", &UIGraph::setLineWidth);
+    g_lua.bindClassMemberFunction<UIGraph>("setCapacity", &UIGraph::setCapacity);
+    g_lua.bindClassMemberFunction<UIGraph>("setTitle", &UIGraph::setTitle);
+    g_lua.bindClassMemberFunction<UIGraph>("setShowLabels", &UIGraph::setShowLabels);
 
     g_lua.registerClass<UIMapAnchorLayout, UIAnchorLayout>();
 }
