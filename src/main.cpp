@@ -44,7 +44,7 @@ int main(int argc, const char* argv[]) {
     // setup application name and version
     g_app.setName("OTClientV8");
     g_app.setCompactName(compactName);
-    g_app.setVersion("3.0");
+    g_app.setVersion("3.1");
 
 #ifdef WITH_ENCRYPTION
     if (std::find(args.begin(), args.end(), "--encrypt") != args.end()) {
