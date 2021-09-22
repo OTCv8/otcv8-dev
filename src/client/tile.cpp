@@ -47,7 +47,7 @@ void Tile::drawGround(const Point& dest, LightView* lightView)
     m_topDraws = 0;
     m_drawElevation = 0;
     if (m_fill != Color::alpha) {
-        g_drawQueue->addFilledRect(Rect(dest, Otc::TILE_PIXELS, Otc::TILE_PIXELS), m_fill);
+        g_drawQueue->addFilledRect(Rect(dest, g_sprites.spriteSize(), g_sprites.spriteSize()), m_fill);
         return;
     }
 
@@ -58,7 +58,7 @@ void Tile::drawGround(const Point& dest, LightView* lightView)
         if (thing->isHidden())
             continue;
 
-        thing->draw(dest - m_drawElevation, true, lightView);
+        thing->draw(dest - m_drawElevation * g_sprites.getOffsetFactor(), true, lightView);
         m_drawElevation = std::min<uint8_t>(m_drawElevation + thing->getElevation(), Otc::MAX_ELEVATION);
     }
 }
@@ -79,7 +79,7 @@ void Tile::drawBottom(const Point& dest, LightView* lightView)
             if (thing->isHidden() || !afterBottom)
                 continue;
 
-            thing->draw(dest - m_drawElevation, true, lightView);
+            thing->draw(dest - m_drawElevation * g_sprites.getOffsetFactor(), true, lightView);
             m_drawElevation = std::min<uint8_t>(m_drawElevation + thing->getElevation(), Otc::MAX_ELEVATION);
         }
     }
@@ -93,7 +93,7 @@ void Tile::drawBottom(const Point& dest, LightView* lightView)
         if (thing->isHidden())
             continue;
 
-        thing->draw(dest - m_drawElevation, true, lightView);
+        thing->draw(dest - m_drawElevation * g_sprites.getOffsetFactor() , true, lightView);
         m_drawElevation = std::min<uint8_t>(m_drawElevation + thing->getElevation(), Otc::MAX_ELEVATION);
 
         if (thing->isLyingCorpse()) {
@@ -108,8 +108,8 @@ void Tile::drawBottom(const Point& dest, LightView* lightView)
                 if (x == 0 && y == 0)
                     continue;
                 if (const TilePtr& tile = g_map.getTile(m_position.translated(x, y))) {
-                    tile->drawCreatures(dest + Point(x * Otc::TILE_PIXELS, y * Otc::TILE_PIXELS), lightView);
-                    tile->drawTop(dest + Point(x * Otc::TILE_PIXELS, y * Otc::TILE_PIXELS), lightView);
+                    tile->drawCreatures(dest + Point(x * g_sprites.spriteSize(), y * g_sprites.spriteSize()), lightView);
+                    tile->drawTop(dest + Point(x * g_sprites.spriteSize(), y * g_sprites.spriteSize()), lightView);
                 }
             }
         }
@@ -131,8 +131,8 @@ void Tile::drawCreatures(const Point& dest, LightView* lightView)
     for (const CreaturePtr& creature : m_walkingCreatures) {
         if (creature->isHidden())
             continue;
-        Point creatureDest(dest.x + ((creature->getPrewalkingPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation),
-                           dest.y + ((creature->getPrewalkingPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation));
+        Point creatureDest(dest.x + ((creature->getPrewalkingPosition().x - m_position.x) * g_sprites.spriteSize() - m_drawElevation * g_sprites.getOffsetFactor()),
+                           dest.y + ((creature->getPrewalkingPosition().y - m_position.y) * g_sprites.spriteSize() - m_drawElevation * g_sprites.getOffsetFactor()));
         creature->draw(creatureDest, true, lightView);
     }
 
@@ -147,7 +147,7 @@ void Tile::drawCreatures(const Point& dest, LightView* lightView)
         CreaturePtr creature = thing->static_self_cast<Creature>();
         if (!creature || creature->isWalking())
             continue;
-        creature->draw(dest - m_drawElevation, true, lightView);
+        creature->draw(dest - m_drawElevation * g_sprites.getOffsetFactor(), true, lightView);
     }
 }
 
@@ -162,8 +162,8 @@ void Tile::drawTop(const Point& dest, LightView* lightView)
     for (const CreaturePtr& creature : m_walkingCreatures) {
         if (creature->isHidden())
             continue;
-        Point creatureDest(dest.x + ((creature->getPrewalkingPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation),
-                   dest.y + ((creature->getPrewalkingPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation));
+        Point creatureDest(dest.x + ((creature->getPrewalkingPosition().x - m_position.x) * g_sprites.spriteSize() - m_drawElevation),
+                   dest.y + ((creature->getPrewalkingPosition().y - m_position.y) * g_sprites.spriteSize() - m_drawElevation));
         creature->draw(creatureDest, true, lightView);
     }
 
@@ -178,7 +178,7 @@ void Tile::drawTop(const Point& dest, LightView* lightView)
         CreaturePtr creature = thing->static_self_cast<Creature>();
         if (!creature || creature->isWalking())
             continue;
-        creature->draw(dest - m_drawElevation, true, lightView);
+        creature->draw(dest - m_drawElevation * g_sprites.getOffsetFactor(), true, lightView);
     }
 
     // effects
@@ -186,7 +186,7 @@ void Tile::drawTop(const Point& dest, LightView* lightView)
     for (int i = limit; i >= 0; --i) {
         if (m_effects[i]->isHidden())
             continue;
-        m_effects[i]->draw(dest - m_drawElevation, m_position.x - g_map.getCentralPosition().x, m_position.y - g_map.getCentralPosition().y, true, lightView);
+        m_effects[i]->draw(dest - m_drawElevation * g_sprites.getOffsetFactor(), m_position.x - g_map.getCentralPosition().x, m_position.y - g_map.getCentralPosition().y, true, lightView);
     }
 
     // top
@@ -564,10 +564,10 @@ CreaturePtr Tile::getTopCreatureEx(Point offset)
         for (const CreaturePtr& c : tile->getCreatures()) {
             if (c->isLocalPlayer()) {
                 localPlayer = c;
-                localPlayerOffset = Point(offset.x - xy[0] * Otc::TILE_PIXELS, offset.y - xy[1] * Otc::TILE_PIXELS);
+                localPlayerOffset = Point(offset.x - xy[0] * g_sprites.spriteSize(), offset.y - xy[1] * g_sprites.spriteSize());
                 continue;
             }
-            if (c->isInsideOffset(Point(offset.x - xy[0] * Otc::TILE_PIXELS, offset.y - xy[1] * Otc::TILE_PIXELS)))
+            if (c->isInsideOffset(Point(offset.x - xy[0] * g_sprites.spriteSize(), offset.y - xy[1] * g_sprites.spriteSize())))
                 return c;
         }
     }

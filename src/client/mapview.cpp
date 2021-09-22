@@ -161,7 +161,7 @@ void MapView::drawFloor(short floor, const Position& cameraPosition, const TileP
             tile->drawBottom(tileDrawPos, m_lightView.get());
 
             if (m_crosshair && tile == crosshairTile) {
-                g_drawQueue->addTexturedRect(Rect(tileDrawPos, tileDrawPos + Otc::TILE_PIXELS - 1),
+                g_drawQueue->addTexturedRect(Rect(tileDrawPos, tileDrawPos + g_sprites.spriteSize() - 1),
                                              m_crosshair, Rect(0, 0, m_crosshair->getSize()));
             }
 
@@ -185,7 +185,7 @@ void MapView::drawFloor(short floor, const Position& cameraPosition, const TileP
             tile->drawBottom(tileDrawPos, m_lightView.get());
 
             if (m_crosshair && tile == crosshairTile) {
-                g_drawQueue->addTexturedRect(Rect(tileDrawPos, tileDrawPos + Otc::TILE_PIXELS - 1),
+                g_drawQueue->addTexturedRect(Rect(tileDrawPos, tileDrawPos + g_sprites.spriteSize() - 1),
                                              m_crosshair, Rect(0, 0, m_crosshair->getSize()));
             }
 
@@ -451,7 +451,7 @@ Position MapView::getPosition(const Point& point, const Size& mapSize)
 
     Point framebufferPos = Point(point.x * sh, point.y * sv);
     Point realPos = (framebufferPos + srcRect.topLeft());
-    Point centerOffset = realPos / Otc::TILE_PIXELS;
+    Point centerOffset = realPos / g_sprites.spriteSize();
 
     Point tilePos2D = getVisibleCenterOffset() - m_drawDimension.toPoint() + centerOffset + Point(2,2);
     if(tilePos2D.x + cameraPosition.x < 0 && tilePos2D.y + cameraPosition.y < 0)
@@ -479,7 +479,7 @@ Point MapView::getPositionOffset(const Point& point, const Size& mapSize)
 
     Point framebufferPos = Point(point.x * sh, point.y * sv);
     Point realPos = (framebufferPos + srcRect.topLeft());
-    return Point(realPos.x % Otc::TILE_PIXELS, realPos.y % Otc::TILE_PIXELS);
+    return Point(realPos.x % g_sprites.spriteSize(), realPos.y % g_sprites.spriteSize());
 }
 
 void MapView::move(int x, int y)
@@ -508,7 +508,7 @@ void MapView::move(int x, int y)
 
 Rect MapView::calcFramebufferSource(const Size& destSize, bool inNextFrame)
 {
-    float scaleFactor = g_sprites.spriteSize()/(float)Otc::TILE_PIXELS;
+    float scaleFactor = g_sprites.spriteSize()/(float)g_sprites.spriteSize();
     Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * g_sprites.spriteSize();
     if(isFollowingCreature())
         drawOffset += m_followingCreature->getWalkOffset(inNextFrame) * scaleFactor;

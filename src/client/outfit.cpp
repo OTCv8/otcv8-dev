@@ -53,13 +53,13 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
 
     Point wingDest = dest;
     if (g_game.getFeature(Otc::GameWingOffset) && m_wings)
-        dest -= Point(6, 6);
+        dest -= Point(6, 6) * g_sprites.getOffsetFactor();
 
     auto type = g_things.rawGetThingType(m_category == ThingCategoryCreature ? m_id : m_auxId, m_category);
     if (!type) return;
 
     if (g_game.getFeature(Otc::GameCenteredOutfits)) {
-        dest.x += ((type->getWidth() - 1) * (Otc::TILE_PIXELS / 2));
+        dest.x += ((type->getWidth() - 1) * (g_sprites.spriteSize() / 2));
     }
 
     int animationPhase = walkAnimationPhase;
@@ -78,8 +78,8 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
             }
         }
         offset = tick <= floatingTicks / 2 ? tick * (maxoffset / (floatingTicks / 2)) : (2 * maxoffset) - tick * (maxoffset / (floatingTicks / 2));
-        dest -= Point(offset, offset);
-        wingDest -= Point(offset, offset);
+        dest -= Point(offset, offset) * g_sprites.getOffsetFactor();
+        wingDest -= Point(offset, offset) * g_sprites.getOffsetFactor();
     };
 
     if (animate && m_category == ThingCategoryCreature) {
@@ -135,9 +135,9 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
                 }
             }
 
-            dest -= mountType->getDisplacement();
+            dest -= mountType->getDisplacement() * g_sprites.getOffsetFactor();
             mountType->draw(dest, 0, direction, 0, 0, mountAnimationPhase, Color::white, lightView);
-            dest += type->getDisplacement();
+            dest += type->getDisplacement() * g_sprites.getOffsetFactor();
         }
     };
 
@@ -211,8 +211,8 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         int auraWidth = auraType->getWidth();
         if (auraHeight > 1 || auraWidth > 1) {
             Point offset = Point (auraWidth > 1 ? (auraWidth - 1) * 16 : 0, auraHeight > 1 ? (auraHeight - 1) * 16 : 0);
-            topAuraDest += offset;
-            auraDest += offset;
+            topAuraDest += offset * g_sprites.getOffsetFactor();
+            auraDest += offset * g_sprites.getOffsetFactor();
         }
     }
 
@@ -225,9 +225,9 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
     if (m_wings && (direction == Otc::South || direction == Otc::East)) {
         if (g_game.getFeature(Otc::GameWingOffset) && zPattern > 0) {
             if (direction == Otc::East)
-                wingDest -= Point(6, 2);
+                wingDest -= Point(6, 2) * g_sprites.getOffsetFactor();
             else
-                wingDest -= Point(0, 6);
+                wingDest -= Point(0, 6) * g_sprites.getOffsetFactor();
         }
         drawWings();
     }
@@ -280,11 +280,11 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         if (g_game.getFeature(Otc::GameAuraFrontAndBack)){
             if (zPattern > 0) {
                 if (direction == Otc::East)
-                    topAuraDest -= Point(12, 6);
+                    topAuraDest -= Point(12, 6) * g_sprites.getOffsetFactor();
                 else if (direction == Otc::South)
-                    topAuraDest -= Point(1, 12);
+                    topAuraDest -= Point(1, 12) * g_sprites.getOffsetFactor();
                 else
-                    topAuraDest -= Point(4, 6);
+                    topAuraDest -= Point(4, 6) * g_sprites.getOffsetFactor();
             }
             drawTopAura();
         }

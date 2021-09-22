@@ -30,17 +30,12 @@
 //@bindsingleton g_sprites
 class SpriteManager
 {
-    enum {
-        SPRITE_SIZE = Otc::TILE_PIXELS,
-        SPRITE_DATA_SIZE = SPRITE_SIZE*SPRITE_SIZE * 4
-    };
-
 public:
     SpriteManager();
 
     void terminate();
 
-    bool loadSpr(std::string file);
+    bool loadSpr(std::string file, bool isHdMod);
     void unload();
 
 #ifdef WITH_ENCRYPTION
@@ -57,15 +52,26 @@ public:
     bool isLoaded() { return m_loaded; }
 
     int spriteSize() { return m_spriteSize; }
+    float getOffsetFactor() const { return static_cast<float>(m_spriteSize) / 32.0f; }
+    bool isHdMod() const { return m_isHdMod; }
 
 private:
+    bool loadCasualSpr(std::string file);
+    bool loadHdSpr(std::string file);
+
+    ImagePtr getSpriteImageCasual(int id);
+    ImagePtr getSpriteImageHd(int id);
     bool m_loaded = false;
+    bool m_isHdMod = false;
     uint32 m_signature;
     int m_spritesCount;
     int m_spritesOffset;
-    int m_spriteSize = Otc::TILE_PIXELS;
+    int m_spriteSize;
     FileStreamPtr m_spritesFile;
     std::vector<std::vector<uint8_t>> m_sprites;
+
+    std::unordered_map<uint32_t, ImagePtr> m_images;
+    std::unordered_map<uint32, std::string> m_cachedData;
 };
 
 extern SpriteManager g_sprites;

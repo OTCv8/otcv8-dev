@@ -132,10 +132,18 @@ local function onTibia12HTTPResult(session, playdata)
     account.subStatus = math.floor((session["premiumuntil"] - g_clock.seconds()) / 86400)
   end
     
-  local things = {
-    data = {G.clientVersion .. "/Tibia.dat", ""},
-    sprites = {G.clientVersion .. "/Tibia.spr", ""},
-  }
+  local things
+  if not g_game.getFeature(Game64Textures) then
+    things = {
+      data = {G.clientVersion .. "/Tibia.dat", ""},
+      sprites = {G.clientVersion .. "/Tibia.spr", ""},
+    }
+  else
+    things = {
+      data = {G.clientVersion .. "/Tibia.dat", ""},
+      sprites = {G.clientVersion .. "/TibiaHD.cwm", ""},
+    }
+  end
   
   local incorrectThings = validateThings(things)
   if #incorrectThings > 0 then
@@ -465,10 +473,18 @@ function EnterGame.doLogin()
     return EnterGame.onError("Invalid server, it should be in format IP:PORT or it should be http url to login script")  
   end
   
-  local things = {
-    data = {G.clientVersion .. "/Tibia.dat", ""},
-    sprites = {G.clientVersion .. "/Tibia.spr", ""},
-  }
+  local things
+  if not g_game.getFeature(Game64Textures) then
+    things = {
+      data = {G.clientVersion .. "/Tibia.dat", ""},
+      sprites = {G.clientVersion .. "/Tibia.spr", ""},
+    }
+  else
+    things = {
+      data = {G.clientVersion .. "/Tibia.dat", ""},
+      sprites = {G.clientVersion .. "/TibiaHD.cwm", ""},
+    }
+  end
   
   local incorrectThings = validateThings(things)
   if #incorrectThings > 0 then
