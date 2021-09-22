@@ -28,7 +28,6 @@
 namespace Otc
 {
     enum : int {
-        TILE_PIXELS = 32, // change to 64 if you want to use 64x64 HD sprites
         MAX_ELEVATION = 24,
 
         SEA_FLOOR = 7,
@@ -484,6 +483,7 @@ namespace Otc
         GameNewUpdateWalk = 120,
         GameNewCreatureStacking = 121,
         GameCreaturesMana = 122,
+        Game64Textures = 123,
 
         LastGameFeature = 130
     };

@@ -12,8 +12,10 @@ end
 function load()
   local version = g_game.getClientVersion()
   local things = g_settings.getNode('things')
+  g_game.enableFeature(Game64Textures)
   
-  local datPath, sprPath
+  local datPath, sprPath, hdPath
+  local isHdMod = false
   if things and things["data"] ~= nil and things["sprites"] ~= nil then
     datPath = '/things/' .. things["data"]
     sprPath = '/things/' .. things["sprites"]
@@ -25,6 +27,11 @@ function load()
       datPath = resolvepath('/things/' .. version .. '/Tibia')
       sprPath = resolvepath('/things/' .. version .. '/Tibia')
     end
+  end
+  
+  if g_game.getFeature(Game64Textures) then
+	hdPath = resolvepath('/things/' .. version .. '/TibiaHD')
+	isHdMod = true
   end
 
   local errorMessage = ''
@@ -38,10 +45,10 @@ function load()
       errorMessage = errorMessage .. tr("Unable to load dat file, please place a valid dat in '%s'", datPath) .. '\n'
     end
   end
-  if not g_sprites.loadSpr(sprPath, false) then
-    errorMessage = errorMessage .. tr("Unable to load spr file, please place a valid spr in '%s'", sprPath)
+  
+  if not g_sprites.loadSpr(sprPath, isHdMod) then
+	errorMessage = errorMessage .. tr("Unable to load spr file, please place a valid spr in '%s'", sprPath)
   end
-
   loaded = (errorMessage:len() == 0)
 
   if errorMessage:len() > 0 then

@@ -220,6 +220,7 @@
     <ClCompile Include="..\src\client\uisprite.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\src\framework\util\pngunpacker.cpp" />
     <ClCompile Include="..\src\main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
@@ -403,6 +404,7 @@
     <ClInclude Include="..\src\framework\util\databuffer.h" />
     <ClInclude Include="..\src\framework\util\framecounter.h" />
     <ClInclude Include="..\src\framework\util\matrix.h" />
+    <ClInclude Include="..\src\framework\util\pngunpacker.h" />
     <ClInclude Include="..\src\framework\util\point.h" />
     <ClInclude Include="..\src\framework\util\qrcodegen.h" />
     <ClInclude Include="..\src\framework\util\rect.h" />

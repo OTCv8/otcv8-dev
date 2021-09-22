@@ -288,10 +288,10 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         sizes.push_back(m_size);
         if(width > 1 || height > 1) {
             m_realSize = fin->getU8();
-            m_exactSize = std::min<int>(m_realSize, std::max<int>(width * Otc::TILE_PIXELS, height * Otc::TILE_PIXELS));
+            m_exactSize = std::min<int>(m_realSize, std::max<int>(width * g_sprites.spriteSize(), height * g_sprites.spriteSize()));
         }
         else
-            m_exactSize = Otc::TILE_PIXELS;
+            m_exactSize = g_sprites.spriteSize();
 
         m_layers = fin->getU8();
         m_numPatternX = fin->getU8();
@@ -510,7 +510,7 @@ DrawQueueItem* ThingType::draw(const Point& dest, int layer, int xPattern, int y
     Point textureOffset = m_texturesFramesOffsets[animationPhase][frameIndex];
     Rect textureRect = m_texturesFramesRects[animationPhase][frameIndex];
 
-    Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1, 1)) * Otc::TILE_PIXELS), textureRect.size());
+    Rect screenRect(dest + (textureOffset - m_displacement * g_sprites.getOffsetFactor() - (m_size.toPoint() - Point(1, 1)) * g_sprites.spriteSize()), textureRect.size());
 
     bool useOpacity = m_opacity < 1.0f;
     if (useOpacity)
@@ -545,16 +545,16 @@ DrawQueueItem* ThingType::draw(const Rect& dest, int layer, int xPattern, int yP
     if (useOpacity)
         color.setAlpha(m_opacity);
 
-    Size size = m_size * Otc::TILE_PIXELS;
+    Size size = m_size * g_sprites.spriteSize();
     if (!size.isValid())
         return nullptr;
 
     // size correction for some too big items
     if ((m_size.width() > 1 || m_size.height() > 1) &&
-        textureRect.width() <= Otc::TILE_PIXELS && textureRect.height() <= Otc::TILE_PIXELS) {
-        size = Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS);
-        textureOffset = Point((Otc::TILE_PIXELS - textureRect.width()) / m_size.width(), 
-                              (Otc::TILE_PIXELS - textureRect.height()) / m_size.height());
+        textureRect.width() <= g_sprites.spriteSize() && textureRect.height() <= g_sprites.spriteSize()) {
+        size = Size(g_sprites.spriteSize(), g_sprites.spriteSize());
+        textureOffset = Point((g_sprites.spriteSize() - textureRect.width()) / m_size.width(),
+                              (g_sprites.spriteSize() - textureRect.height()) / m_size.height());
     }
 
     float scale = std::min<float>((float)dest.width() / size.width(), (float)dest.height() / size.height());
@@ -585,7 +585,7 @@ std::shared_ptr<DrawOutfitParams> ThingType::drawOutfit(const Point& dest, int m
     Size size = textureRect.size();
     if (!size.isValid())
         return nullptr;
-    Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1, 1)) * Otc::TILE_PIXELS), textureRect.size());
+    Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1, 1)) * g_sprites.spriteSize()), textureRect.size());
 
     bool useOpacity = m_opacity < 1.0f;
     if (useOpacity)
@@ -619,7 +619,7 @@ Rect ThingType::getDrawSize(const Point& dest, int layer, int xPattern, int yPat
 
     Point textureOffset = m_texturesFramesOffsets[animationPhase][frameIndex];
     Rect textureRect = m_texturesFramesRects[animationPhase][frameIndex];
-    return Rect(dest + textureOffset - m_displacement - (m_size.toPoint() - Point(1, 1)) * Otc::TILE_PIXELS, textureRect.size());
+    return Rect(dest + textureOffset - m_displacement - (m_size.toPoint() - Point(1, 1)) * g_sprites.spriteSize(), textureRect.size());
 }
 
 
@@ -708,7 +708,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
 
 Size ThingType::getBestTextureDimension(int w, int h, int count)
 {
-    const int MAX = Otc::TILE_PIXELS;
+    const int MAX = g_sprites.spriteSize();
 
     int k = 1;
     while(k < w)

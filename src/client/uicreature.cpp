@@ -21,6 +21,7 @@
  */
 
 #include "uicreature.h"
+#include "spritemanager.h"
 #include <framework/otml/otml.h>
 #include <framework/graphics/drawqueue.h>
 
@@ -50,7 +51,7 @@ void UICreature::drawSelf(Fw::DrawPane drawPane)
         }
 
         if(m_scale >= 0.01) // TODO: make it correctly
-           m_creature->drawOutfit(Rect(getPaddingRect().topLeft(), Otc::TILE_PIXELS * m_scale, Otc::TILE_PIXELS * m_scale), m_direction, m_imageColor, m_animate);
+           m_creature->drawOutfit(Rect(getPaddingRect().topLeft(), g_sprites.spriteSize() * m_scale, g_sprites.spriteSize() * m_scale), m_direction, m_imageColor, m_animate);
         else
            m_creature->drawOutfit(getPaddingRect(), m_direction, m_imageColor, m_animate);
     }

@@ -195,6 +195,9 @@
     <ClCompile Include="..\src\client\healthbars.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\framework\util\pngunpacker.cpp">
+      <Filter>Header Files\framework\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\framework\const.h">
@@ -754,6 +757,9 @@
     </ClInclude>
     <ClInclude Include="..\src\client\healthbars.h">
       <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\framework\util\pngunpacker.h">
+      <Filter>Header Files\framework\util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
