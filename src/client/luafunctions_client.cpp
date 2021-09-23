@@ -674,6 +674,8 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Item>("getClothSlot", &Item::getClothSlot);
     g_lua.bindClassMemberFunction<Item>("getTooltip", &Item::getTooltip);
     g_lua.bindClassMemberFunction<Item>("setTooltip", &Item::setTooltip);
+    g_lua.bindClassMemberFunction<Item>("getQuickLootFlags", &Item::getQuickLootFlags);
+    g_lua.bindClassMemberFunction<Item>("setQuickLootFlags", &Item::setQuickLootFlags);
 
     g_lua.registerClass<Effect, Thing>();
     g_lua.bindClassStaticFunction<Effect>("create", []{ return EffectPtr(new Effect); });

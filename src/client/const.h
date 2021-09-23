@@ -483,7 +483,7 @@ namespace Otc
         GameNewUpdateWalk = 120,
         GameNewCreatureStacking = 121,
         GameCreaturesMana = 122,
-        Game64Textures = 123,
+        GameQuickLootFlags = 123,
 
         LastGameFeature = 130
     };
