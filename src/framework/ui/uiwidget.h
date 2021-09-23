@@ -63,6 +63,7 @@ protected:
     std::string m_source;
     Rect m_rect;
     Point m_virtualOffset;
+    stdext::boolean<true> m_autoDraw;
     stdext::boolean<true> m_enabled;
     stdext::boolean<true> m_visible;
     stdext::boolean<true> m_focusable;
@@ -128,6 +129,7 @@ public:
     void setStyleFromNode(const OTMLNodePtr& styleNode);
     void setEnabled(bool enabled);
     void setVisible(bool visible);
+    void setAutoDraw(bool value);
     void setOn(bool on);
     void setChecked(bool checked);
     void setFocusable(bool focusable);
@@ -245,6 +247,7 @@ public:
     bool isHidden() { return hasState(Fw::HiddenState); }
     bool isExplicitlyEnabled() { return m_enabled; }
     bool isExplicitlyVisible() { return m_visible; }
+    bool isAutoDraw() { return m_autoDraw; }
     bool isFocusable() { return m_focusable; }
     bool isPhantom() { return m_phantom; }
     bool isDraggable() { return m_draggable; }
