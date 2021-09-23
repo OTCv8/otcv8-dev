@@ -92,6 +92,7 @@ public:
     void setSubType(int subType) { m_countOrSubType = subType; }
     void setColor(const Color& c) { m_color = c; }
     void setTooltip(const std::string& str) { m_tooltip = str; }
+    void setQuickLootFlags(uint32 flags) { m_quickLootFlags = flags; }
 
     int getCountOrSubType() { return m_countOrSubType; }
     int getSubType();
@@ -102,6 +103,7 @@ public:
     std::string getName();
     bool isValid();
     std::string getTooltip() { return m_tooltip; }
+    uint32 getQuickLootFlags() { return m_quickLootFlags; }
 
     void unserializeItem(const BinaryTreePtr& in);
     void serializeItem(const OutputBinaryTreePtr& out);
@@ -163,6 +165,7 @@ private:
     bool m_async;
     std::string m_tooltip;
 
+    uint32 m_quickLootFlags;
     uint8 m_phase;
     ticks_t m_lastPhase;
 };
