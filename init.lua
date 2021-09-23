@@ -57,7 +57,6 @@ elseif settings:exists('layout') then
 end
 g_resources.setLayout(layout)
 
-g_game.enableFeature(Game64Textures)
 -- load mods
 g_modules.discoverModules()
 g_modules.ensureModuleLoaded("corelib")

@@ -14,7 +14,7 @@ public:
     void terminate();
 
     int get(const std::string& url, int timeout = 5);
-    int post(const std::string& url, const std::string& data, int timeout = 5);
+    int post(const std::string& url, const std::string& data, int timeout = 5, bool isJson = false);
     int download(const std::string& url, std::string path, int timeout = 5);
     int ws(const std::string& url, int timeout = 5);
     bool wsSend(int operationId, std::string message);
