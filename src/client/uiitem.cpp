@@ -21,6 +21,7 @@
  */
 
 #include "uiitem.h"
+#include "spritemanager.h"
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/fontmanager.h>
@@ -46,7 +47,7 @@ void UIItem::drawSelf(Fw::DrawPane drawPane)
     if(m_itemVisible && m_item) {
         Rect drawRect = getPaddingRect();
 
-        int exactSize = std::max<int>(Otc::TILE_PIXELS, m_item->getExactSize());
+        int exactSize = std::max<int>(g_sprites.spriteSize(), m_item->getExactSize());
         if(exactSize == 0)
             return;
 

@@ -21,6 +21,7 @@
  */
 
 #include "lightview.h"
+#include "spritemanager.h"
 #include <framework/graphics/painter.h>
 
 void LightView::addLight(const Point& pos, uint8_t color, uint8_t intensity)
@@ -37,7 +38,7 @@ void LightView::addLight(const Point& pos, uint8_t color, uint8_t intensity)
 
 void LightView::setFieldBrightness(const Point& pos, size_t start, uint8_t color)
 {
-    size_t index = (pos.y / Otc::TILE_PIXELS) * m_mapSize.width() + (pos.x / Otc::TILE_PIXELS);
+    size_t index = (pos.y / g_sprites.spriteSize()) * m_mapSize.width() + (pos.x / g_sprites.spriteSize());
     if (index >= m_tiles.size()) return;
     m_tiles[index].start = start;
     m_tiles[index].color = color;
@@ -52,7 +53,7 @@ void LightView::draw() // render thread
 
     for (int x = 0; x < m_mapSize.width(); ++x) {
         for (int y = 0; y < m_mapSize.height(); ++y) {
-            Point pos(x * Otc::TILE_PIXELS + Otc::TILE_PIXELS / 2, y * Otc::TILE_PIXELS + Otc::TILE_PIXELS / 2);
+            Point pos(x * g_sprites.spriteSize() + g_sprites.spriteSize() / 2, y * g_sprites.spriteSize() + g_sprites.spriteSize() / 2);
             int index = (y * m_mapSize.width() + x);
             int colorIndex = index * 4;
             buffer[colorIndex] = m_globalLight.r();
@@ -63,7 +64,7 @@ void LightView::draw() // render thread
                 Light& light = m_lights[i];
                 float distance = std::sqrt((pos.x - light.pos.x) * (pos.x - light.pos.x) +
                                            (pos.y - light.pos.y) * (pos.y - light.pos.y));
-                distance /= Otc::TILE_PIXELS;
+                distance /= g_sprites.spriteSize();
                 float intensity = (-distance + light.intensity) * 0.2f;
                 if (intensity < 0.01f) continue;
                 if (intensity > 1.0f) intensity = 1.0f;
@@ -83,8 +84,8 @@ void LightView::draw() // render thread
     Size size = m_src.size();
     CoordsBuffer coords;
     coords.addRect(RectF(m_dest.left(), m_dest.top(), m_dest.width(), m_dest.height()),
-                   RectF((float)offset.x / Otc::TILE_PIXELS, (float)offset.y / Otc::TILE_PIXELS,
-                         (float)size.width() / Otc::TILE_PIXELS, (float)size.height() / Otc::TILE_PIXELS));
+                   RectF((float)offset.x / g_sprites.spriteSize(), (float)offset.y / g_sprites.spriteSize(),
+                         (float)size.width() / g_sprites.spriteSize(), (float)size.height() / g_sprites.spriteSize()));
 
     g_painter->resetColor();
     g_painter->setCompositionMode(Painter::CompositionMode_Multiply);

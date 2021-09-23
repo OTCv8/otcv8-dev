@@ -27,6 +27,7 @@
 #include <framework/graphics/image.h>
 #include <framework/graphics/atlas.h>
 #include <framework/util/crypt.h>
+#include <framework/util/pngunpacker.h>
 
 SpriteManager g_sprites;
 
@@ -41,42 +42,18 @@ void SpriteManager::terminate()
     unload();
 }
 
-bool SpriteManager::loadSpr(std::string file)
+bool SpriteManager::loadSpr(std::string file, bool isHdMod)
 {
     m_spritesCount = 0;
     m_signature = 0;
-    m_spriteSize = Otc::TILE_PIXELS;
     m_loaded = false;
     m_sprites.clear();
+    m_isHdMod = isHdMod;
 
-    try {
-        file = g_resources.guessFilePath(file, "spr");
-
-        m_spritesFile = g_resources.openFile(file, g_game.getFeature(Otc::GameDontCacheFiles));
-
-        m_signature = m_spritesFile->getU32();
-        if (m_signature == *((uint32_t*)"OTV8")) {
-            m_signature = m_spritesFile->getU32();
-            m_spritesCount = m_spritesFile->getU32();
-            m_sprites.resize(m_spritesCount + 1);
-            for (int i = 1; i <= m_spritesCount; ++i) {
-                int bufferSize = m_spritesFile->getU16();
-                if (bufferSize == 0) continue;
-                m_sprites[i].resize(bufferSize + 1);
-                m_sprites[i][0] = 0;
-                m_spritesFile->read(m_sprites[i].data() + 1, bufferSize);
-            }
-            m_spritesFile = nullptr;
-        } else {
-            m_spritesCount = g_game.getFeature(Otc::GameSpritesU32) ? m_spritesFile->getU32() : m_spritesFile->getU16();
-            m_spritesOffset = m_spritesFile->tell();
-        }
-        m_loaded = true;
-        g_lua.callGlobalField("g_sprites", "onLoadSpr", file);
-        return true;
-    } catch (stdext::exception& e) {
-        g_logger.error(stdext::format("Failed to load sprites from '%s': %s", file, e.what()));
-        return false;
+    if (isHdMod) {
+        return loadHdSpr(file);
+    } else {
+        return loadCasualSpr(file);
     }
 }
 
@@ -321,11 +298,103 @@ void SpriteManager::unload()
 
 ImagePtr SpriteManager::getSpriteImage(int id)
 {
+    if (m_isHdMod) {
+        return getSpriteImageHd(id);
+    }
+    else {
+        return getSpriteImageCasual(id);
+    }
+}
+
+bool SpriteManager::loadCasualSpr(std::string file)
+{
+    m_spriteSize = 32u;
+    try {
+        file = g_resources.guessFilePath(file, "spr");
+
+        m_spritesFile = g_resources.openFile(file, g_game.getFeature(Otc::GameDontCacheFiles));
+
+        m_signature = m_spritesFile->getU32();
+        if (m_signature == *((uint32_t*)"OTV8")) {
+            m_signature = m_spritesFile->getU32();
+            m_spritesCount = m_spritesFile->getU32();
+            m_sprites.resize(m_spritesCount + 1);
+            for (int i = 1; i <= m_spritesCount; ++i) {
+                int bufferSize = m_spritesFile->getU16();
+                if (bufferSize == 0) continue;
+                m_sprites[i].resize(bufferSize + 1);
+                m_sprites[i][0] = 0;
+                m_spritesFile->read(m_sprites[i].data() + 1, bufferSize);
+            }
+            m_spritesFile = nullptr;
+        }
+        else {
+            m_spritesCount = g_game.getFeature(Otc::GameSpritesU32) ? m_spritesFile->getU32() : m_spritesFile->getU16();
+            m_spritesOffset = m_spritesFile->tell();
+        }
+        m_loaded = true;
+        g_lua.callGlobalField("g_sprites", "onLoadSpr", file);
+        return true;
+    }
+    catch (stdext::exception& e) {
+        g_logger.error(stdext::format("Failed to load sprites from '%s': %s", file, e.what()));
+        return false;
+    }
+}
+
+bool SpriteManager::loadHdSpr(std::string file)
+{
+    m_spriteSize = 64u;
+    std::unordered_map<uint32, std::string> cachedDataLocal;
+
+    try {
+        auto inFilePath = g_resources.guessFilePath(file, "cwm");
+        auto spritesFile = g_resources.openFile(inFilePath, true);
+
+        std::string fileBuffer = std::string(spritesFile->size(), '\0');
+        spritesFile->read(fileBuffer.data(), fileBuffer.size());
+        spritesFile->close();
+
+        PngUnpacker pu(std::move(fileBuffer));
+        pu.unpackFiles();
+
+        const std::vector<char>& packedData = pu.getPackedFileData();
+
+        size_t metadataSize = pu.getMetadata().size();
+
+        for (const auto& fileMetadata : pu.getMetadata()) {
+            uint32_t imageID = std::stoi(fileMetadata.getFileName());
+            cachedDataLocal[imageID].resize(fileMetadata.getFileSize());
+
+            std::copy_n(&packedData[fileMetadata.getOffset()], fileMetadata.getFileSize(), cachedDataLocal[imageID].begin());
+        }
+
+        m_spritesCount = cachedDataLocal.size();
+        m_cachedData = std::move(cachedDataLocal);
+
+        if (m_spritesCount == 0) {
+            g_logger.error(stdext::format("Failed to load sprites from '%s': %s - no files", file));
+            return false;
+        }
+
+        m_loaded = true;
+        return true;
+    }
+    catch (stdext::exception& e) {
+        g_logger.error(stdext::format("Failed to load sprites from '%s': %s", file, e.what()));
+        return false;
+    }
+
+    return false;
+}
+
+ImagePtr SpriteManager::getSpriteImageCasual(int id)
+{
     try {
         int spriteDataSize = m_spriteSize * m_spriteSize * 4;
 
         if (!m_sprites.empty()) {
-            if (id >= (int)m_sprites.size()) 
+            if (id >= (int)m_sprites.size())
                 return nullptr;
             auto& buffer = m_sprites[id];
             if (buffer.size() < 5)
@@ -351,7 +420,7 @@ ImagePtr SpriteManager::getSpriteImage(int id)
                 bufferPos += 2;
                 uint16_t coloredPixels = *(uint16_t*)(&buffer[bufferPos]);
                 bufferPos += 2;
-                
+
                 writePos += transparentPixels * 4;
                 for (int i = 0; i < coloredPixels; ++i) {
                     pixels[writePos++] = buffer[bufferPos++];
@@ -359,7 +428,8 @@ ImagePtr SpriteManager::getSpriteImage(int id)
                     pixels[writePos++] = buffer[bufferPos++];
                     if (hasAlpha) {
                         pixels[writePos] = buffer[bufferPos++];
-                    } else {
+                    }
+                    else {
                         pixels[writePos] = 0xFF;
                     }
                     writePos += 1;
@@ -407,7 +477,8 @@ ImagePtr SpriteManager::getSpriteImage(int id)
                 m_spritesFile->read(&pixels[writePos], std::min<uint16>(coloredPixels * 4, spriteDataSize - writePos));
                 writePos += coloredPixels * 4;
                 read += 4 + (4 * coloredPixels);
-            } else {
+            }
+            else {
                 for (int i = 0; i < coloredPixels && writePos < spriteDataSize; i++) {
                     pixels[writePos + 0] = m_spritesFile->getU8();
                     pixels[writePos + 1] = m_spritesFile->getU8();
@@ -420,8 +491,42 @@ ImagePtr SpriteManager::getSpriteImage(int id)
         }
 
         return image;
-    } catch (stdext::exception & e) {
+    }
+    catch (stdext::exception& e) {
         g_logger.error(stdext::format("Failed to get sprite id %d: %s", id, e.what()));
         return nullptr;
     }
+}
+
+ImagePtr SpriteManager::getSpriteImageHd(int id)
+{
+    if (id == 0 || !m_loaded)
+        return nullptr;
+
+    if (m_cachedData.find(id) == m_cachedData.end())
+    {
+        return nullptr;
+    }
+
+    auto it = m_images.find(id);
+
+    ImagePtr image;
+    if (it == m_images.end()) {
+
+        try {
+            image = Image::loadPNG(m_cachedData[id].data(), m_cachedData[id].size());
+        }
+        catch (std::exception e)
+        {
+            return nullptr;
+        }
+        if (image) {
+            m_images[id] = image;
+        }
+    }
+    else {
+        image = it->second;
+    }
+
+    return image;
 }
