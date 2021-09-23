@@ -437,7 +437,7 @@ protected:
     Point m_iconOffset;
     stdext::boolean<false> m_imageFixedRatio;
     stdext::boolean<false> m_imageRepeated;
-    stdext::boolean<false> m_imageSmooth;
+    stdext::boolean<true> m_imageSmooth;
     stdext::boolean<false> m_imageAutoResize;
     EdgeGroup<int> m_imageBorder;
 

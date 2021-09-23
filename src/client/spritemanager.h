@@ -35,7 +35,7 @@ public:
 
     void terminate();
 
-    bool loadSpr(std::string file, bool isHdMod);
+    bool loadSpr(std::string file);
     void unload();
 
 #ifdef WITH_ENCRYPTION
@@ -57,7 +57,7 @@ public:
 
 private:
     bool loadCasualSpr(std::string file);
-    bool loadHdSpr(std::string file);
+    bool loadCwmSpr(std::string file);
 
     ImagePtr getSpriteImageCasual(int id);
     ImagePtr getSpriteImageHd(int id);
@@ -69,8 +69,6 @@ private:
     int m_spriteSize;
     FileStreamPtr m_spritesFile;
     std::vector<std::vector<uint8_t>> m_sprites;
-
-    std::unordered_map<uint32_t, ImagePtr> m_images;
     std::unordered_map<uint32, std::string> m_cachedData;
 };
 
