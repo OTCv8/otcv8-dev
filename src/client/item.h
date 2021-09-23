@@ -103,7 +103,7 @@ public:
     std::string getName();
     bool isValid();
     std::string getTooltip() { return m_tooltip; }
-    uint8 getQuickLootFlags() { return m_quickLootFlags; }
+    uint32 getQuickLootFlags() { return m_quickLootFlags; }
 
     void unserializeItem(const BinaryTreePtr& in);
     void serializeItem(const OutputBinaryTreePtr& out);
