@@ -91,8 +91,9 @@ void MapView::drawTileWidget(const Rect& rect, const Rect& srcRect)
     float verticalStretchFactor = rect.height() / (float)srcRect.height();
 
     auto player = g_game.getLocalPlayer();
-    for (auto& tile : m_cachedVisibleTiles) {
-        Position tilePos = tile.first->getPosition();
+    auto floor = player->getPosition().z;
+    for (auto& tile : m_cachedVisibleTiles[floor]) {
+        Position tilePos = tile->getPosition();
         if (tilePos.z != player->getPosition().z) continue;
 
         Point p = transformPositionTo2D(tilePos, cameraPosition) - drawOffset;
@@ -101,7 +102,7 @@ void MapView::drawTileWidget(const Rect& rect, const Rect& srcRect)
         p += rect.topLeft();
 
         size_t drawQueueStart = g_drawQueue->size();
-        tile.first->drawWidget(p);
+        tile->drawWidget(p);
         g_drawQueue->setClip(drawQueueStart, rect);
     }
 }
