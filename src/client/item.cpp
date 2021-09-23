@@ -44,6 +44,7 @@ Item::Item() :
     m_serverId(0),
     m_countOrSubType(1),
     m_color(Color::alpha),
+    m_quickLootFlags(0),
     m_async(true),
     m_phase(0),
     m_lastPhase(0)
