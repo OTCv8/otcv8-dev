@@ -83,6 +83,29 @@ void MapView::drawTileTexts(const Rect& rect, const Rect& srcRect)
     }
 }
 
+void MapView::drawTileWidget(const Rect& rect, const Rect& srcRect)
+{
+    Position cameraPosition = getCameraPosition();
+    Point drawOffset = srcRect.topLeft();
+    float horizontalStretchFactor = rect.width() / (float)srcRect.width();
+    float verticalStretchFactor = rect.height() / (float)srcRect.height();
+
+    auto player = g_game.getLocalPlayer();
+    auto floor = player->getPosition().z;
+    for (auto& tile : m_cachedVisibleTiles[floor]) {
+        Position tilePos = tile->getPosition();
+        if (tilePos.z != player->getPosition().z) continue;
+
+        Point p = transformPositionTo2D(tilePos, cameraPosition) - drawOffset;
+        p.x *= horizontalStretchFactor;
+        p.y *= verticalStretchFactor;
+        p += rect.topLeft();
+
+        size_t drawQueueStart = g_drawQueue->size();
+        tile->drawWidget(p);
+        g_drawQueue->setClip(drawQueueStart, rect);
+    }
+}
 
 void MapView::drawMapBackground(const Rect& rect, const TilePtr& crosshairTile) {
     Position cameraPosition = getCameraPosition();
@@ -297,6 +320,8 @@ void MapView::drawMapForeground(const Rect& rect)
             c.first->drawInformation(c.second, g_map.isCovered(c.first->getPrewalkingPosition(), m_cachedFirstVisibleFloor), rect, flags);
         }
     }
+	
+	drawTileWidget(rect, srcRect);
 }
 
 

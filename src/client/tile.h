@@ -70,6 +70,7 @@ public:
     void drawCreatures(const Point& dest, LightView* lightView = nullptr);
     void drawTop(const Point& dest, LightView* lightView = nullptr);
     void drawTexts(Point dest);
+    void drawWidget(Point dest);
 
 public:
     void clean();
@@ -156,6 +157,9 @@ public:
     void resetFill() { m_fill = Color::alpha; }
 
     bool canShoot(int distance);
+	
+	void setWidget(UIWidgetPtr widget) { m_widget = widget; }
+    UIWidgetPtr getWidget() { return m_widget; }
 
 private:
     void checkTranslucentLight();
@@ -180,6 +184,8 @@ private:
     StaticTextPtr m_timerText;
     StaticTextPtr m_text;
     Color m_fill = Color::alpha;
+	
+	UIWidgetPtr m_widget;
 };
 
 #endif
