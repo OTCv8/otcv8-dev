@@ -158,8 +158,14 @@ public:
 
     bool canShoot(int distance);
 	
-	void setWidget(UIWidgetPtr widget) { m_widget = widget; }
+    void setWidget(UIWidgetPtr widget) { m_widget = widget; }
     UIWidgetPtr getWidget() { return m_widget; }
+    void removeWidget() {
+        if (m_widget) {
+            m_widget->destroy();
+            m_widget = nullptr;
+        }
+    }
 
 private:
     void checkTranslucentLight();

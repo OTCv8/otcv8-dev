@@ -812,6 +812,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Tile>("canShoot", &Tile::canShoot);
     g_lua.bindClassMemberFunction<Tile>("setWidget", &Tile::setWidget);
     g_lua.bindClassMemberFunction<Tile>("getWidget", &Tile::getWidget);
+    g_lua.bindClassMemberFunction<Tile>("removeWidget", &Tile::removeWidget);
     // for bot
     g_lua.bindClassMemberFunction<Tile>("setText", &Tile::setText);
     g_lua.bindClassMemberFunction<Tile>("getText", &Tile::getText);
