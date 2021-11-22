@@ -68,7 +68,11 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
     onAttackingCreatureChange = {},
     onManaChange = {},
     onStatesChange = {},
-    onAddItem = {}
+    onAddItem = {},
+    onGameEditText = {},
+    onGroupSpellCooldown = {},
+    onSpellCooldown = {},
+    onRemoveItem = {}
   }
   
   -- basic functions & classes
@@ -305,9 +309,9 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
           callback(container)
         end
       end,
-      onContainerUpdateItem = function(container, slot, item)
+      onContainerUpdateItem = function(container, slot, item, oldItem)
         for i, callback in ipairs(context._callbacks.onContainerUpdateItem) do
-          callback(container, slot, item)
+          callback(container, slot, item, oldItem)
         end
       end,
       onMissle = function(missle)
@@ -360,6 +364,11 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
           callback(id, title, message, buttons, enterButton, escapeButton, choices, priority)
         end
       end,
+      onGameEditText = function(id, itemId, maxLength, text, writer, time)
+        for i, callback in ipairs(context._callbacks.onGameEditText) do
+          callback(id, itemId, maxLength, text, writer, time)
+        end
+      end,
       onAttackingCreatureChange = function(creature, oldCreature)
         for i, callback in ipairs(context._callbacks.onAttackingCreatureChange) do
           callback(creature, oldCreature)
@@ -370,16 +379,31 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
           callback(player, mana, maxMana, oldMana, oldMaxMana)
         end
       end,
-      onAddItem = function(container, slot, item, oldItem)
+      onAddItem = function(container, slot, item)
         for i, callback in ipairs(context._callbacks.onAddItem) do
-          callback(container, slot, item, oldItem)
+          callback(container, slot, item)
+        end
+      end,
+      onRemoveItem = function(container, slot, item)
+        for i, callback in ipairs(context._callbacks.onRemoveItem) do
+          callback(container, slot, item)
         end
       end,
       onStatesChange = function(states, oldStates)
         for i, callback in ipairs(context._callbacks.onStatesChange) do
           callback(states, oldStates)
         end
-      end
+      end,
+      onGroupSpellCooldown = function(iconId, duration)
+        for i, callback in ipairs(context._callbacks.onGroupSpellCooldown) do
+          callback(iconId, duration)
+        end
+      end,
+      onSpellCooldown = function(iconId, duration)
+        for i, callback in ipairs(context._callbacks.onSpellCooldown) do
+          callback(iconId, duration)
+        end
+      end,
     }    
   }
 end

@@ -125,7 +125,7 @@ context.onContainerClose = function(callback)
   return context.callback("onContainerClose", callback)
 end
 
--- onContainerUpdateItem -- callback = function(container, slot, item)
+-- onContainerUpdateItem -- callback = function(container, slot, item, oldItem)
 context.onContainerUpdateItem = function(callback)
   return context.callback("onContainerUpdateItem", callback)
 end
@@ -200,9 +200,29 @@ context.onAddItem = function(callback)
   return context.callback("onAddItem", callback)
 end
 
+-- onRemoveItem - callback = function(container, slot, item)
+context.onRemoveItem = function(callback)
+  return context.callback("onRemoveItem", callback)
+end
+
 -- onStatesChange - callback = function(states, oldStates)
 context.onStatesChange = function(callback)
   return context.callback("onStatesChange", callback)
+end
+
+-- onGameEditText - callback = function(id, itemId, maxLength, text, writer, time)
+context.onGameEditText = function(callback)
+  return context.callback("onGameEditText", callback)
+end
+
+-- onSpellCooldown - callback = function(iconId, duration)
+context.onSpellCooldown = function(callback)
+  return context.callback("onSpellCooldown", callback)
+end
+
+-- onGroupSpellCooldown - callback = function(iconId, duration)
+context.onGroupSpellCooldown = function(callback)
+  return context.callback("onGroupSpellCooldown", callback)
 end
 
 -- CUSTOM CALLBACKS
