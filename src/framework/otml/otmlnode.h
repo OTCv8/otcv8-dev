@@ -45,13 +45,14 @@ public:
     bool hasValue() { return !m_value.empty(); }
     bool hasChildren();
     bool hasChildAt(const std::string& childTag) { return !!get(childTag); }
-    bool hasChildAtIndex(int childIndex) { return !!getIndex(childIndex); }
+    size_t getIndex() { return m_index; }
 
     void setTag(const std::string& tag);
     void setValue(const std::string& value) { m_value = value; }
     void setNull(bool null) { m_null = null; }
     void setUnique(bool unique) { m_unique = unique; }
     void setSource(const std::string& source) { m_source = source; }
+    void setIndex(size_t index) { m_index = index; }
 
     void lockTag() {
         m_tagLocked = true;
@@ -61,11 +62,9 @@ public:
     OTMLNodePtr getIndex(int childIndex);
 
     OTMLNodePtr at(const std::string& childTag);
-    OTMLNodePtr atIndex(int childIndex);
 
     void addChild(const OTMLNodePtr& newChild);
     bool removeChild(const OTMLNodePtr& oldChild);
-    bool replaceChild(const OTMLNodePtr& oldChild, const OTMLNodePtr& newChild);
     void copy(const OTMLNodePtr& node);
     void merge(const OTMLNodePtr& node);
     void clear();
@@ -98,11 +97,11 @@ public:
 protected:
     OTMLNode() : m_unique(false), m_null(false) { }
 
-    OTMLNodeList m_children;
-    std::unordered_map<std::string, OTMLNodePtr> m_childrenTagCache;
+    std::unordered_map<std::string, std::vector<OTMLNodePtr>> m_children;
     std::string m_tag;
     std::string m_value;
     std::string m_source;
+    size_t m_index = 0;
     bool m_unique;
     bool m_null;
     bool m_tagLocked = false;
@@ -135,12 +134,6 @@ T OTMLNode::value() {
 template<typename T>
 T OTMLNode::valueAt(const std::string& childTag) {
     OTMLNodePtr node = at(childTag);
-    return node->value<T>();
-}
-
-template<typename T>
-T OTMLNode::valueAtIndex(int childIndex) {
-    OTMLNodePtr node = atIndex(childIndex);
     return node->value<T>();
 }
 

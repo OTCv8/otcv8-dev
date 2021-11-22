@@ -33,6 +33,7 @@ public:
 
     static ImagePtr load(std::string file);
     static ImagePtr loadPNG(const std::string& file);
+    static ImagePtr loadPNG(const void* data, uint32_t size);
 
     void savePNG(const std::string& fileName);
 

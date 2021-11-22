@@ -42,6 +42,7 @@
 #include "protocolgame.h"
 #include "uiitem.h"
 #include "uicreature.h"
+#include "uigraph.h"
 #include "uimap.h"
 #include "uiminimap.h"
 #include "uimapanchorlayout.h"
@@ -103,6 +104,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_sprites", "loadSpr", &SpriteManager::loadSpr, &g_sprites);
 #ifdef WITH_ENCRYPTION
     g_lua.bindSingletonFunction("g_sprites", "saveSpr", &SpriteManager::saveSpr, &g_sprites);
+    g_lua.bindSingletonFunction("g_sprites", "saveSpr64", &SpriteManager::saveSpr64, &g_sprites);
     g_lua.bindSingletonFunction("g_sprites", "dumpSprites", &SpriteManager::dumpSprites, &g_sprites);
     g_lua.bindSingletonFunction("g_sprites", "encryptSprites", &SpriteManager::encryptSprites, &g_sprites);    
 #endif
@@ -672,6 +674,8 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Item>("getClothSlot", &Item::getClothSlot);
     g_lua.bindClassMemberFunction<Item>("getTooltip", &Item::getTooltip);
     g_lua.bindClassMemberFunction<Item>("setTooltip", &Item::setTooltip);
+    g_lua.bindClassMemberFunction<Item>("getQuickLootFlags", &Item::getQuickLootFlags);
+    g_lua.bindClassMemberFunction<Item>("setQuickLootFlags", &Item::setQuickLootFlags);
 
     g_lua.registerClass<Effect, Thing>();
     g_lua.bindClassStaticFunction<Effect>("create", []{ return EffectPtr(new Effect); });
@@ -806,6 +810,9 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Tile>("hasElevation", &Tile::hasElevation);
     g_lua.bindClassMemberFunction<Tile>("isBlocking", &Tile::isBlocking);
     g_lua.bindClassMemberFunction<Tile>("canShoot", &Tile::canShoot);
+    g_lua.bindClassMemberFunction<Tile>("setWidget", &Tile::setWidget);
+    g_lua.bindClassMemberFunction<Tile>("getWidget", &Tile::getWidget);
+    g_lua.bindClassMemberFunction<Tile>("removeWidget", &Tile::removeWidget);
     // for bot
     g_lua.bindClassMemberFunction<Tile>("setText", &Tile::setText);
     g_lua.bindClassMemberFunction<Tile>("getText", &Tile::getText);
@@ -930,9 +937,18 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMinimap>("centerInPosition", &UIMinimap::centerInPosition);
 
     g_lua.registerClass<UIProgressRect, UIWidget>();
-    g_lua.bindClassStaticFunction<UIProgressRect>("create", []{ return UIProgressRectPtr(new UIProgressRect); } );
+    g_lua.bindClassStaticFunction<UIProgressRect>("create", [] { return UIProgressRectPtr(new UIProgressRect); });
     g_lua.bindClassMemberFunction<UIProgressRect>("setPercent", &UIProgressRect::setPercent);
     g_lua.bindClassMemberFunction<UIProgressRect>("getPercent", &UIProgressRect::getPercent);
+
+    g_lua.registerClass<UIGraph, UIWidget>();
+    g_lua.bindClassStaticFunction<UIGraph>("create", [] { return UIGraphPtr(new UIGraph); });
+    g_lua.bindClassMemberFunction<UIGraph>("addValue", &UIGraph::addValue);
+    g_lua.bindClassMemberFunction<UIGraph>("clear", &UIGraph::clear);
+    g_lua.bindClassMemberFunction<UIGraph>("setLineWidth", &UIGraph::setLineWidth);
+    g_lua.bindClassMemberFunction<UIGraph>("setCapacity", &UIGraph::setCapacity);
+    g_lua.bindClassMemberFunction<UIGraph>("setTitle", &UIGraph::setTitle);
+    g_lua.bindClassMemberFunction<UIGraph>("setShowLabels", &UIGraph::setShowLabels);
 
     g_lua.registerClass<UIMapAnchorLayout, UIAnchorLayout>();
 }

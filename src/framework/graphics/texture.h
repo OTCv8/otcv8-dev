@@ -43,6 +43,10 @@ public:
     virtual void setRepeat(bool repeat);
     virtual bool buildHardwareMipmaps();
     void setTime(ticks_t time) { m_time = time; }
+    void setCanCache(bool canCache)
+    {
+        m_canCache = canCache;
+    }
 
     uint getId() { return m_id; }
     uint getUniqueId() { return m_uniqueId; }
@@ -54,6 +58,7 @@ public:
     bool isEmpty() { return false; }
     bool hasRepeat() { return m_repeat; }
     bool hasMipmaps() { return m_hasMipmaps; }
+    bool canCache() { return m_canCache; }
     virtual bool isAnimatedTexture() { return false; }
 
 protected:
@@ -77,6 +82,7 @@ protected:
     bool m_repeat = false;
     bool m_buildHardwareMipmaps = false;
     bool m_needsUpdate = false;
+    bool m_canCache = true;
     ImagePtr m_image;
 };
 

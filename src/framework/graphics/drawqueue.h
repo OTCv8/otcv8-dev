@@ -115,6 +115,16 @@ struct DrawQueueItemTextColored : public DrawQueueItem {
     std::vector<std::pair<int, Color>> m_colors;
 };
 
+struct DrawQueueItemLine : public DrawQueueItem {
+    DrawQueueItemLine(const std::vector<Point>& points, int width, const Color& color) :
+        DrawQueueItem(nullptr, color), m_points(points), m_width(width)
+    {};
+    void draw();
+
+    std::vector<Point> m_points;
+    int m_width;
+};
+
 struct DrawQueueCondition {
     DrawQueueCondition(size_t start, size_t end) :
         m_start(start), m_end(end) {}
@@ -227,6 +237,14 @@ public:
         CoordsBuffer coordsBuffer;
         coordsBuffer.addBoudingRect(dest, innerLineWidth);
         addFillCoords(coordsBuffer, color);
+    }
+
+    void addLine(const std::vector<Point>& points, int width, const Color& color = Color::white)
+    {
+        if (points.empty() || width < 0)
+            return;
+
+        m_queue.push_back(new DrawQueueItemLine(points, width, color));
     }
 
     void setFrameBuffer(const Rect& dest, const Size& size, const Rect& src);

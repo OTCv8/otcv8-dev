@@ -23,17 +23,13 @@
 #ifndef SPRITEMANAGER_H
 #define SPRITEMANAGER_H
 
+#include "const.h"
 #include <framework/core/declarations.h>
 #include <framework/graphics/declarations.h>
 
 //@bindsingleton g_sprites
 class SpriteManager
 {
-    enum {
-        SPRITE_SIZE = 32,
-        SPRITE_DATA_SIZE = SPRITE_SIZE*SPRITE_SIZE * 4
-    };
-
 public:
     SpriteManager();
 
@@ -44,6 +40,7 @@ public:
 
 #ifdef WITH_ENCRYPTION
     void saveSpr(std::string fileName);
+    void saveSpr64(std::string fileName);
     void encryptSprites(std::string fileName);
     void dumpSprites(std::string dir);
 #endif
@@ -55,15 +52,24 @@ public:
     bool isLoaded() { return m_loaded; }
 
     int spriteSize() { return m_spriteSize; }
+    float getOffsetFactor() const { return static_cast<float>(m_spriteSize) / 32.0f; }
+    bool isHdMod() const { return m_isHdMod; }
 
 private:
-    stdext::boolean<false> m_loaded;
+    bool loadCasualSpr(std::string file);
+    bool loadCwmSpr(std::string file);
+
+    ImagePtr getSpriteImageCasual(int id);
+    ImagePtr getSpriteImageHd(int id);
+    bool m_loaded = false;
+    bool m_isHdMod = false;
     uint32 m_signature;
     int m_spritesCount;
     int m_spritesOffset;
-    int m_spriteSize = 32;
+    int m_spriteSize;
     FileStreamPtr m_spritesFile;
     std::vector<std::vector<uint8_t>> m_sprites;
+    std::unordered_map<uint32, std::string> m_cachedData;
 };
 
 extern SpriteManager g_sprites;

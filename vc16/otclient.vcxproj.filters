@@ -755,6 +755,9 @@
     <ClInclude Include="..\src\client\healthbars.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\framework\util\pngunpacker.h">
+      <Filter>Header Files\framework\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\src\otclient.rc">
