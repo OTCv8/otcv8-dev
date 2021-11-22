@@ -173,11 +173,11 @@ local top3 = UI.DualLabel("-", "0", {maxWidth = 200}, impactWindow.contentsPanel
 local top4 = UI.DualLabel("-", "0", {maxWidth = 200}, impactWindow.contentsPanel)
 local top5 = UI.DualLabel("-", "0", {maxWidth = 200}, impactWindow.contentsPanel)
 
-top1.left:setWidth(145)
-top2.left:setWidth(145)
-top3.left:setWidth(145)
-top4.left:setWidth(145)
-top5.left:setWidth(145)
+top1.left:setWidth(135)
+top2.left:setWidth(135)
+top3.left:setWidth(135)
+top4.left:setWidth(135)
+top5.left:setWidth(135)
 
 
 --- healing
@@ -739,6 +739,7 @@ macro(500, function()
       for i, word in ipairs(words) do
         name = name .. " " .. capitalFistLetter(word)
       end
+      name = name:len() < 20 and name or name:sub(1,17).."..."
       name = name:trim()..": "
       if i == 1 then
         first = {l=name, r=val}
