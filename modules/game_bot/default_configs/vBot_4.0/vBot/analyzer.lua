@@ -782,7 +782,7 @@ function refreshLoot()
         label1.count:setText(niceFormat(v.count))
         label1.count:setColor(getColor(price))
         local tooltipName = v.count > 1 and v.name.."s" or v.name
-        label1:setTooltip(v.count .. "x " .. tooltipName .. " (Value: "..getPrice(v.name).."gp, Sum: "..price.."gp)")
+        label1:setTooltip(v.count .. "x " .. tooltipName .. " (Value: "..format_thousand(getPrice(v.name)).."gp, Sum: "..format_thousand(price).."gp)")
     end
     local height = getPanelHeight(lootItems)
     lootItems:setHeight(height)
@@ -802,7 +802,7 @@ function refreshWaste()
       label1.count:setText(niceFormat(v.count))
       label1.count:setColor(getColor(price))
       local tooltipName = v.count > 1 and v.name.."s" or v.name
-      label1:setTooltip(v.count .. "x " .. tooltipName .. " (Value: "..getPrice(v.name).."gp, Sum: "..price.."gp)")
+      label1:setTooltip(v.count .. "x " .. tooltipName .. " (Value: "..format_thousand(getPrice(v.name)).."gp, Sum: "..format_thousand(price).."gp)")
     end
     local height = getPanelHeight(supplyItems)
     supplyItems:setHeight(height)    
