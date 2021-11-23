@@ -486,6 +486,7 @@ local function setFrames()
       end
   end 
 end 
+setFrames()
 
 onContainerOpen(function(container, previousContainer)
   setFrames()
@@ -565,6 +566,7 @@ settingsWindow.RarityFrames:setOn(storage.analyzers.rarityFrames)
 settingsWindow.RarityFrames.onClick = function(widget)
   storage.analyzers.rarityFrames = not storage.analyzers.rarityFrames
   widget:setOn(storage.analyzers.rarityFrames)
+  setFrames()
 end
 
 
@@ -972,20 +974,18 @@ function reportStats()
 end
 
 function damageHour()
-  local d = sumT(dmgTable)
   if uptime < 5*60 then
     return totalDmg
   else
-    return hourVal(d)
+    return hourVal(totalDmg)
   end
 end
 
 function healHour()
-  local d = sumT(healTable)
   if uptime < 5*60 then
     return totalHeal
   else
-    return hourVal(d)
+    return hourVal(healTable)
   end
 end
 

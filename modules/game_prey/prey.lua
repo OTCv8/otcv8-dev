@@ -2,6 +2,8 @@
 
 local preyWindow
 local preyButton
+local preyTracker
+local preyTrackerButton
 local msgWindow
 local bankGold = 0
 local inventoryGold = 0
@@ -57,7 +59,8 @@ function timeleftTranslation(timeleft, forPreyTimeleft) -- in seconds
     return "" .. minutes .. "m"
   end
   return tr("Available in") .. " " .. minutes .. "m"
-end  
+end
+  
 function init()
   connect(g_game, {
     onGameStart = check,
@@ -74,6 +77,11 @@ function init()
 
   preyWindow = g_ui.displayUI('prey')
   preyWindow:hide()
+  preyTracker = g_ui.createWidget('PreyTracker', modules.game_interface.getRightPanel())
+  preyTracker:setup()
+  preyTracker:setContentMaximumHeight(100)
+  preyTracker:setContentMinimumHeight(47)
+  preyTracker:hide()
   if g_game.isOnline() then
     check()
   end
@@ -96,7 +104,11 @@ function terminate()
   if preyButton then
     preyButton:destroy()
   end
+  if preyTrackerButton then
+    preyTrackerButton:destroy()
+  end
   preyWindow:destroy()
+  preyTracker:destroy()
   if msgWindow then
     msgWindow:destroy()
     msgWindow = nil
@@ -106,11 +118,22 @@ end
 function check()
   if g_game.getFeature(GamePrey) then
     if not preyButton then
-      preyButton = modules.client_topmenu.addRightGameToggleButton('preyButton', tr('Preys'), '/images/topbuttons/prey', toggle)
+      preyButton = modules.client_topmenu.addRightGameToggleButton('preyButton', tr('Prey Dialog'), '/images/topbuttons/prey_window', toggle)
+    end
+    if not preyTrackerButton then
+      preyTrackerButton = modules.client_topmenu.addRightGameToggleButton("preyTrackerButton", tr('Prey Tracker'), '/images/topbuttons/prey', toggleTracker)
     end
   elseif preyButton then
     preyButton:destroy()
     preyButton = nil
+  end
+end
+
+function toggleTracker()
+  if preyTracker:isVisible() then
+    preyTracker:hide()
+  else
+    preyTracker:show()
   end
 end
 
@@ -148,11 +171,28 @@ function onPreyFreeRolls(slot, timeleft)
   prey.bottomLabel:setText(tr("Free list reroll") .. ": \n" .. timeleftTranslation(timeleft * 60))
 end
 
+local regex = [[Duration: ([^m]+)]]
 function onPreyTimeLeft(slot, timeleft)
-  local prey = preyWindow["slot" .. (slot + 1)]
+  local percent = timeleft / 7200
+  slot = "slot" .. (slot + 1)
+  local prey = preyWindow[slot]
+  local tracker = preyTracker.contentsPanel[slot]
   if not prey then return end
   if prey.state ~= "active" then
     return
+  end
+  tracker.time:setPercent(percent*100)
+  local text = tracker.time:getTooltip()
+  local re = regexMatch(text, regex)
+  local oldTime = re[1][2]
+  local newTime = timeleftTranslation(timeleft, true)
+  newTime = newTime:sub(1,newTime:len()-1)
+  text = text:gsub(oldTime, newTime)
+  for i, element in pairs({tracker.creatureName, tracker.creature, tracker.preyType, tracker.time}) do
+    element:setTooltip(text)
+    element.onClick = function()
+      show()
+    end
   end
   prey.description:setText(tr("Time left") .. ": " .. timeleftTranslation(timeleft, true))  
 end
@@ -164,6 +204,11 @@ end
 
 function onPreyLocked(slot, unlockState, timeUntilFreeReroll)
   local prey = preyWindow["slot" .. (slot + 1)]
+  local tracker = preyTracker.contentsPanel["slot" .. (slot + 1)]
+  if tracker then
+    tracker:hide()
+    preyTracker:setContentMaximumHeight(preyTracker:getHeight()-20)
+  end
   if not prey then return end
   prey.state = "locked"
   prey.title:setText(tr("Prey Locked"))
@@ -191,6 +236,20 @@ end
 
 function onPreyInactive(slot, timeUntilFreeReroll)
   local prey = preyWindow["slot" .. (slot + 1)]
+  local tracker = preyTracker.contentsPanel["slot"..(slot + 1)]
+  if tracker then
+    tracker.creature:hide()
+    tracker.noCreature:show()
+    tracker.creatureName:setText("Inactive")
+    tracker.time:setPercent(0)
+    tracker.preyType:setImageSource("/images/game/prey/prey_no_bonus")
+    for i, element in pairs({tracker.creatureName, tracker.creature, tracker.preyType, tracker.time}) do
+      element:setTooltip("Inactive Prey. \n\nClick in this window to open the prey dialog.")
+      element.onClick = function()
+        show()
+      end
+    end
+  end
   if not prey then return end
   prey.state = "inactive"
   prey.title:setText(tr("Prey Inactive"))
@@ -215,8 +274,71 @@ function onPreyInactive(slot, timeUntilFreeReroll)
   end  
 end
 
+function getIconPath(bonusType)
+  local path = "/images/game/prey/"
+  if bonusType == PREY_BONUS_DAMAGE_BOOST then
+    return path.."prey_damage"
+  elseif bonusType == PREY_BONUS_DAMAGE_REDUCTION then
+    return path.."prey_defense"
+  elseif bonusType == PREY_BONUS_XP_BONUS then
+    return path.."prey_xp"
+  elseif bonusType == PREY_BONUS_IMPROVED_LOOT then
+    return path.."prey_loot"
+  end
+end
+
+function getBonusDescription(bonusType)
+  if bonusType == PREY_BONUS_DAMAGE_BOOST then
+    return "Damage Boost"
+  elseif bonusType == PREY_BONUS_DAMAGE_REDUCTION then
+    return "Damage Reduction"
+  elseif bonusType == PREY_BONUS_XP_BONUS then
+    return "XP Bonus"
+  elseif bonusType == PREY_BONUS_IMPROVED_LOOT then
+    return "Improved Loot"
+  end
+end
+
+function getTooltipBonusDescription(bonusType, bonusValue)
+  if bonusType == PREY_BONUS_DAMAGE_BOOST then
+    return "You deal +"..bonusValue.."% extra damage against your prey creature."
+  elseif bonusType == PREY_BONUS_DAMAGE_REDUCTION then
+    return "You take "..bonusValue.."% less damage from your prey creature."
+  elseif bonusType == PREY_BONUS_XP_BONUS then
+    return "Killing your prey creature rewards +"..bonusValue.."% extra XP."
+  elseif bonusType == PREY_BONUS_IMPROVED_LOOT then
+    return "Your creature has a +"..bonusValue.."% chance to drop additional loot."
+  end
+end
+
+function capitalFormatStr(str)
+  local formatted = ""
+  str = string.split(str, " ")
+  for i, word in ipairs(str) do
+    formatted = formatted .. " " .. (string.gsub(word, "^%l", string.upper))
+  end
+  return formatted:trim()
+end
+
 function onPreyActive(slot, currentHolderName, currentHolderOutfit, bonusType, bonusValue, bonusGrade, timeLeft, timeUntilFreeReroll)
   local prey = preyWindow["slot" .. (slot + 1)]
+  local tracker = preyTracker.contentsPanel["slot"..(slot + 1)]
+  currentHolderName = capitalFormatStr(currentHolderName)
+  if tracker then
+    local percent = (timeLeft / 7200)*100
+    tracker.creature:show()
+    tracker.noCreature:hide()
+    tracker.creatureName:setText(currentHolderName)
+    tracker.creature:setOutfit(currentHolderOutfit)
+    tracker.preyType:setImageSource(getIconPath(bonusType))
+    tracker.time:setPercent(percent)
+    for i, element in pairs({tracker.creatureName, tracker.creature, tracker.preyType, tracker.time}) do
+      element:setTooltip("Creature: "..currentHolderName .. "\nDuration: ".. timeleftTranslation(timeLeft, true) .."\nValue: "..bonusGrade.."/10".."\n"..getTooltipBonusDescription(bonusType,bonusValue).."\n\nClick in this window to open the prey dialog.")
+      element.onClick = function()
+        show()
+      end
+    end
+  end
   if not prey then return end
   prey.state = "active"
   prey.title:setText(currentHolderName)
@@ -253,6 +375,20 @@ end
 
 function onPreySelection(slot, bonusType, bonusValue, bonusGrade, names, outfits, timeUntilFreeReroll)
   local prey = preyWindow["slot" .. (slot + 1)]
+  local tracker = preyTracker.contentsPanel["slot"..(slot + 1)]
+  if tracker then
+    tracker.creature:hide()
+    tracker.noCreature:show()
+    tracker.creatureName:setText("Inactive")
+    tracker.time:setPercent(0)
+    tracker.preyType:setImageSource("/images/game/prey/prey_no_bonus")
+    for i, element in pairs({tracker.creatureName, tracker.creature, tracker.preyType, tracker.time}) do
+      element:setTooltip("Inactive Prey. \n\nClick in this window to open the prey dialog.")
+      element.onClick = function()
+        show()
+      end
+    end
+  end
   if not prey then return end
   prey.state = "selection"
   prey.title:setText(tr("Select monster"))

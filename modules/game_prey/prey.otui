@@ -197,3 +197,82 @@ MainWindow
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     @onClick: modules.game_prey.hide()
+
+
+PreyCreature < Panel
+  height: 22
+  margin-top: 3
+  @onClick: modules.game_prey.show()
+
+  UICreature
+    id: creature
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    size: 20 20
+
+  UIWidget
+    id: noCreature
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    size: 20 20
+    image-source: /images/game/prey/prey_inactive
+
+  UIWidget
+    id: preyType
+    anchors.left: prev.right
+    margin-left: 5
+    anchors.verticalCenter: prev.verticalCenter
+    size: 15 15
+
+  UIWidget
+    id: creatureName
+    anchors.left: prev.right
+    margin-left: 5
+    anchors.top: parent.top
+    anchors.bottom: prev.bottom
+    margin-bottom: 7
+    anchors.right: parent.right
+    text: Inactive
+    font: verdana-11px-rounded
+    text-align: left     
+
+  ProgressBar
+    id: time
+    anchors.left: prev.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-bottom: 2
+    height: 6
+    background-color: #c28400
+    phantom: false    
+
+PreyTracker < MiniWindow
+  id: preyTracker
+  !text: tr('Preys')
+  height: 95
+  icon: /images/topbuttons/prey
+
+  MiniWindowContents
+    padding-left: 5
+    padding-right: 5
+    padding-top: 5
+    layout: verticalBox
+
+    Label
+      !text: tr('Prey Creatures')
+      font: verdana-11px-rounded   
+
+    HorizontalSeparator
+      margin-top: 1
+
+    PreyCreature
+      id: slot1
+      margin-top: 5
+
+    PreyCreature
+      id: slot2
+
+    PreyCreature
+      id: slot3
