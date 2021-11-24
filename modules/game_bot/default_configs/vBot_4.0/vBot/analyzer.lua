@@ -985,7 +985,7 @@ function healHour()
   if uptime < 5*60 then
     return totalHeal
   else
-    return hourVal(healTable)
+    return hourVal(totalHeal)
   end
 end
 
