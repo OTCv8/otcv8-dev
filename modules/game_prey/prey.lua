@@ -1,4 +1,5 @@
 -- sponsored by kivera-global.com
+-- remade by Vithrax#5814
 
 local preyWindow
 local preyButton
@@ -44,21 +45,11 @@ function timeleftTranslation(timeleft, forPreyTimeleft) -- in seconds
     if forPreyTimeleft then
       return tr("infinite bonus")
     end
-    return tr("Available now")
+    return tr("Free")
   end
-  local minutes = math.ceil(timeleft / 60)
-  local hours = math.floor(minutes / 60)
-  minutes = minutes - hours * 60
-  if hours > 0 then
-    if forPreyTimeleft then
-      return "" .. hours .. "h " .. minutes .. "m"    
-    end
-    return tr("Available in") .. " " .. hours .. "h " .. minutes .. "m"
-  end   
-  if forPreyTimeleft then
-    return "" .. minutes .. "m"
-  end
-  return tr("Available in") .. " " .. minutes .. "m"
+  local hours = string.format("%02.f", math.floor(timeleft/3600))
+  local mins = string.format("%02.f", math.floor(timeleft/60 - (hours*60)))
+  return hours .. ":" .. mins
 end
   
 function init()
@@ -84,6 +75,40 @@ function init()
   preyTracker:hide()
   if g_game.isOnline() then
     check()
+  end
+  setUnsupportedSettings()
+end
+
+local descriptionTable = {
+  ["shopPermButton"] = "Go to the Store to purchase the Permanent Prey Slot. Once you have completed the purchase, you can activate a prey here, no matter if your character is on a free or a Premium account.",
+  ["shopTempButton"] = "You can activate this prey whenever your account has Premium Status.",
+  ["preyWindow"] = "",
+  ["noBonusIcon"] = "This prey is not available for your character yet.\nCheck the large blue button(s) to learn how to unlock this prey slot",
+  ["selectPrey"] = "Click here to get a bonus with a higher value. The bonus for your prey will be selected randomly from one of the following: damage boost, damage reduction, bonus XP, improved loot. Your prey will be active for 2 hours hunting time again. Your prey creature will stay the same.",
+  ["pickSpecificPrey"] = "Available only for protocols 12+",
+  ["rerollButton"] = "If you like to select another prey crature, click here to get a new list with 9 creatures to choose from.\nThe newly selected prey will be active for 2 hours hunting time again.",
+  ["preyCandidate"] = "Select a new prey creature for the next 2 hours hunting time.",
+  ["choosePreyButton"] = "Click on this button to confirm selected monsters as your prey creature for the next 2 hours hunting time."
+}
+
+function onHover(widget)
+  if type(widget) == "string" then
+    return preyWindow.description:setText(descriptionTable[widget])
+  elseif type(widget) == "number" then
+    local slot = "slot" .. (widget + 1)
+    local tracker = preyTracker.contentsPanel[slot]
+    local desc = tracker.time:getTooltip()
+    desc = desc:sub(1,desc:len()-46)
+    return preyWindow.description:setText(desc)
+  end
+  if widget:isVisible() then
+    local id = widget:getId()
+    local desc = descriptionTable[id]
+    if desc then
+      preyWindow.description:setText(desc)
+    else
+      print(id)
+    end
   end
 end
 
@@ -112,6 +137,21 @@ function terminate()
   if msgWindow then
     msgWindow:destroy()
     msgWindow = nil
+  end
+end
+
+function setUnsupportedSettings()
+  local t = {"slot1", "slot2", "slot3"}
+  for i, slot in pairs(t) do
+    local panel = preyWindow[slot]
+    for j, state in pairs({panel.active, panel.inactive}) do
+      state.select.price.text:setText("-------")
+    end
+    panel.active.autoRerollPrice.text:setText("-")
+    panel.active.lockPreyPrice.text:setText("-")
+    panel.active.choose.price.text:setText(1)
+    panel.active.autoReroll.autoRerollCheck:disable()
+    panel.active.lockPrey.lockPreyCheck:disable()
   end
 end
 
@@ -164,24 +204,27 @@ end
 
 function onPreyFreeRolls(slot, timeleft)
   local prey = preyWindow["slot" .. (slot + 1)]
+  local percent = (timeleft / 2 * 60 * 60) * 100
+  local desc = timeleftTranslation(timeleft * 60)
   if not prey then return end
-  if prey.state ~= "active" and prey.state ~= "selection" then
-    return
+  for i, panel in pairs({prey.active, prey.inactive}) do
+    local progressBar = panel.reroll.button.time
+    local price = panel.reroll.button.price.text
+    progressBar:setPercent(percent)
+    progressBar:setText(desc)
+    if timeleft == 0 then
+      price:setText("Free")
+    end
   end
-  prey.bottomLabel:setText(tr("Free list reroll") .. ": \n" .. timeleftTranslation(timeleft * 60))
 end
 
 local regex = [[Duration: ([^m]+)]]
 function onPreyTimeLeft(slot, timeleft)
-  local percent = timeleft / 7200
+  -- tracker
+  local percent = (timeleft / 2 * 60 * 60) * 100
   slot = "slot" .. (slot + 1)
-  local prey = preyWindow[slot]
   local tracker = preyTracker.contentsPanel[slot]
-  if not prey then return end
-  if prey.state ~= "active" then
-    return
-  end
-  tracker.time:setPercent(percent*100)
+  tracker.time:setPercent(percent)
   local text = tracker.time:getTooltip()
   local re = regexMatch(text, regex)
   local oldTime = re[1][2]
@@ -194,48 +237,70 @@ function onPreyTimeLeft(slot, timeleft)
       show()
     end
   end
-  prey.description:setText(tr("Time left") .. ": " .. timeleftTranslation(timeleft, true))  
+  -- main window
+  local prey = preyWindow[slot]
+  if not prey then return end
+  local progressbar = prey.active.creatureAndBonus.creature.timeLeft
+  local desc = timeleftTranslation(timeleft * 60)
+  progressbar:setPercent(percent)
+  progressbar:setText(desc)
 end
 
 function onPreyPrice(price)
   rerollPrice = price
-  preyWindow.rerollPrice:setText(tr("Reroll price") .. ":\n" .. price)
+  local t = {"slot1", "slot2", "slot3"}
+  for i, slot in pairs(t) do
+    local panel = preyWindow[slot]
+    for j, state in pairs({panel.active, panel.inactive}) do
+      local price = state.reroll.price.text
+      local progressBar = state.reroll.button.time
+      if progressBar:getText() ~= "Free" then
+        price:setText(comma_value(rerollPrice))
+      else
+        price:setText("0")
+        progressBar:setPercent(0)
+      end
+    end
+  end
+end
+
+function setTimeUntilFreeReroll(slot, timeUntilFreeReroll) -- minutes
+  local prey = preyWindow["slot"..(slot + 1)]
+  if not prey then return end
+  local percent = (timeUntilFreeReroll / (20 * 60)) * 100
+  local desc = timeleftTranslation(timeUntilFreeReroll * 60)
+  for i, panel in pairs({prey.active, prey.inactive}) do
+    local reroll = panel.reroll.button.time
+    reroll:setPercent(percent)
+    reroll:setText(desc)
+    local price = panel.reroll.price.text
+    if timeUntilFreeReroll > 0 then
+      price:setText(comma_value(rerollPrice))
+    else
+      price:setText("Free")
+    end
+  end
 end
 
 function onPreyLocked(slot, unlockState, timeUntilFreeReroll)
-  local prey = preyWindow["slot" .. (slot + 1)]
-  local tracker = preyTracker.contentsPanel["slot" .. (slot + 1)]
+  -- tracker
+  slot = "slot" .. (slot + 1)
+  local tracker = preyTracker.contentsPanel[slot]
   if tracker then
     tracker:hide()
     preyTracker:setContentMaximumHeight(preyTracker:getHeight()-20)
   end
+  -- main window
+  local prey = preyWindow[slot]
   if not prey then return end
-  prey.state = "locked"
-  prey.title:setText(tr("Prey Locked"))
-  prey.list:hide()
-  prey.listScrollbar:hide()
-  prey.creature:hide()
-  prey.description:hide()
-  prey.bonuses:hide()
-  prey.button:hide()
-  prey.bottomLabel:show()
-  if unlockState == 0 then
-    prey.bottomLabel:setText(tr("You need to have premium account and buy this prey slot in the game store."))
-  elseif unlockState == 1 then
-    prey.bottomLabel:setText(tr("You need to buy this prey slot in the game store."))
-  else
-    prey.bottomLabel:setText(tr("You can't unlock it."))
-    prey.bottomButton:hide()
-  end
-  if (unlockState == 0 or unlockState == 1) and modules.game_shop then
-    prey.bottomButton:setText("Open game store")
-    prey.bottomButton.onClick = function() hide() modules.game_shop.show() end
-    prey.bottomButton:show()
-  end
+  prey.title:setText("Locked")
+  prey.inactive:hide()
+  prey.active:hide()
+  prey.locked:show()
 end
 
 function onPreyInactive(slot, timeUntilFreeReroll)
-  local prey = preyWindow["slot" .. (slot + 1)]
+  -- tracker
   local tracker = preyTracker.contentsPanel["slot"..(slot + 1)]
   if tracker then
     tracker.creature:hide()
@@ -250,31 +315,55 @@ function onPreyInactive(slot, timeUntilFreeReroll)
       end
     end
   end
+  -- main window
+  setTimeUntilFreeReroll(slot, timeUntilFreeReroll)
+  local prey = preyWindow["slot"..(slot + 1)]
   if not prey then return end
-  prey.state = "inactive"
-  prey.title:setText(tr("Prey Inactive"))
-  prey.list:hide()
-  prey.listScrollbar:hide()
-  prey.creature:hide()
-  prey.description:hide()
-  prey.bonuses:hide()
-  prey.button:hide()
-  prey.bottomLabel:hide()
-  
-  prey.bottomLabel:setText(tr("Free list reroll")..": \n" .. timeleftTranslation(timeUntilFreeReroll * 60)) 
-  prey.bottomLabel:show()
-  if timeUntilFreeReroll > 0 then
-    prey.bottomButton:setText(tr("Buy list reroll"))
-  else
-    prey.bottomButton:setText(tr("Free list reroll"))
-  end
-  prey.bottomButton:show()
-  prey.bottomButton.onClick = function()
+  prey.active:hide()
+  prey.locked:hide()
+  prey.inactive:show()
+  local rerollButton = prey.inactive.reroll.button.rerollButton
+  rerollButton:setImageSource("/images/game/prey/prey_reroll_blocked")
+  rerollButton:disable()
+  rerollButton.onClick = function()
     g_game.preyAction(slot, PREY_ACTION_LISTREROLL, 0)
-  end  
+  end
 end
 
-function getIconPath(bonusType)
+function setBonusGradeStars(slot, grade)
+  local prey = preyWindow["slot"..(slot + 1)]
+  local gradePanel = prey.active.creatureAndBonus.bonus.grade
+
+  gradePanel:destroyChildren()
+  for i=1,10 do
+    if i <= grade then
+      local widget = g_ui.createWidget("Star", gradePanel)
+      widget.onHoverChange = function(widget,hovered)
+        onHover(slot)
+      end
+    else
+      local widget = g_ui.createWidget("NoStar", gradePanel)
+      widget.onHoverChange = function(widget,hovered)
+        onHover(slot)
+      end
+    end
+  end
+end
+
+function getBigIconPath(bonusType)
+  local path = "/images/game/prey/"
+  if bonusType == PREY_BONUS_DAMAGE_BOOST then
+    return path.."prey_bigdamage"
+  elseif bonusType == PREY_BONUS_DAMAGE_REDUCTION then
+    return path.."prey_bigdefense"
+  elseif bonusType == PREY_BONUS_XP_BONUS then
+    return path.."prey_bigxp"
+  elseif bonusType == PREY_BONUS_IMPROVED_LOOT then
+    return path.."prey_bigloot"
+  end
+end
+
+function getSmallIconPath(bonusType)
   local path = "/images/game/prey/"
   if bonusType == PREY_BONUS_DAMAGE_BOOST then
     return path.."prey_damage"
@@ -320,61 +409,67 @@ function capitalFormatStr(str)
   return formatted:trim()
 end
 
+function onItemBoxChecked(widget)
+
+  for i, slot in pairs({"slot1", "slot2", "slot3"}) do
+    local list = preyWindow[slot].inactive.list:getChildren()
+    if table.find(list, widget) then
+      for i, child in pairs(list) do
+        if child ~= widget then
+          child:setChecked(false)
+        end
+      end
+    end
+  end
+  widget:setChecked(true)
+end
+
 function onPreyActive(slot, currentHolderName, currentHolderOutfit, bonusType, bonusValue, bonusGrade, timeLeft, timeUntilFreeReroll)
-  local prey = preyWindow["slot" .. (slot + 1)]
   local tracker = preyTracker.contentsPanel["slot"..(slot + 1)]
   currentHolderName = capitalFormatStr(currentHolderName)
+  local percent = (timeLeft / 2 * 60 * 60)*100
   if tracker then
-    local percent = (timeLeft / 7200)*100
     tracker.creature:show()
     tracker.noCreature:hide()
     tracker.creatureName:setText(currentHolderName)
     tracker.creature:setOutfit(currentHolderOutfit)
-    tracker.preyType:setImageSource(getIconPath(bonusType))
+    tracker.preyType:setImageSource(getSmallIconPath(bonusType))
     tracker.time:setPercent(percent)
     for i, element in pairs({tracker.creatureName, tracker.creature, tracker.preyType, tracker.time}) do
-      element:setTooltip("Creature: "..currentHolderName .. "\nDuration: ".. timeleftTranslation(timeLeft, true) .."\nValue: "..bonusGrade.."/10".."\n"..getTooltipBonusDescription(bonusType,bonusValue).."\n\nClick in this window to open the prey dialog.")
+      element:setTooltip("Creature: "..currentHolderName .. "\nDuration: ".. timeleftTranslation(timeLeft, true) .."\nValue: " ..bonusGrade.."/10".."\nType: " .. getBonusDescription(bonusType) ..  "\n"..getTooltipBonusDescription(bonusType,bonusValue).."\n\nClick in this window to open the prey dialog.")
       element.onClick = function()
         show()
       end
     end
   end
+  local prey = preyWindow["slot" .. (slot + 1)]  
   if not prey then return end
-  prey.state = "active"
+  prey.inactive:hide()
+  prey.locked:hide()
+  prey.active:show()
   prey.title:setText(currentHolderName)
-  prey.list:hide()
-  prey.listScrollbar:hide()
-  prey.creature:show()
-  prey.creature:setOutfit(currentHolderOutfit)
-  prey.description:setText(tr("Time left") .. ": " .. timeleftTranslation(timeLeft, true))
-  prey.description:show()
-  prey.bonuses:setText(bonusDescription(bonusType, bonusValue, bonusGrade))
-  prey.bonuses:show()
-  prey.button:setText(tr("Bonus reroll"))
-  prey.button:show()
-  prey.bottomLabel:setText(tr("Free list reroll")..": \n" .. timeleftTranslation(timeUntilFreeReroll * 60)) 
-  prey.bottomLabel:show()
-  if timeUntilFreeReroll > 0 then
-    prey.bottomButton:setText(tr("Buy list reroll"))
-  else
-    prey.bottomButton:setText(tr("Free list reroll"))
+  local creatureAndBonus = prey.active.creatureAndBonus
+  creatureAndBonus.creature:setOutfit(currentHolderOutfit)
+  setTimeUntilFreeReroll(slot, timeUntilFreeReroll)
+  creatureAndBonus.bonus.icon:setImageSource(getBigIconPath(bonusType))
+  creatureAndBonus.bonus.icon.onHoverChange = function(widget, hovered)
+    onHover(slot)
   end
-  prey.bottomButton:show()
-  
-  prey.button.onClick = function()
-    if bonusRerolls == 0 then
-      return showMessage(tr("Error"), tr("You don't have any bonus rerolls.\nYou can buy them in ingame store."))
-    end    
+  setBonusGradeStars(slot, bonusGrade)
+  creatureAndBonus.timeLeft:setPercent(percent)
+  creatureAndBonus.timeLeft:setText(timeleftTranslation(timeLeft, true))
+  -- bonus reroll
+  prey.active.choose.selectPrey.onClick = function()
     g_game.preyAction(slot, PREY_ACTION_BONUSREROLL, 0)
   end
-
-  prey.bottomButton.onClick = function()
+  -- creature reroll
+  prey.active.reroll.button.rerollButton.onClick = function()
     g_game.preyAction(slot, PREY_ACTION_LISTREROLL, 0)
   end
 end
 
 function onPreySelection(slot, bonusType, bonusValue, bonusGrade, names, outfits, timeUntilFreeReroll)
-  local prey = preyWindow["slot" .. (slot + 1)]
+  -- tracker
   local tracker = preyTracker.contentsPanel["slot"..(slot + 1)]
   if tracker then
     tracker.creature:hide()
@@ -389,32 +484,35 @@ function onPreySelection(slot, bonusType, bonusValue, bonusGrade, names, outfits
       end
     end
   end
+  -- main window
+  local prey = preyWindow["slot" .. (slot + 1)]
+  setTimeUntilFreeReroll(slot, timeUntilFreeReroll)
   if not prey then return end
-  prey.state = "selection"
+  prey.active:hide()
+  prey.locked:hide()
+  prey.inactive:show()
   prey.title:setText(tr("Select monster"))
-  prey.list:show()
-  prey.listScrollbar:show()
-  prey.creature:hide()
-  prey.description:hide()
-  prey.bonuses:hide()
-  prey.button:setText(tr("Select"))
-  prey.button:show()
-  prey.bottomLabel:setText("Free list reroll: \n" .. timeleftTranslation(timeUntilFreeReroll * 60)) 
-  prey.bottomLabel:show()
-  prey.bottomButton:hide()
-  prey.list:destroyChildren()
+  local rerollButton = prey.inactive.reroll.button.rerollButton
+  rerollButton:setImageSource("/images/game/prey/prey_reroll_blocked")
+  rerollButton:disable()
+  local list = prey.inactive.list
+  list:destroyChildren()
   for i, name in ipairs(names) do
-    local label = g_ui.createWidget("PreySelectionLabel", prey.list)
-    label:setText(name)  
-    label.creature:setOutfit(outfits[i])
-  end
-  prey.button.onClick = function()
-    local child = prey.list:getFocusedChild()
-    if not child then 
-          return showMessage(tr("Error"), tr("Select monster to proceed."))
+    local box = g_ui.createWidget("PreyCreatureBox", list)
+    name = capitalFormatStr(name)
+    box:setTooltip(name)
+    box.creature:setOutfit(outfits[i])
+    box.onHoverChange = function(widget, hovered)
+      onHover("preyCandidate")
     end
-    local index = prey.list:getChildIndex(child)
-    g_game.preyAction(slot, PREY_ACTION_MONSTERSELECTION, index - 1)
+  end
+  prey.inactive.choose.choosePreyButton.onClick = function()
+    for i, child in pairs(list:getChildren()) do
+      if child:isChecked() then
+        return g_game.preyAction(slot, PREY_ACTION_MONSTERSELECTION, i - 1)
+      end
+    end
+    return showMessage(tr("Error"), tr("Select monster to proceed."))
   end
 end
 
@@ -425,11 +523,11 @@ function onResourceBalance(type, balance)
     inventoryGold = balance
   elseif type == 10 then -- bonus rerolls
     bonusRerolls = balance
-    preyWindow.bonusRerolls:setText(tr("Available bonus rerolls") .. ":\n" .. balance)
+    preyWindow.wildCards:setText(balance)
   end
   
   if type == 0 or type == 1 then
-    preyWindow.balance:setText(tr("Balance") .. ":\n" .. (bankGold + inventoryGold))
+    preyWindow.gold:setText(comma_value(bankGold + inventoryGold))
   end
 end
 
