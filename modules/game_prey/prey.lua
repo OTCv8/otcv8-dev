@@ -502,9 +502,6 @@ function onPreySelection(slot, bonusType, bonusValue, bonusGrade, names, outfits
     name = capitalFormatStr(name)
     box:setTooltip(name)
     box.creature:setOutfit(outfits[i])
-    box.onHoverChange = function(widget, hovered)
-      onHover("preyCandidate")
-    end
   end
   prey.inactive.choose.choosePreyButton.onClick = function()
     for i, child in pairs(list:getChildren()) do
