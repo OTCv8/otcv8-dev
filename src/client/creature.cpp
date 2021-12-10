@@ -690,6 +690,8 @@ void Creature::setOutfit(const Outfit& outfit)
             return;
         m_outfit.setAuxId(outfit.getAuxId());
         m_outfit.setCategory(outfit.getCategory());
+        m_outfit.setWings(0);
+        m_outfit.setAura(0);
     } else {
         if (outfit.getId() > 0 && !g_things.isValidDatId(outfit.getId(), ThingCategoryCreature))
             return;
