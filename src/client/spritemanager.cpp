@@ -349,7 +349,7 @@ bool SpriteManager::loadHdSpr(std::string file)
 
     try {
         auto inFilePath = g_resources.guessFilePath(file, "cwm");
-        auto spritesFile = g_resources.openFile(inFilePath, true);
+        auto spritesFile = g_resources.openFile(inFilePath, g_game.getFeature(Otc::GameDontCacheFiles));
 
         std::string fileBuffer = std::string(spritesFile->size(), '\0');
         spritesFile->read(fileBuffer.data(), fileBuffer.size());
