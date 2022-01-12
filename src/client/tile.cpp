@@ -241,10 +241,26 @@ void Tile::drawTexts(Point dest)
     }
 }
 
+void Tile::drawWidget(Point dest)
+{
+    if (!m_widget)
+        return;
+    
+    Rect dest_rect = m_widget->getRect();
+    dest_rect = Rect(dest - Point(dest_rect.width() / 2 - g_sprites.spriteSize(), dest_rect.height() / 2 - g_sprites.spriteSize()), dest_rect.width(), dest_rect.height());
+    m_widget->setRect(dest_rect);
+    m_widget->draw(dest_rect, Fw::ForegroundPane);
+}
+
 void Tile::clean()
 {
     while(!m_things.empty())
         removeThing(m_things.front());
+    
+    if (m_widget) {
+        m_widget->destroy();
+        m_widget = nullptr;
+    }
 }
 
 void Tile::addWalkingCreature(const CreaturePtr& creature)

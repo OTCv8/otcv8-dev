@@ -5,6 +5,8 @@
 #include <functional>
 #include <vector>
 
+class HttpSession;
+
 struct HttpResult {
     std::string url;
     int operationId = 0;
@@ -18,6 +20,7 @@ struct HttpResult {
     std::string postData;
     std::vector<uint8_t> response;
     std::string error;
+    std::weak_ptr<HttpSession> session;
 };
 
 

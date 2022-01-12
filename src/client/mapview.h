@@ -38,11 +38,11 @@ public:
     ~MapView();
     void drawMapBackground(const Rect& rect, const TilePtr& crosshairTile = nullptr);
     void drawMapForeground(const Rect& rect);
-    void drawTexts(const Rect& rect, const Rect& srcRect);
 
 private:
     void drawFloor(short floor, const Position& cameraPosition, const TilePtr& crosshairTile = nullptr);
     void drawTileTexts(const Rect& rect, const Rect& srcRect);
+    void drawTileWidget(const Rect& rect, const Rect& srcRect);
     void updateGeometry(const Size& visibleDimension, const Size& optimizedSize);
     void updateVisibleTilesCache();
     void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
