@@ -354,10 +354,6 @@ bool SpriteManager::loadCwmSpr(std::string file)
         auto inFilePath = g_resources.guessFilePath(file, "cwm");
         auto spritesFile = g_resources.openFile(inFilePath, g_game.getFeature(Otc::GameDontCacheFiles));
 
-        std::string fileBuffer = std::string(spritesFile->size(), '\0');
-        spritesFile->read(fileBuffer.data(), fileBuffer.size());
-        spritesFile->close();
-
         uint8_t version = spritesFile->getU8();
         if (version != 0x01) {
             g_logger.error(stdext::format("Invalid CWM file version - %s", file));
