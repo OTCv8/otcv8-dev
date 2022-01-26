@@ -41,7 +41,7 @@ Outfit::Outfit()
     resetClothes();
 }
 
-void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase, bool animate, LightView* lightView)
+void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase, bool animate, LightView* lightView, bool ui)
 {
     // direction correction
     if (m_category != ThingCategoryCreature)
@@ -86,11 +86,11 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         auto idleAnimator = type->getIdleAnimator();
         if (idleAnimator) {
             if (walkAnimationPhase > 0) {
-                animationPhase += idleAnimator->getAnimationPhases() - 1;;
+                animationPhase += idleAnimator->getAnimationPhases() - 1;
             } else {
                 animationPhase = idleAnimator->getPhase();
             }
-        } else if (type->isAnimateAlways()) {
+        } else if (type->isAnimateAlways() || ui) {
             int phases = type->getAnimator() ? type->getAnimator()->getAnimationPhases() : type->getAnimationPhases();
             int ticksPerFrame = 1000 / phases;
             animationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
@@ -153,7 +153,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
                 }                 else {
                     wingAnimationPhase = idleAnimator->getPhase();
                 }
-            }             else if (wingsType->isAnimateAlways()) {
+            } else if (wingsType->isAnimateAlways()) {
                 int phases = wingsType->getAnimator() ? wingsType->getAnimator()->getAnimationPhases() : wingsType->getAnimationPhases();
                 int ticksPerFrame = 1000 / phases;
                 wingAnimationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
@@ -294,10 +294,10 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
     }
 }
 
-void Outfit::draw(const Rect& dest, Otc::Direction direction, uint animationPhase, bool animate)
+void Outfit::draw(const Rect& dest, Otc::Direction direction, uint animationPhase, bool animate, bool ui)
 {
     int size = g_drawQueue->size();
-    draw(Point(0, 0), direction, animationPhase, animate);
+    draw(Point(0, 0), direction, animationPhase, animate, nullptr, ui);
     g_drawQueue->correctOutfit(dest, size);
 }
 

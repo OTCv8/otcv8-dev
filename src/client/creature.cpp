@@ -124,12 +124,12 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
         lightView->addLight(creatureCenter, light);
 }
 
-void Creature::drawOutfit(const Rect& destRect, Otc::Direction direction, const Color& color, bool animate)
+void Creature::drawOutfit(const Rect& destRect, Otc::Direction direction, const Color& color, bool animate, bool ui)
 {
     if (direction == Otc::InvalidDirection)
         direction = m_direction;
 
-    m_outfit.draw(destRect, direction, 0, animate);
+    m_outfit.draw(destRect, direction, 0, animate, ui);
 }
 
 void Creature::drawInformation(const Point& point, bool useGray, const Rect& parentRect, int drawFlags)
