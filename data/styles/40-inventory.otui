@@ -194,12 +194,12 @@ InventoryWindow < MiniWindow
         margin-top: 3
 
       SoulCapLabel
-        id: capLabel
+        id: soulLabel
         anchors.top: slot10.bottom
         anchors.horizontalCenter: slot10.horizontalCenter
         
       SoulCapLabel
-        id: soulLabel
+        id: capLabel
         anchors.top: slot9.bottom
         anchors.horizontalCenter: slot9.horizontalCenter
 
