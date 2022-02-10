@@ -47,7 +47,7 @@ public:
     virtual ~Creature();
 
     virtual void draw(const Point& dest, bool animate = true, LightView* lightView = nullptr);
-    virtual void drawOutfit(const Rect& destRect, Otc::Direction direction = Otc::InvalidDirection, const Color& color = Color::white, bool animate = false);
+    virtual void drawOutfit(const Rect& destRect, Otc::Direction direction = Otc::InvalidDirection, const Color& color = Color::white, bool animate = false, bool ui = false);
 
     void drawInformation(const Point& point, bool useGray, const Rect& parentRect, int drawFlags);
 
