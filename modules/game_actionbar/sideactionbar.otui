@@ -1,17 +1,18 @@
-ActionButton < Panel
+SideActionButton < Panel
   font: cipsoftFont
-  anchors.top: parent.top
-  anchors.bottom: parent.bottom
-  width: 40
+  anchors.left: parent.left
+  anchors.right: parent.right
+  height: 40
   padding: 1 1 1 1
-  margin-left: 1
+  margin-top: 1
   draggable: true
   
   $first:
-    anchors.left: parent.left
+    anchors.top: parent.top
+    margin-top: -3
 
   $!first:
-    anchors.left: prev.right
+    anchors.top: prev.bottom
     
   Item
     id: item
@@ -63,43 +64,43 @@ Panel
   focusable: false
   image-source: /images/ui/panel_side
   image-border: 4
-  margin-top: -1
+  margin-top: -2
   
   $on:
-    height: 40
+    width: 40
     visible: true
     
   $!on:
-    height: 0
+    width: 0
     visible: false
 
   TabButton
     id: prevButton
-    icon: /images/game/console/leftarrow
+    icon: /images/game/console/uparrow
     anchors.left: parent.left
     anchors.top: parent.top
-    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    margin-top: -1
     margin-left: 1
-    margin-top: 1
-    margin-bottom: 2
+    margin-right: 1
     
   Panel
     id: tabBar
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    anchors.left: prev.right
-    anchors.right: next.left
-    margin-right: 3
+    anchors.top: prev.bottom
+    anchors.right: parent.right
+    anchors.left: parent.left
+    anchors.bottom: next.top
+    margin-top: 3
     clipping: true
     
   TabButton
     id: nextButton
-    icon: /images/game/console/rightarrow
+    icon: /images/game/console/downarrow
     anchors.right: parent.right
-    anchors.top: parent.top
+    anchors.left: parent.left
     anchors.bottom: parent.bottom
     margin-right: 1
-    margin-top: 1
+    margin-left: 1
     margin-bottom: 2
 
 ActionAssignWindow < MainWindow

@@ -1,0 +1,10 @@
+Module
+  name: game_topbar
+  description: Customizable Top Bar
+  author: Vithrax
+  discord: Vithrax#5814
+  sandboxed: true
+  autoload: true
+  scripts: [ topbar ]
+  @onLoad: init()
+  @onUnload: terminate()

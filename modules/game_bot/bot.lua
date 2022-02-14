@@ -190,7 +190,13 @@ function refresh()
 
   -- storage
   botStorage = {}
-  botStorageFile = "/bot/" .. configName .. "/storage.json"
+  
+  local path = "/bot/" .. configName .. "/storage/"
+  if not g_resources.directoryExists(path) then
+    g_resources.makeDir(path)
+  end
+
+  botStorageFile = path.."profile_" .. g_settings.getNumber('profile') .. ".json"
   if g_resources.fileExists(botStorageFile) then
     local status, result = pcall(function() 
       return json.decode(g_resources.readFileContents(botStorageFile)) 
