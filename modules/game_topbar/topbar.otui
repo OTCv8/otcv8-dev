@@ -27,7 +27,7 @@ StatsPanel < Panel
 
     Panel
       id: box
-      image-source: /images/ui/tibia12_background
+      image-source: /images/ui/dark_background
       anchors.fill: parent
       layout:
         type: horizontalBox
