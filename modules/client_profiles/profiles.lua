@@ -1,27 +1,35 @@
 local settings = {}
+ChangedProfile = false
 
 function init()
   connect(g_game, {
-    onGameStart = start,
-    onGameEnd = onProfileChange
+    onGameStart = online,
+    onGameEnd = offline
   })
 
 end
 
 function terminate()
   disconnect(g_game, {
-    onGameStart = start,
-    onGameEnd = onProfileChange
+    onGameStart = online,
+    onGameEnd = offline
   })
 end
 
 -- loads settings on character login
-function start()
+function online()
+  ChangedProfile = false
 
-  load()
-  -- startup arguments has higher priority than settings
-  if not getProfileFromStartupArgument() then
-    getProfileFromSettings()
+  -- startup arguments has higher priority than settings, no need to load them
+  local index = getProfileFromStartupArgument()
+  if index then
+    setProfileOption(index)
+  else
+    load()
+  end
+
+  if not index then
+    setProfileOption(getProfileFromSettings() or 1)
   end
 
   -- create main settings dir
@@ -39,6 +47,18 @@ function start()
   end
 end
 
+function setProfileOption(index)
+  local currentProfile = g_settings.getNumber('profile')
+  currentProfile = tostring(currentProfile) 
+  index = tostring(index)
+
+  if currentProfile ~= index then
+    ChangedProfile = true
+    return modules.client_options.setOption('profile', index)
+  end
+
+end
+
 -- load profile number from settings
 function getProfileFromSettings()
   -- settings should save per character, return if not online
@@ -47,7 +67,7 @@ function getProfileFromSettings()
   local index = g_game.getCharacterName()
   local savedData = settings[index]
 
-  return modules.client_options.setOption('profile', savedData or 1)
+  return savedData
 end
 
 -- option to launch client with hardcoded profile
@@ -61,11 +81,12 @@ function getProfileFromStartupArgument()
         if option == "--profile" then
             local profileIndex = startupOptions[index + 1]
             if profileIndex == nil then
-              g_logger.info("Startup arguments incomplete: missing profile index.")
+              return g_logger.info("Startup arguments incomplete: missing profile index.")
             end
 
+            g_logger.info("Startup options: Forced profile: "..profileIndex)
             -- set value in options
-            return modules.client_options.setOption('profile', profileIndex)
+            return profileIndex
         end
     end
 
@@ -79,32 +100,35 @@ function getSettingsFilePath(fileNameWithFormat)
   return "/settings/profile_"..currentProfile.."/"..fileNameWithFormat
 end
 
+function offline()
+  onProfileChange(true)
+end
+
 -- profile change callback (called in options), saves settings & reloads given module configs
-function onProfileChange()
-  -- settings should save per character, return if not online
-  if not g_game.isOnline() then return end
+function onProfileChange(offline)
+  if not offline then
+    if not g_game.isOnline() then return end
+  -- had to apply some delay
+    scheduleEvent(collectiveReload, 100)
+  end
 
   local currentProfile = g_settings.getNumber('profile')
   local index = g_game.getCharacterName()
   
-  settings[index] = currentProfile
-  save()
+  if index then
+    settings[index] = currentProfile
+    save()
+  end
+end
 
-  -- init reload of module data, below add functions
+-- collection of refresh functions from different modules
+function collectiveReload()
   modules.game_topbar.refresh(true)
   modules.game_actionbar.refresh(true)
   modules.game_bot.refresh()
 end
 
-
-
-
-
-
-
-
 -- json handlers
-
 function load()
   local file = "/settings/profiles.json"
   if g_resources.fileExists(file) then

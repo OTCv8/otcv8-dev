@@ -261,7 +261,9 @@ end
 
 function online()
   botButton:show()
-  scheduleEvent(refresh, 20)
+  if not modules.client_profiles.ChangedProfile then
+    scheduleEvent(refresh, 20)
+  end
 end
 
 function offline()
