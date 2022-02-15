@@ -90,8 +90,6 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
     drawBottomWidgets(creatureCenter, m_walking ? m_walkDirection : m_direction);
 
     Point animationOffset = animate ? m_walkOffset : Point(0, 0);
-    if (m_outfit.getCategory() != ThingCategoryCreature)
-        animationOffset -= getDisplacement();
 
     if (m_showTimedSquare && animate) {
         g_drawQueue->addBoundingRect(Rect(dest - jumpOffset + (animationOffset - getDisplacement() + 2 * g_sprites.getOffsetFactor()), Size(sprSize - 4, sprSize - 4)), 2 * g_sprites.getOffsetFactor(), m_timedSquareColor);
@@ -100,6 +98,9 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
     if (m_showStaticSquare && animate) {
         g_drawQueue->addBoundingRect(Rect(dest - jumpOffset + (animationOffset - getDisplacement()), Size(sprSize, sprSize)), 2 * g_sprites.getOffsetFactor(), m_staticSquareColor);
     }
+
+    if (m_outfit.getCategory() != ThingCategoryCreature)
+        animationOffset -= getDisplacement();
 
     size_t drawQueueSize = g_drawQueue->size();
     m_outfit.draw(dest - jumpOffset + animationOffset, m_walking ? m_walkDirection : m_direction, m_walkAnimationPhase, true, lightView);
