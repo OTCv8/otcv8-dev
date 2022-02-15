@@ -64,6 +64,8 @@ local defaultOptions = {
   actionbarRight2 = false,
   actionbarRight3 = false,
 
+  actionbarLock = true,
+
   profile = 1
 }
 
@@ -77,7 +79,7 @@ local interfacePanel
 local consolePanel
 local graphicsPanel
 local audioPanel
-local personalizationPanel
+local customPanel
 local extrasPanel
 local audioButton
 
@@ -127,8 +129,8 @@ function init()
     optionsTabBar:addTab(tr('Extras'), extrasPanel, '/images/optionstab/extras')
   end
 
-  personalizationPanel = g_ui.loadUI('personalization')
-  optionsTabBar:addTab(tr('Personalization'), personalizationPanel, '/images/optionstab/features')
+  customPanel = g_ui.loadUI('custom')
+  optionsTabBar:addTab(tr('Custom'), customPanel, '/images/optionstab/features')
 
   optionsButton = modules.client_topmenu.addLeftButton('optionsButton', tr('Options'), '/images/topbuttons/options', toggle)
   audioButton = modules.client_topmenu.addLeftButton('audioButton', tr('Audio'), '/images/topbuttons/audio', function() toggleOption('enableAudio') end)

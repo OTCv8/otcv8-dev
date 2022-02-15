@@ -189,7 +189,7 @@ function offline(reloaded)
                               rightActionPanel1, rightActionPanel2, rightActionPanel3}) do
     settings[tostring(index)] = {}
     for i, child in ipairs(panel.tabBar:getChildren()) do
-      if child.config and child.config.actionType then
+      if child.config and child.config.item then
         settings[tostring(index)][tostring(i)] = child.config
         if type(child.config.hotkey) == 'string' and child.config.hotkey:len() > 0 then
           g_keyboard.unbindKeyPress(child.config.hotkey, child.callback, gameRootPanel)
@@ -229,7 +229,18 @@ function setupAction(action)
   action.item:setShowCount(false)
   action.onMouseRelease = actionOnMouseRelease
   action.onTouchRelease = actionOnMouseRelease
-  action.callback = function(k, c, ticks) executeAction(action, ticks) end
+
+  action.callback = function(k, c, ticks) 
+    local lockKeyboard = g_settings.getBoolean('actionbarLock', false)
+    local chatMode = not modules.game_walking.wsadWalking
+
+    if not lockKeyboard or not chatMode then
+      print('lock', lockKeyboard)
+      print('chatMode', chatMode)
+      executeAction(action, ticks) 
+    end
+  end
+
   action.item.onItemChange = nil -- disable callbacks for setup
   
   if config then
