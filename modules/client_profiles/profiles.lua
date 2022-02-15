@@ -20,13 +20,13 @@ end
 function online()
   ChangedProfile = false
 
-  -- startup arguments has higher priority than settings, no need to load them
+  -- startup arguments has higher priority than settings
   local index = getProfileFromStartupArgument()
   if index then
     setProfileOption(index)
-  else
-    load()
   end
+
+  load()
 
   if not index then
     setProfileOption(getProfileFromSettings() or 1)
@@ -137,7 +137,7 @@ function load()
     end)
     if not status then
         return onError(
-                   "Error while reading top bar settings file. To fix this problem you can delete storage.json. Details: " ..
+                   "Error while reading profiles file. To fix this problem you can delete storage.json. Details: " ..
                        result)
     end
     settings = result
