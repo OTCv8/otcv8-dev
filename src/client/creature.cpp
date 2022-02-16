@@ -90,8 +90,6 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
     drawBottomWidgets(creatureCenter, m_walking ? m_walkDirection : m_direction);
 
     Point animationOffset = animate ? m_walkOffset : Point(0, 0);
-    if (m_outfit.getCategory() != ThingCategoryCreature)
-        animationOffset -= getDisplacement();
 
     if (m_showTimedSquare && animate) {
         g_drawQueue->addBoundingRect(Rect(dest - jumpOffset + (animationOffset - getDisplacement() + 2 * g_sprites.getOffsetFactor()), Size(sprSize - 4, sprSize - 4)), 2 * g_sprites.getOffsetFactor(), m_timedSquareColor);
@@ -100,6 +98,9 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
     if (m_showStaticSquare && animate) {
         g_drawQueue->addBoundingRect(Rect(dest - jumpOffset + (animationOffset - getDisplacement()), Size(sprSize, sprSize)), 2 * g_sprites.getOffsetFactor(), m_staticSquareColor);
     }
+
+    if (m_outfit.getCategory() != ThingCategoryCreature)
+        animationOffset -= getDisplacement();
 
     size_t drawQueueSize = g_drawQueue->size();
     m_outfit.draw(dest - jumpOffset + animationOffset, m_walking ? m_walkDirection : m_direction, m_walkAnimationPhase, true, lightView);
@@ -124,12 +125,12 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
         lightView->addLight(creatureCenter, light);
 }
 
-void Creature::drawOutfit(const Rect& destRect, Otc::Direction direction, const Color& color, bool animate)
+void Creature::drawOutfit(const Rect& destRect, Otc::Direction direction, const Color& color, bool animate, bool ui)
 {
     if (direction == Otc::InvalidDirection)
         direction = m_direction;
 
-    m_outfit.draw(destRect, direction, 0, animate);
+    m_outfit.draw(destRect, direction, 0, animate, ui);
 }
 
 void Creature::drawInformation(const Point& point, bool useGray, const Rect& parentRect, int drawFlags)
@@ -690,6 +691,8 @@ void Creature::setOutfit(const Outfit& outfit)
             return;
         m_outfit.setAuxId(outfit.getAuxId());
         m_outfit.setCategory(outfit.getCategory());
+        m_outfit.setWings(0);
+        m_outfit.setAura(0);
     } else {
         if (outfit.getId() > 0 && !g_things.isValidDatId(outfit.getId(), ThingCategoryCreature))
             return;

@@ -51,9 +51,9 @@ void UICreature::drawSelf(Fw::DrawPane drawPane)
         }
 
         if(m_scale >= 0.01) // TODO: make it correctly
-           m_creature->drawOutfit(Rect(getPaddingRect().topLeft(), g_sprites.spriteSize() * m_scale, g_sprites.spriteSize() * m_scale), m_direction, m_imageColor, m_animate);
+           m_creature->drawOutfit(Rect(getPaddingRect().topLeft(), g_sprites.spriteSize() * m_scale, g_sprites.spriteSize() * m_scale), m_direction, m_imageColor, m_animate, true);
         else
-           m_creature->drawOutfit(getPaddingRect(), m_direction, m_imageColor, m_animate);
+           m_creature->drawOutfit(getPaddingRect(), m_direction, m_imageColor, m_animate, true);
     }
 }
 

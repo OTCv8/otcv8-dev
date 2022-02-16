@@ -54,6 +54,11 @@ public:
     void setAutoScroll(bool autoScroll) { m_autoScroll = autoScroll; }
     void setAutoSubmit(bool autoSubmit) { m_autoSubmit = autoSubmit; }
 
+    void setPlaceholder(std::string placeholder) { m_placeholder = placeholder; }
+    void setPlaceholderColor(const Color& color) { m_placeholderColor = color; }
+    void setPlaceholderAlign(Fw::AlignmentFlag align) { m_placeholderAlign = align; }
+    void setPlaceholderFont(const std::string& fontName);
+
     void moveCursorHorizontally(bool right);
     void moveCursorVertically(bool up);
     void appendText(std::string text);
@@ -144,6 +149,11 @@ private:
     CoordsBuffer m_glyphsTextCoordsBuffer;
     CoordsBuffer m_glyphsSelectCoordsBuffer;
     bool m_glyphsMustRecache;
+
+    std::string m_placeholder;
+    Color m_placeholderColor;
+    Fw::AlignmentFlag m_placeholderAlign;
+    BitmapFontPtr m_placeholderFont;
 };
 
 #endif
