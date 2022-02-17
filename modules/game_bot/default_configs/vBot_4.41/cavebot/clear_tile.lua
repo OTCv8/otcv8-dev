@@ -4,11 +4,21 @@ CaveBot.Extensions.ClearTile.setup = function()
   CaveBot.registerAction("ClearTile", "#00FFFF", function(value, retries)
     local data = string.split(value, ",")
     local pos = {x=tonumber(data[1]), y=tonumber(data[2]), z=tonumber(data[3])}
-    local doors
+    local doors = false
+    local stand = false
     local pPos = player:getPosition()
-    if #data == 4 then
-      doors = true
+
+
+    for i, value in ipairs(data) do
+      value = value:lower():trim()
+      if value == "stand" then
+        stand = true
+      elseif value == "doors" then
+        doors = true
+      end
     end
+
+
     if not #pos == 3 then
       warn("CaveBot[ClearTile]: invalid value. It should be position (x,y,z), is: " .. value)
       return false
@@ -32,8 +42,14 @@ CaveBot.Extensions.ClearTile.setup = function()
 
     -- no items on tile and walkability means we are done
     if tile:isWalkable() and tile:getTopUseThing():isNotMoveable() and not tile:hasCreature() and not doors then
-      print("CaveBot[ClearTile]: tile clear, proceeding")
-      return true
+      if stand then
+        if not CaveBot.MatchPosition(tPos, 0) then
+          CaveBot.GoTo(tPos, 0)
+          return "retry"
+        end
+        print("CaveBot[ClearTile]: tile clear, proceeding")
+        return true
+      end
     end
 
     if not CaveBot.MatchPosition(tPos, 3) then
@@ -42,49 +58,64 @@ CaveBot.Extensions.ClearTile.setup = function()
     end
 
     if retries > 0 then
-      delay(1500)
+      delay(1100)
     end
 
-    -- but if not then first check for creatures
+    -- monster
     if tile:hasCreature() then
       local c = tile:getCreatures()[1]
       if c:isMonster() then
         attack(c)
         return "retry"
-        -- ok here we will find tile to push player, random
-      elseif c:isPlayer() then
-        local candidates = {}
-        for _, tile in ipairs(g_map.getTiles(posz())) do
-          if getDistanceBetween(c:getPosition(), tile:getPosition()) == 1 and tile:getPosition() ~= pPos and tile:isWalkable(false) then
-            table.insert(candidates, tile:getPosition())
-          end
-        end
-
-        if #candidates == 0 then
-          print("CaveBot[ClearTile]: can't find tile to push, cannot clear way, skipping")
-          return false
-        else
-          print("CaveBot[ClearTile]: pushing player... " .. c:getName() .. " out of the way")
-          local pos = candidates[math.random(1,#candidates)]
-          local tile = g_map.getTile(pos)
-          tile:setText("here")
-          schedule(500, function() tile:setText("") end)
-          g_game.move(c, pos)
-          return "retry"
-        end
       end
     end
-    for i, item in ipairs(tile:getItems()) do
-      if not item:isNotMoveable() then
+
+    -- moveable item
+    local item = tile:getTopMoveThing()
+    if item:isItem() then
+      if item and not item:isNotMoveable() then
         print("CaveBot[ClearTile]: moving item... " .. item:getId().. " from tile")
         g_game.move(item, pPos, item:getCount())
         return "retry"
-      end
+      end   
     end
+
+    -- player
+
+      -- push creature
+      if tile:hasCreature() then
+        local c = tile:getCreatures()[1]
+        if c and c:isPlayer() then
+
+          local candidates = {}
+          for _, tile in ipairs(g_map.getTiles(posz())) do
+            local tPos = tile:getPosition()
+            if getDistanceBetween(c:getPosition(), tPos) == 1 and tPos ~= pPos and tile:isWalkable() then
+              table.insert(candidates, tPos)
+            end
+          end
+
+          if #candidates == 0 then
+            print("CaveBot[ClearTile]: can't find tile to push, cannot clear way, skipping")
+            return false
+          else
+            print("CaveBot[ClearTile]: pushing player... " .. c:getName() .. " out of the way")
+            local pos = candidates[math.random(1,#candidates)]
+            local tile = g_map.getTile(pos)
+            tile:setText("here")
+            schedule(500, function() tile:setText("") end)
+            g_game.move(c, pos, 1)
+            return "retry"
+          end
+        end
+      end
+
+    -- doors
     if doors then
       use(tile:getTopUseThing())
       return "retry"
     end
+
     return "retry"
   end)
 

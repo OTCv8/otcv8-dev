@@ -1,6 +1,5 @@
-local version = "4.4"
+local version = "4.41"
 local currentVersion
-local hashcode
 local available = false
 
 storage.checkVersion = storage.checkVersion or 0
@@ -16,9 +15,7 @@ if os.time() > storage.checkVersion + (12 * 60 * 60) then
           return
         end
 
-        local t = string.split(data, ",")
-        currentVersion = t[1]:trim()
-        hashcode = t[2]:trim()
+        currentVersion = data
         available = true
     end)
 
@@ -29,18 +26,15 @@ UI.Button("Official OTCv8 Discord!", function() g_platform.openUrl("https://disc
 UI.Separator()
 
 schedule(5000, function()
+
     if not available then return end
     if currentVersion ~= version then
         
         UI.Separator()
-        local label = UI.Label("New vBot is available for download! v"..currentVersion)
-        label:setColor()
-        UI.Button("Get Hash Code", function() 
-            g_window.setClipboardText(hashcode)
-            info("Hashcode copied to clipboard!")
-        end)
+        UI.Label("New vBot is available for download! v"..currentVersion)
         UI.Button("Go to vBot GitHub Page", function() g_platform.openUrl("https://github.com/Vithrax/vBot") end)
         UI.Separator()
+        
     end
 
 end)

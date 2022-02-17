@@ -448,10 +448,12 @@ inputPanel.addButton.onClick = function()
     local name = inputPanel.name:getText()
     local items = getItemsFromBox()
     local unequip = {}
+    local hasUnequip = false
 
     for i, child in pairs(inputPanel.unequipPanel:getChildren()) do
         if child:isChecked() then
             table.insert(unequip, true)
+            hasUnequip = true
         else
             table.insert(unequip, false)
         end
@@ -491,8 +493,8 @@ inputPanel.addButton.onClick = function()
         end
     end
 
-    if #items == 0 then
-        return warn("[vBot Equipper] Please add items.")
+    if #items == 0 and not hasUnequip then
+        return warn("[vBot Equipper] Please add items or select unequip slots.")
     end
 
     if #name == 0 then

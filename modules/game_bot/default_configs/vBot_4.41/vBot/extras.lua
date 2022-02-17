@@ -14,6 +14,14 @@ extrasWindow.closeButton.onClick = function(widget)
   extrasWindow:hide()
 end
 
+extrasWindow.onGeometryChange = function(widget, old, new)
+  if old.height == 0 then return end
+  
+  settings.height = new.height
+end
+
+extrasWindow:setHeight(settings.height or 360)
+
 -- available options for dest param
 local rightPanel = extrasWindow.content.right
 local leftPanel = extrasWindow.content.left
@@ -525,7 +533,9 @@ if true then
     end
   end
   if settings.checkPlayer then 
-    checkPlayers()
+    schedule(500, function()
+      checkPlayers()
+    end)
   end
 
   onPlayerPositionChange(function(x,y)

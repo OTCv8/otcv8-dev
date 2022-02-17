@@ -136,7 +136,17 @@ ExtrasWindow < MainWindow
     anchors.right: parent.right
     anchors.left: parent.left
     anchors.bottom: closeButton.top
-    margin-bottom: 8    
+    margin-bottom: 8
+
+  ResizeBorder
+    id: bottomResizeBorder
+    anchors.fill: separator
+    height: 3
+    minimum: 260
+    maximum: 600
+    margin-left: 3
+    margin-right: 3
+    background: #ffffff88    
 
   Button
     id: closeButton
