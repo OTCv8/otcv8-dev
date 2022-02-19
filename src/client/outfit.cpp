@@ -73,7 +73,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
             auto idleAnimator = type->getIdleAnimator();
             if (idleAnimator) {
                 animationPhase = idleAnimator->getPhase();
-            }             else {
+            } else {
                 animationPhase = 0;
             }
         }
@@ -94,6 +94,9 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
             int phases = type->getAnimator() ? type->getAnimator()->getAnimationPhases() : type->getAnimationPhases();
             int ticksPerFrame = 1000 / phases;
             animationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
+            if (!type->isAnimateAlways() && ui) {
+                animationPhase += 1;
+            }
         }
         if (g_game.getFeature(Otc::GameWingOffset) && m_wings) {
             wingBounce();
