@@ -94,6 +94,7 @@ public:
 
     void setTitle(const std::string& title, const std::string& font, const Color& color);
     void clearTitle() { setTitle("", "", Color::white); }
+    std::string getTitle() { return m_titleCache.getText(); }
 
     uint32 getId() { return m_id; }
     std::string getName() { return m_name; }

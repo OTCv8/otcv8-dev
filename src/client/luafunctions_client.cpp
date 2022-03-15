@@ -545,6 +545,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("clearText", &Creature::clearText);
     g_lua.bindClassMemberFunction<Creature>("setTitle", &Creature::setTitle);
     g_lua.bindClassMemberFunction<Creature>("clearTitle", &Creature::clearTitle);
+    g_lua.bindClassMemberFunction<Creature>("getTitle", &Creature::getTitle);
 
     // widgets
     g_lua.bindClassMemberFunction<Creature>("addTopWidget", &Creature::addTopWidget);
