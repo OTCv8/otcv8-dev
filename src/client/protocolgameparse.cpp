@@ -1071,6 +1071,7 @@ void ProtocolGame::parseDeath(const InputMessagePtr& msg)
 void ProtocolGame::parseMapDescription(const InputMessagePtr& msg)
 {
     Position pos = getPosition(msg);
+    Position oldPos = m_localPlayer->getPosition();
 
     if (!m_mapKnown)
         m_localPlayer->setPosition(pos);
@@ -1079,6 +1080,11 @@ void ProtocolGame::parseMapDescription(const InputMessagePtr& msg)
 
     AwareRange range = g_map.getAwareRange();
     setMapDescription(msg, pos.x - range.left, pos.y - range.top, pos.z, range.horizontal(), range.vertical());
+
+    if (m_mapKnown) {
+        // We know about the map so its not from logging in, it must be teleport
+        g_lua.callGlobalField("g_game", "onTeleport", m_localPlayer, pos, oldPos);
+    }
 
     if (!m_mapKnown) {
         g_dispatcher.addEvent([] { g_lua.callGlobalField("g_game", "onMapKnown"); });
@@ -1361,7 +1367,7 @@ void ProtocolGame::parseOpenNpcTrade(const InputMessagePtr& msg)
 
     for (int i = 0; i < listCount; ++i) {
         uint16 itemId = msg->getU16();
-        uint16 count = g_game.getFeature(Otc::GameCountU16) ? msg->getU16() : msg->getU8();
+        uint8 count = msg->getU8();
 
         ItemPtr item = Item::create(itemId);
         item->setCountOrSubType(count);
@@ -2360,6 +2366,8 @@ void ProtocolGame::parseFloorChangeUp(const InputMessagePtr& msg)
     newPos.y++;
     g_map.setCentralPosition(newPos);
 
+    g_lua.callGlobalField("g_game", "onTeleport", m_localPlayer, newPos, pos);
+
     int skip = 0;
     if (pos.z == Otc::SEA_FLOOR)
         for (int i = Otc::SEA_FLOOR - Otc::AWARE_UNDEGROUND_FLOOR_RANGE; i >= 0; i--)
@@ -2383,6 +2391,8 @@ void ProtocolGame::parseFloorChangeDown(const InputMessagePtr& msg)
     newPos.x--;
     newPos.y--;
     g_map.setCentralPosition(newPos);
+
+    g_lua.callGlobalField("g_game", "onTeleport", m_localPlayer, newPos, pos);
 
     int skip = 0;
     if (pos.z == Otc::UNDERGROUND_FLOOR) {
@@ -3558,8 +3568,12 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id, bool hasDescri
         msg->getU8(); // mark
     }
 
-    if (item->isStackable() || item->isFluidContainer() || item->isSplash() || item->isChargeable())
+    if (item->isStackable() || item->isChargeable()) {
         item->setCountOrSubType(g_game.getFeature(Otc::GameCountU16) ? msg->getU16() : msg->getU8());
+    }
+    else if (item->isFluidContainer() || item->isSplash()) {
+        item->setCountOrSubType(msg->getU8());
+    }
     else if (item->rawGetThingType()->isContainer() && (g_game.getFeature(Otc::GameTibia12Protocol) || g_game.getFeature(Otc::GameQuickLootFlags))) {
         // not sure about this part
         uint8_t hasQuickLootFlags = msg->getU8();

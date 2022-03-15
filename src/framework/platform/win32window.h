@@ -82,6 +82,8 @@ public:
     std::string getClipboardText();
     std::string getPlatformType();
 
+    void flash() override;
+
 protected:
     int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot);
 

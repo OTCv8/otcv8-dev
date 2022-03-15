@@ -273,6 +273,14 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     if (drawFlags & Otc::DrawNames) {
         m_nameCache.draw(textRect, fillColor);
 
+        if (g_game.getFeature(Otc::GameCreatureTitle) && m_titleCache.hasText()) {
+            Size titleSize = m_titleCache.getTextSize();
+            Point textCenter = textRect.topCenter();
+            textRect.setSize(titleSize);
+            textRect.moveBottomCenter(textCenter);
+            m_titleCache.draw(textRect, m_titleColor);
+        }
+
         if (m_text) {
             auto extraTextSize = m_text->getCachedText().getTextSize();
             Rect extraTextRect = Rect(point.x + m_informationOffset.x * g_sprites.getOffsetFactor() - extraTextSize.width() / 2.0, point.y + (m_informationOffset.y + 15) * g_sprites.getOffsetFactor(), extraTextSize);
@@ -1203,4 +1211,13 @@ void Creature::updateProgressBar(uint32 duration, bool ltr)
         m_progressBarPercent = 0;
     }
     callLuaField("onProgressBarUpdate", m_progressBarPercent, duration, ltr);
+}
+
+void Creature::setTitle(const std::string& title, const std::string& font, const Color& color)
+{
+    m_titleCache.setText(title);
+    if (!font.empty()) {
+        m_titleCache.setFont(g_fonts.getFont(font));
+    }
+    m_titleColor = color;
 }

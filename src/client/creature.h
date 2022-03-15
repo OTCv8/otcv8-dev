@@ -92,6 +92,9 @@ public:
     std::string getText();
     void clearText() { setText("", Color::white); }
 
+    void setTitle(const std::string& title, const std::string& font, const Color& color);
+    void clearTitle() { setTitle("", "", Color::white); }
+
     uint32 getId() { return m_id; }
     std::string getName() { return m_name; }
     uint8 getHealthPercent() { return m_healthPercent; }
@@ -237,6 +240,8 @@ protected:
     Color m_outfitColor;
     ScheduledEventPtr m_outfitColorUpdateEvent;
     Timer m_outfitColorTimer;
+    CachedText m_titleCache;
+    Color m_titleColor;
 
     static std::array<double, Otc::LastSpeedFormula> m_speedFormula;
 
