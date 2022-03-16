@@ -1097,6 +1097,7 @@ void ProtocolGame::parseMapDescription(const InputMessagePtr& msg)
 void ProtocolGame::parseFloorDescription(const InputMessagePtr& msg)
 {
     Position pos = getPosition(msg);
+    Position oldPos = m_localPlayer->getPosition();
     int floor = msg->getU8();
 
     if (pos.z == floor) {
@@ -1109,6 +1110,7 @@ void ProtocolGame::parseFloorDescription(const InputMessagePtr& msg)
         }
 
         g_dispatcher.addEvent([] { g_lua.callGlobalField("g_game", "onMapDescription"); });
+		g_lua.callGlobalField("g_game", "onTeleport", m_localPlayer, pos, oldPos);
     }
 
     AwareRange range = g_map.getAwareRange();
