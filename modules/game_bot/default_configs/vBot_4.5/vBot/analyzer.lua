@@ -937,6 +937,9 @@ local function setFrames()
               local price = getPrice(name)
               -- set rarity frame
               child:setImageSource(getFrame(price))
+              if price > 0 then
+                child:setTooltip("Price: "..format_thousand(price).."gp")
+              end
           else -- empty widget
               -- revert any possible changes
               child:setImageSource("/images/ui/item")

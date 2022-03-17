@@ -135,14 +135,14 @@ local spellPatterns = {
     {-- adjacent
       [[
         111
-        101
+        111
         111
       ]],
       -- adjacent SAFE
       [[
         11111
         11111
-        11011
+        11111
         11111
         11111
       ]]

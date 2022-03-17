@@ -1,7 +1,39 @@
 CaveBot.Actions = {}
 vBot.lastLabel = ""
+local oldTibia = g_game.getClientVersion() < 960
 
-local antiTrapTriggered = false
+
+-- antistuck f()
+local nextPos = nil
+local function modPos(dir)
+    local y = 0
+    local x = 0
+
+    if dir == 0 then
+        y = -1
+    elseif dir == 1 then
+        x = 1
+    elseif dir == 2 then
+        y = 1
+    elseif dir == 3 then
+        x = -1
+    elseif dir == 4 then
+        y = -1
+        x = 1
+    elseif dir == 5 then
+        y = 1
+        x = 1
+    elseif dir == 6 then
+        y = 1
+        x = -1
+    elseif dir == 7 then
+        y = -1
+        x = -1
+    end
+
+    return {x, y}
+end
+
 -- it adds an action widget to list
 CaveBot.addAction = function(action, value, focus)
   action = action:lower()
@@ -176,27 +208,37 @@ CaveBot.registerAction("goto", "green", function(value, retries, prev)
   -- check if there's a path to destination but consider Creatures (attack only if trapped)
   local path2 = findPath(playerPos, pos, maxDist, { ignoreNonPathable = true, precision = 1 })
   if not path2 then
-    local target = {} -- c = creature, d = distance
-    for i, spec in pairs(getSpectators()) do
-      local hppc = spec:getHealthPercent()
-      if spec:isMonster() and (hppc and hppc > 0) then
-        local path = findPath(playerPos, spec:getPosition(), 7, { ignoreNonPathable = true, precision = 1 })
-        if path then
-          local dist = getDistanceBetween(pos, spec:getPosition())
-          if not target.d or target.d > dist then
-            target = {c=spec, d=dist}
+    local foundMonster = false
+    for i, dir in ipairs(path) do
+      local dirs = modPos(dir)
+      nextPos = nextPos or playerPos
+      nextPos.x = nextPos.x + dirs[1]
+      nextPos.y = nextPos.y + dirs[2]
+  
+      local tile = g_map.getTile(nextPos)
+      if tile then
+          if tile:hasCreature() then
+              local creature = tile:getCreatures()[1]
+              local hppc = creature:getHealthPercent()
+              if creature:isMonster() and (hppc and hppc > 0) and (oldTibia or creature:getType() < 3) then
+                  -- real blocking creature can not meet those conditions - ie. it could be player, so just in case check if the next creature is reachable
+                  local path = findPath(playerPos, creature:getPosition(), 20, { ignoreNonPathable = true, precision = 1 }) 
+                  if path then
+                      foundMonster = true
+                      attack(creature)
+                      g_game.setChaseMode(1)
+                      CaveBot.setOff()
+                      CaveBot.delay(1000)
+                      schedule(1000, function() CaveBot.setOn() end)
+                  end
+              end
           end
-        end
       end
     end
-    if target.c then
-      if target.c ~= getTarget() then
-        attack(target.c)
-      end
-      g_game.setChaseMode(1)
-      CaveBot.setOff()
-      schedule(1000, function() CaveBot.setOn() end)
-    else
+
+    nextPos = nil -- reset path
+    if not foundMonster then
+      foundMonster = false
       return false -- no other way
     end
   end

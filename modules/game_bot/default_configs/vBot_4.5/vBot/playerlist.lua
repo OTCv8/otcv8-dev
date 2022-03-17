@@ -183,6 +183,26 @@ if rootWidget then
                 clearCachedPlayers()
                 refreshStatus()
             end
+            label.onMouseRelease = function(widget, mousePos, mouseButton)
+              if mouseButton == 2 then
+                local child = rootWidget:recursiveGetChildByPos(mousePos)
+                if child == widget then
+                  local menu = g_ui.createWidget('PopupMenu')
+                  menu:setId("blzMenu")
+                  menu:setGameMenu(true)
+                  menu:addOption('Check Player', function()
+                    local name = widget:getText():gsub(" ", "_")
+                    local link = "https://www.gunzodus.net/character/show/"
+                    g_platform.openUrl(link..name)
+                  end, "")
+                  menu:addOption('Copy Name', function()
+                    g_window.setClipboardText(widget:getText())
+                  end, "")
+                  menu:display(mousePos)
+                  return true
+                end
+              end
+            end
         end
 
         local tabButton = TabBar.buttonsPanel:getChildren()[v]
@@ -215,6 +235,26 @@ if rootWidget then
                           table.remove(playerList, table.find(playerList, name))
                           label:destroy()
                       end
+                      label.onMouseRelease = function(widget, mousePos, mouseButton)
+                        if mouseButton == 2 then
+                          local child = rootWidget:recursiveGetChildByPos(mousePos)
+                          if child == widget then
+                            local menu = g_ui.createWidget('PopupMenu')
+                            menu:setId("blzMenu")
+                            menu:setGameMenu(true)
+                            menu:addOption('Check Player', function()
+                              local name = widget:getText():gsub(" ", "_")
+                              local link = "https://www.gunzodus.net/character/show/"
+                              g_platform.openUrl(link..name)
+                            end, "")
+                            menu:addOption('Copy Name', function()
+                              g_window.setClipboardText(widget:getText())
+                            end, "")
+                            menu:display(mousePos)
+                            return true
+                          end
+                        end
+                      end
                       nameTab:setText("")
                   else
                       warn("vBot[PlayerList]: Player ".. name .." is already added!")
@@ -245,6 +285,26 @@ if rootWidget then
           table.remove(playerList, table.find(playerList, name))
           label:destroy()
       end
+      label.onMouseRelease = function(widget, mousePos, mouseButton)
+        if mouseButton == 2 then
+          local child = rootWidget:recursiveGetChildByPos(mousePos)
+          if child == widget then
+            local menu = g_ui.createWidget('PopupMenu')
+            menu:setId("blzMenu")
+            menu:setGameMenu(true)
+            menu:addOption('Check Player', function()
+              local name = widget:getText():gsub(" ", "_")
+              local link = "https://www.gunzodus.net/character/show/"
+              g_platform.openUrl(link..name)
+            end, "")
+            menu:addOption('Copy Name', function()
+              g_window.setClipboardText(widget:getText())
+            end, "")
+            menu:display(mousePos)
+            return true
+          end
+        end
+      end
     end
 end
 
@@ -263,10 +323,10 @@ onCreatureAppear(function(creature)
     checkStatus(creature)
   end)
   
-  onPlayerPositionChange(function(x,y)
-    if x.z ~= y.z then
-      schedule(20, function()
-        refreshStatus()
-      end)
-    end
-  end)
+onPlayerPositionChange(function(x,y)
+  if x.z ~= y.z then
+    schedule(20, function()
+      refreshStatus()
+    end)
+  end
+end)
