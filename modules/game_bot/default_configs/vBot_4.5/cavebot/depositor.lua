@@ -125,6 +125,7 @@ CaveBot.Extensions.Depositor.setup = function()
 		end
 
 		-- we gucci
+		resetCache()
 		return true
 	end)
 

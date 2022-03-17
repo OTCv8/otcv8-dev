@@ -428,8 +428,7 @@ function isFriend(c)
         if not p then return false end
         if p:isLocalPlayer() then return true end
         if p:isPlayer() then
-            if ((p:getShield() >= 3 and p:getShield() <= 10) or p:getEmblem() ==
-                1) then
+            if p:isPartyMember() then
                 CachedFriends[c] = true
                 CachedFriends[p] = true
                 return true
@@ -658,8 +657,7 @@ function getPlayers(range, multifloor)
     for _, spec in pairs(getSpectators(multifloor)) do
         specs = not spec:isLocalPlayer() and spec:isPlayer() and
                     distanceFromPlayer(spec:getPosition()) <= range and
-                    not ((spec:getShield() >= 3 and spec:getShield() <= 10) or
-                        spec:getEmblem() == 1) and specs + 1 or specs;
+                    not (spec:isPartyMember() or spec:getEmblem() == 1) and specs + 1 or specs;
     end
     return specs;
 end

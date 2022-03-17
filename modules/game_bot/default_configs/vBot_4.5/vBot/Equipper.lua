@@ -51,7 +51,8 @@ local conditions = { -- always add new conditions at the bottom
     "Player is in protection zone", -- nothing 11
     "Players around is more than:", -- spinbox 12
     "Players around is less than:", -- spinbox 13
-    "TargetBot Danger is Above:" -- spinbox 14
+    "TargetBot Danger is Above:", -- spinbox 14
+    "Blacklist player in range (sqm)" -- spinbox 15
 }
 
 local conditionNumber = 1
@@ -577,6 +578,8 @@ local function interpreteCondition(n, v)
         return getPlayers() < v
     elseif n == 14 then
         return TargetBot.Danger() > v and TargetBot.isOn()
+    elseif n == 15 then
+        return isBlackListedPlayerInRange(v)
     end
     
 end

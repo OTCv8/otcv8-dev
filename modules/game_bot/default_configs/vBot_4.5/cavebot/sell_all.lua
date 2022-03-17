@@ -5,15 +5,16 @@ CaveBot.Extensions.SellAll.setup = function()
   CaveBot.registerAction("SellAll", "#C300FF", function(value, retries)
     local val = string.split(value, ",")
     local wait
-    if #val > 2 then 
-      warn("CaveBot[SellAll]: incorrect sell all value!")
-      return false
+
+    -- table formatting
+    for i, v in ipairs(val) do
+      v = v:trim()
+      v = tonumber(v) or v
+      val[i] = v
     end
 
-    if #val == 2 then
+    if table.find(val, "yes", true) then
       wait = true
-    else
-      wait = false
     end
 
     local npcName = val[1]
@@ -46,8 +47,8 @@ CaveBot.Extensions.SellAll.setup = function()
       sellAllCap = freecap()
     end
     
-    NPC.sellAll(wait)
-    if #val == 2 then
+    modules.game_npctrade.sellAll(wait, val)
+    if wait then
       print("CaveBot[SellAll]: Sold All with delay")
     else
       print("CaveBot[SellAll]: Sold All without delay")
@@ -59,7 +60,6 @@ CaveBot.Extensions.SellAll.setup = function()
  CaveBot.Editor.registerAction("sellall", "sell all", {
   value="NPC",
   title="Sell All",
-  description="Insert NPC name, and 'yes' if sell with delay  ",
-  validation=[[^[^,]+(?:, yes$|, Yes$|, YES$|$)]]
+  description="NPC Name, 'yes' if sell with delay, exceptions: id separated by comma",
  })
 end

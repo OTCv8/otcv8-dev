@@ -102,4 +102,5 @@ TargetBot.Creature.edit = function(config, callback) -- callback = function(newC
   addCheckBox("diamondArrows", "D-Arrows priority", false)
   addCheckBox("rePosition", "rePosition to better tile", false)
   addCheckBox("closeLure", "Close Pulling Monsters", false)
+  addCheckBox("rpSafe", "RP PVP SAFE - (DA)", false)
 end

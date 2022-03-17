@@ -1,14 +1,20 @@
 TargetBot.Creature.calculatePriority = function(creature, config, path)
   -- config is based on creature_editor
   local priority = 0
+  local currentTarget = g_game.getAttackingCreature()
 
   -- extra priority if it's current target
-  if g_game.getAttackingCreature() == creature then
+  if currentTarget == creature then
     priority = priority + 1
   end
 
-  -- check if distance is fine, if not then attack only if already attacked
+  -- check if distance is ok
   if #path > config.maxDistance then
+    if config.rpSafe then
+      if currentTarget == creature then
+        g_game.cancelAttackAndFollow()  -- if not, stop attack (pvp safe)
+      end
+    end
     return priority
   end
 
@@ -27,6 +33,15 @@ TargetBot.Creature.calculatePriority = function(creature, config, path)
   if config.diamondArrows then
     local mobCount = getCreaturesInArea(creature:getPosition(), diamondArrowArea, 2)
     priority = priority + (mobCount * 4)
+
+    if config.rpSafe then
+      if getCreaturesInArea(creature:getPosition(), largeRuneArea, 3) > 0 then
+        if currentTarget == creature then
+          g_game.cancelAttackAndFollow()
+        end
+        return 0 -- pvp safe
+      end
+    end
   end
 
   -- extra priority for low health

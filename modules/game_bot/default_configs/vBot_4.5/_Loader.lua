@@ -37,6 +37,7 @@ local luaFiles = {
   "Dropper",
   "Containers",
   "quiver_manager",
+  "quiver_label",
   "tools",
   "antiRs",
   "depot_withdraw",
