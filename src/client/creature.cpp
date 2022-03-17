@@ -273,7 +273,7 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     if (drawFlags & Otc::DrawNames) {
         m_nameCache.draw(textRect, fillColor);
 
-        if (g_game.getFeature(Otc::GameCreatureTitle) && m_titleCache.hasText()) {
+        if (m_titleCache.hasText()) {
             Size titleSize = m_titleCache.getTextSize();
             Point textCenter = textRect.topCenter();
             textRect.setSize(titleSize);
