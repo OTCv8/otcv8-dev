@@ -61,6 +61,7 @@ public:
     void scaleUp();
     void scaleDown();
     void scale(float value);
+    void setSmooth(bool value);
 
 protected:
     void resize(const Size& size);
