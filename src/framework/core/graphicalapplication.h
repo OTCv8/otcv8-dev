@@ -63,6 +63,8 @@ public:
     void scale(float value);
     void setSmooth(bool value);
 
+    void doMapScreenshot(std::string fileName);
+
 protected:
     void resize(const Size& size);
     void inputEvent(InputEvent event);

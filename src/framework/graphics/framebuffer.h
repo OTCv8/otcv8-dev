@@ -57,6 +57,8 @@ public:
 
     std::vector<uint32_t> readPixels();
 
+    void doScreenshot(std::string fileName);
+
 private:
     void internalCreate();
     void internalBind();

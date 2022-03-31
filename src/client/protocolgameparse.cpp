@@ -2692,16 +2692,17 @@ void ProtocolGame::parseQuestLog(const InputMessagePtr& msg)
 
 void ProtocolGame::parseQuestLine(const InputMessagePtr& msg)
 {
-    std::vector<std::tuple<std::string, std::string>> questMissions;
+    std::vector<std::tuple<std::string, std::string, int>> questMissions;
     int questId = msg->getU16();
     int missionCount = msg->getU8();
     for (int i = 0; i < missionCount; i++) {
-        if (g_game.getFeature(Otc::GameTibia12Protocol))
-            msg->getU16(); // mission id
+        int missionId = 0;
+        if (g_game.getFeature(Otc::GameTibia12Protocol) || g_game.getFeature(Otc::GameMissionId))
+            missionId = msg->getU16();
 
         std::string missionName = msg->getString();
         std::string missionDescrition = msg->getString();
-        questMissions.push_back(std::make_tuple(missionName, missionDescrition));
+        questMissions.push_back(std::make_tuple(missionName, missionDescrition, missionId));
     }
 
     g_game.processQuestLine(questId, questMissions);

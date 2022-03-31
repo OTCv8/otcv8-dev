@@ -307,6 +307,7 @@ protected:
     Color m_iconColor;
     Rect m_iconRect;
     Rect m_iconClipRect;
+    std::string m_iconPath;
     Fw::AlignmentFlag m_iconAlign;
     EdgeGroup<Color> m_borderColor;
     EdgeGroup<int> m_borderWidth;
@@ -397,6 +398,7 @@ public:
     Size getIconSize() { return m_iconRect.size(); }
     Rect getIconRect() { return m_iconRect; }
     Rect getIconClip() { return m_iconClipRect; }
+    std::string getIconPath() { return m_iconPath; }
     Fw::AlignmentFlag getIconAlign() { return m_iconAlign; }
     Color getBorderTopColor() { return m_borderColor.top; }
     Color getBorderRightColor() { return m_borderColor.right; }

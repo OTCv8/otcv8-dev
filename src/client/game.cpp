@@ -515,7 +515,7 @@ void Game::processQuestLog(const std::vector<std::tuple<int, std::string, bool> 
     g_lua.callGlobalField("g_game", "onQuestLog", questList);
 }
 
-void Game::processQuestLine(int questId, const std::vector<std::tuple<std::string, std::string> >& questMissions)
+void Game::processQuestLine(int questId, const std::vector<std::tuple<std::string, std::string, int> >& questMissions)
 {
     g_lua.callGlobalField("g_game", "onQuestLine", questId, questMissions);
 }
