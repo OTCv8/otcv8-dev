@@ -40,7 +40,6 @@ public:
     void setCursorPos(int pos);
     void setSelection(int start, int end);
     void setCursorVisible(bool enable) { m_cursorVisible = enable; }
-    void setChangeCursorImage(bool enable) { m_changeCursorImage = enable; }
     void setTextHidden(bool hidden);
     void setValidCharacters(const std::string validCharacters) { m_validCharacters = validCharacters; }
     void setShiftNavigation(bool enable) { m_shiftNavigation = enable; }
@@ -88,7 +87,6 @@ public:
     Color getSelectionBackgroundColor() { return m_selectionBackgroundColor; }
     bool hasSelection() { return m_selectionEnd - m_selectionStart > 0; }
     bool isCursorVisible() { return m_cursorVisible; }
-    bool isChangingCursorImage() { return m_changeCursorImage; }
     bool isTextHidden() { return m_textHidden; }
     bool isShiftNavigation() { return m_shiftNavigation; }
     bool isMultiline() { return m_multiline; }
@@ -99,7 +97,6 @@ public:
 protected:
     void updateText();
 
-    virtual void onHoverChange(bool hovered);
     virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
     virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
     virtual void onFocusChange(bool focused, Fw::FocusReason reason);
@@ -128,7 +125,6 @@ private:
     bool m_cursorInRange;
     bool m_cursorVisible;
     bool m_editable;
-    bool m_changeCursorImage;
     std::string m_validCharacters;
     uint m_maxLength;
     bool m_updatesEnabled;

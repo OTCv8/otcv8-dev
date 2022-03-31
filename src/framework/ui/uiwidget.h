@@ -372,6 +372,8 @@ public:
     void setPaddingLeft(int padding) { m_padding.left = padding; updateLayout(); }
     void setOpacity(float opacity) { m_opacity = stdext::clamp<float>(opacity, 0.0f, 1.0f); }
     void setRotation(float degrees) { m_rotation = degrees; }
+    void setChangeCursorImage(bool enable) { m_changeCursorImage = enable; }
+    void setCursor(const std::string& cursor);
 
     int getX() { return m_rect.x(); }
     int getY() { return m_rect.y(); }
@@ -418,6 +420,7 @@ public:
     int getPaddingLeft() { return m_padding.left; }
     float getOpacity() { return m_opacity; }
     float getRotation() { return m_rotation; }
+    bool isChangingCursorImage() { return m_changeCursorImage; }
 
 // image
 private:
@@ -431,6 +434,9 @@ private:
     Rect m_imageCachedScreenCoords;
     stdext::boolean<true> m_imageMustRecache;
     stdext::boolean<false> m_imageBordered;
+
+    std::string m_cursor;
+    stdext::boolean<false> m_changeCursorImage;
 
 protected:
     void drawImage(const Rect& screenCoords);
@@ -514,6 +520,7 @@ protected:
     BitmapFontPtr m_font;
     std::vector<std::pair<int, Color>> m_textColors;
     std::vector<std::pair<int, Color>> m_drawTextColors;
+    stdext::boolean<false> m_shadow;
 
 public:
     void resizeToText() { setSize(getTextSize()); }
@@ -529,6 +536,7 @@ public:
     void setTextVerticalAutoResize(bool textAutoResize) { m_textVerticalAutoResize = textAutoResize; updateText(); }
     void setTextOnlyUpperCase(bool textOnlyUpperCase) { m_textOnlyUpperCase = textOnlyUpperCase; setText(m_text); }
     void setFont(const std::string& fontName);
+    void setShadow(bool shadow) { m_shadow = shadow; }
 
     std::string getText() { return m_text; }
     std::string getDrawText() { return m_drawText; }

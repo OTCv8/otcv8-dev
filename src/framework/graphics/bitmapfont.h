@@ -41,11 +41,11 @@ public:
     void load(const OTMLNodePtr& fontNode);
 
     /// Simple text render starting at startPos
-    void drawText(const std::string& text, const Point& startPos, const Color& color = Color::white);
+    void drawText(const std::string& text, const Point& startPos, const Color& color = Color::white, bool shadow = false);
 
     /// Advanced text render delimited by a screen region and alignment
-    void drawText(const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft, const Color& color = Color::white);
-    void drawColoredText(const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align, const std::vector<std::pair<int, Color>>& colors);
+    void drawText(const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft, const Color& color = Color::white, bool shadow = false);
+    void drawColoredText(const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align, const std::vector<std::pair<int, Color>>& colors, bool shadow = false);
 
     void calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft);
 
