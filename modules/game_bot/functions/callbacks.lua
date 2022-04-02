@@ -235,6 +235,11 @@ context.onGameQuestLine = function(callback)
   return context.callback("onGameQuestLine", callback)
 end
 
+-- onOpenNpcTrade - callback = function(buy, sell)
+context.onOpenNpcTrade = function(callback)
+  return context.callback("onOpenNpcTrade", callback)
+end
+
 -- CUSTOM CALLBACKS
 
 -- listen(name, callback) -- callback = function(text, channelId, pos)

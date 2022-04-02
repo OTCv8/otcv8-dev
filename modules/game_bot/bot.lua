@@ -499,7 +499,8 @@ function initCallbacks()
     onSpellCooldown = botSpellCooldown,
     onSpellGroupCooldown = botGroupSpellCooldown,
     onQuestLog = botGameQuestLog,
-    onQuestLine = botGameQuestLine
+    onQuestLine = botGameQuestLine,
+    onOpenNpcTrade = botOpenNpcTrade
   })
   
   connect(Tile, {
@@ -564,7 +565,8 @@ function terminateCallbacks()
     onSpellCooldown = botSpellCooldown,
     onSpellGroupCooldown = botGroupSpellCooldown,
     onQuestLog = botGameQuestLog,
-    onQuestLine = botGameQuestLine
+    onQuestLine = botGameQuestLine,
+    onOpenNpcTrade = botOpenNpcTrade
   })
   
   disconnect(Tile, {
@@ -800,7 +802,12 @@ function botGameQuestLog(quests)
   safeBotCall(function() botExecutor.callbacks.onGameQuestLog(quests) end)
 end
 
-function botGameQuestLine(quests)
+function botGameQuestLine(questId, questMissions)
   if botExecutor == nil then return false end
   safeBotCall(function() botExecutor.callbacks.onGameQuestLine(questId, questMissions) end)
+end
+
+function botOpenNpcTrade(items)
+  if botExecutor == nil then return false end
+  safeBotCall(function() botExecutor.callbacks.onOpenNpcTrade(items) end)
 end

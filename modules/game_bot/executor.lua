@@ -74,7 +74,8 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
     onSpellCooldown = {},
     onRemoveItem = {},
     onGameQuestLog = {},
-    onGameQuestLine = {}
+    onGameQuestLine = {},
+    onOpenNpcTrade = {}
   }
   
   -- basic functions & classes
@@ -424,6 +425,32 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
         end
         for i, callback in ipairs(context._callbacks.onGameQuestLine) do
           callback(questId, tmp)
+        end
+      end,
+      onOpenNpcTrade = function(items)
+        local buy = {}
+        local sell = {}
+        for key,item in pairs(items) do
+          if item[4] > 0 then
+            local newItem = {}
+            newItem.ptr = item[1]
+            newItem.name = item[2]
+            newItem.weight = item[3] / 100
+            newItem.price = item[4]
+            table.insert(buy, newItem)
+          end
+          
+          if item[5] > 0 then
+            local newItem = {}
+            newItem.ptr = item[1]
+            newItem.name = item[2]
+            newItem.weight = item[3] / 100
+            newItem.price = item[5]
+            table.insert(sell, newItem)
+          end
+        end
+        for i, callback in ipairs(context._callbacks.onOpenNpcTrade) do
+          callback(buy,sell)
         end
       end,
     }    
