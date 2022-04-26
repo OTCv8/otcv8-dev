@@ -2,11 +2,36 @@ CaveBot.Extensions.SupplyCheck = {}
 
 local supplyRetries = 0
 local missedChecks = 0
-local time = nil
+local rawRound = 0
+local time = now
+vBot.CaveBotData = vBot.CaveBotData or {
+  refills = 0,
+  rounds = 0,
+  time = {},
+  lastRefill = os.time(),
+  refillTime = {}
+}
+
+local function setCaveBotData(hunting)
+  if hunting then
+    supplyRetries = supplyRetries + 1
+  else
+    supplyRetries = 0
+    table.insert(vBot.CaveBotData.refillTime, os.difftime(os.time() - vBot.CaveBotData.lastRefill))
+    vBot.CaveBotData.lastRefill = os.time()
+    vBot.CaveBotData.refills = vBot.CaveBotData.refills + 1
+  end
+
+  table.insert(vBot.CaveBotData.time, rawRound)
+  vBot.CaveBotData.rounds = vBot.CaveBotData.rounds + 1
+  missedChecks = 0
+end
+
 CaveBot.Extensions.SupplyCheck.setup = function()
  CaveBot.registerAction("supplyCheck", "#db5a5a", function(value)
   local data = string.split(value, ",")
   local round = 0
+  rawRound = 0
   local label = data[1]:trim()
   local pos = nil
     if #data == 4 then
@@ -28,7 +53,8 @@ CaveBot.Extensions.SupplyCheck.setup = function()
   end
 
   if time then
-    round = math.ceil((now - time)/1000) .. "s"
+    rawRound = math.ceil((now - time)/1000)
+    round = rawRound .. "s"
   else
     round = ""
   end
@@ -67,68 +93,51 @@ CaveBot.Extensions.SupplyCheck.setup = function()
     return false    
   elseif supplyRetries > (storage.extras.huntRoutes or 50) then
     print("CaveBot[SupplyCheck]: Round limit reached, going back on refill. Last round took: " .. round)
-    supplyRetries = 0
-    missedChecks = 0
+    setCaveBotData()
     return false
   elseif (supplies.imbues and player:getSkillLevel(11) == 0) then 
     print("CaveBot[SupplyCheck]: Imbues ran out. Going on refill. Last round took: " .. round)
-    supplyRetries = 0
-    missedChecks = 0
+    setCaveBotData()
     return false
   elseif (supplies.staminaSwitch and stamina() < tonumber(supplies.staminaValue)) then 
     print("CaveBot[SupplyCheck]: Stamina ran out. Going on refill. Last round took: " .. round)
-    supplyRetries = 0
-    missedChecks = 0
+    setCaveBotData()
     return false
   elseif (softCount < 1 and supplies.SoftBoots) then 
     print("CaveBot[SupplyCheck]: No soft boots left. Going on refill. Last round took: " .. round)
-    supplyRetries = 0
-    missedChecks = 0
+    setCaveBotData()
     return false
   elseif (totalItem1 < tonumber(supplies.item1Min) and supplies.item1 > 100) then 
     print("CaveBot[SupplyCheck]: Not enough item: " .. supplies.item1 .. "(only " .. totalItem1 .. " left). Going on refill. Last round took: " .. round)
-    supplyRetries = 0
-    missedChecks = 0
+    setCaveBotData()
     return false
   elseif (totalItem2 < tonumber(supplies.item2Min) and supplies.item2 > 100) then 
     print("CaveBot[SupplyCheck]: Not enough item: " .. supplies.item2 .. "(only " .. totalItem2 .. " left). Going on refill. Last round took: " .. round)
-    supplyRetries = 0
-    missedChecks = 0
+    setCaveBotData()
     return false
   elseif (totalItem3 < tonumber(supplies.item3Min) and supplies.item3 > 100) then 
     print("CaveBot[SupplyCheck]: Not enough item: " .. supplies.item3 .. "(only " .. totalItem3 .. " left). Going on refill. Last round took: " .. round)
-    supplyRetries = 0
-    missedChecks = 0
+    setCaveBotData()
     return false
   elseif (totalItem4 < tonumber(supplies.item4Min) and supplies.item4 > 100) then 
     print("CaveBot[SupplyCheck]: Not enough item: " .. supplies.item4 .. "(only " .. totalItem4 .. " left). Going on refill. Last round took: " .. round)
-    supplyRetries = 0
-    missedChecks = 0
+    setCaveBotData()
     return false
   elseif (totalItem5 < tonumber(supplies.item5Min) and supplies.item5 > 100) then 
     print("CaveBot[SupplyCheck]: Not enough item: " .. supplies.item5 .. "(only " .. totalItem5 .. " left). Going on refill. Last round took: " .. round)
-    supplyRetries = 0
-    missedChecks = 0
+    setCaveBotData()
     return false
   elseif (totalItem6 < tonumber(supplies.item6Min) and supplies.item6 > 100) then 
     print("CaveBot[SupplyCheck]: Not enough item: " .. supplies.item6 .. "(only " .. totalItem6 .. " left). Going on refill. Last round took: " .. round)
-    supplyRetries = 0
-    missedChecks = 0
+    setCaveBotData()
     return false
   elseif (freecap() < tonumber(supplies.capValue) and supplies.capSwitch) then
     print("CaveBot[SupplyCheck]: Not enough capacity. Going on refill. Last round took: " .. round)
-    supplyRetries = 0
-    missedChecks = 0
+    setCaveBotData()
     return false
-  elseif ForcedRefill then
-    print("CaveBot[SupplyCheck]: Forced refill, going back to city. Last round took: " .. round)
-    supplyRetries = 0
-    missedChecks = 0
-    return false    
   else
     print("CaveBot[SupplyCheck]: Enough supplies. Hunting. Round (" .. supplyRetries .. "/" .. (storage.extras.huntRoutes or 50) .."). Last round took: " .. round)
-    supplyRetries = supplyRetries + 1
-    missedChecks = 0
+    setCaveBotData(true)
     return CaveBot.gotoLabel(label)
   end
  end)

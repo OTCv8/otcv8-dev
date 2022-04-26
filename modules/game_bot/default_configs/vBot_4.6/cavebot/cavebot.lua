@@ -207,8 +207,11 @@ CaveBot.gotoNextWaypointInRange = function()
         local pos = {x = tonumber(re[1][2]), y = tonumber(re[1][3]), z = tonumber(re[1][4])}
         
         if posz() == pos.z then
-          if distanceFromPlayer(pos) <= storage.extras.gotoMaxDistance/2 then
-            return ui.list:focusChild(child)
+          local maxDist = storage.extras.gotoMaxDistance/2
+          if distanceFromPlayer(pos) <= maxDist then
+            if findPath(player:getPosition(), pos, maxDist, { ignoreNonPathable = true }) then
+              return ui.list:focusChild(child)
+            end
           end
         end
       end

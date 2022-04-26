@@ -2,6 +2,7 @@ CaveBot.Actions = {}
 vBot.lastLabel = ""
 local oldTibia = g_game.getClientVersion() < 960
 
+local noPath = 0
 
 -- antistuck f()
 local nextPos = nil
@@ -168,10 +169,18 @@ CaveBot.registerAction("goto", "green", function(value, retries, prev)
   
   if CaveBot.Config.get("mapClick") then
     if retries >= 5 then
+      noPath = noPath + 1
+      if noPath == 10 and storage.extras.pathfinding then
+        CaveBot.gotoNextWaypointInRange()
+      end
       return false -- tried 5 times, can't get there
     end
   else
     if retries >= 100 then
+      noPath = noPath + 1
+      if noPath == 10 and storage.extras.pathfinding then
+        CaveBot.gotoNextWaypointInRange()
+      end
       return false -- tried 100 times, can't get there
     end  
   end
@@ -180,12 +189,20 @@ CaveBot.registerAction("goto", "green", function(value, retries, prev)
   pos = {x=tonumber(pos[1][2]), y=tonumber(pos[1][3]), z=tonumber(pos[1][4])}  
   local playerPos = player:getPosition()
   if pos.z ~= playerPos.z then 
+    noPath = noPath + 1
+    if noPath == 10 and storage.extras.pathfinding then
+      CaveBot.gotoNextWaypointInRange()
+    end
     return false -- different floor
   end
 
   local maxDist = storage.extras.gotoMaxDistance or 40
   
   if math.abs(pos.x-playerPos.x) + math.abs(pos.y-playerPos.y) > maxDist then
+    noPath = noPath + 1
+    if noPath == 10 and storage.extras.pathfinding then
+      CaveBot.gotoNextWaypointInRange()
+    end
     return false -- too far way
   end
 
@@ -194,14 +211,20 @@ CaveBot.registerAction("goto", "green", function(value, retries, prev)
   
   if stairs then
     if math.abs(pos.x-playerPos.x) == 0 and math.abs(pos.y-playerPos.y) <= 0 then
+      noPath = 0
       return true -- already at position
     end
   elseif math.abs(pos.x-playerPos.x) == 0 and math.abs(pos.y-playerPos.y) <= (precision or 1) then
+      noPath = 0
       return true -- already at position
   end
   -- check if there's a path to that place, ignore creatures and fields
   local path = findPath(playerPos, pos, maxDist, { ignoreNonPathable = true, precision = 1, ignoreCreatures = true, allowUnseen = true, allowOnlyVisibleTiles = false  })
   if not path then
+    noPath = noPath + 1
+    if noPath == 10 and storage.extras.pathfinding then
+      CaveBot.gotoNextWaypointInRange()
+    end
     return false -- there's no way
   end
 
@@ -222,14 +245,16 @@ CaveBot.registerAction("goto", "green", function(value, retries, prev)
               local hppc = creature:getHealthPercent()
               if creature:isMonster() and (hppc and hppc > 0) and (oldTibia or creature:getType() < 3) then
                   -- real blocking creature can not meet those conditions - ie. it could be player, so just in case check if the next creature is reachable
-                  local path = findPath(playerPos, creature:getPosition(), 20, { ignoreNonPathable = true, precision = 1 }) 
+                  local path = findPath(playerPos, creature:getPosition(), 7, { ignoreNonPathable = true, precision = 1 }) 
                   if path then
                       foundMonster = true
-                      attack(creature)
+                      if g_game.getAttackingCreature() ~= creature then
+                        attack(creature)
+                      end
                       g_game.setChaseMode(1)
-                      CaveBot.setOff()
-                      CaveBot.delay(1000)
-                      schedule(1000, function() CaveBot.setOn() end)
+                      CaveBot.delay(100)
+                      retries = 0 -- reset retries, we are trying to unclog the cavebot
+                      break
                   end
               end
           end
@@ -265,10 +290,18 @@ CaveBot.registerAction("goto", "green", function(value, retries, prev)
   end
   
   if not CaveBot.Config.get("mapClick") and retries >= 5 then
+    noPath = noPath + 1
+    if noPath == 10 and storage.extras.pathfinding then
+      CaveBot.gotoNextWaypointInRange()
+    end
     return false
   end
   
   if CaveBot.Config.get("skipBlocked") then
+    noPath = noPath + 1
+    if noPath == 10 and storage.extras.pathfinding then
+      CaveBot.gotoNextWaypointInRange()
+    end
     return false
   end
 
