@@ -94,6 +94,18 @@ function refreshContainerPages(container)
     nextPageButton:setEnabled(true)
     nextPageButton.onClick = function() g_game.seekInContainer(container:getId(), container:getFirstIndex() + container:getCapacity()) end
   end
+
+  local pagePanel = container.window:recursiveGetChildById('pagePanel')
+  if pagePanel then
+    pagePanel.onMouseWheel = function(widget, mousePos, mouseWheel)
+      if pages == 1 then return end
+      if mouseWheel == 1 then
+        return prevPageButton.onClick()
+      else
+        return nextPageButton.onClick()
+      end
+    end
+  end
 end
 
 function onContainerOpen(container, previousContainer)
@@ -124,6 +136,19 @@ function onContainerOpen(container, previousContainer)
     local child = containerPanel:getChildByIndex(-1)
     if child then
       child:onDrop(widget, mousePos, true)        
+    end
+  end
+  containerWindow.onMouseRelease = function(widget, mousePos, mouseButton)
+    if mouseButton == 7 then
+      if container:hasParent() then
+        return g_game.openParent(container)
+      end
+    elseif mouseButton == 8 then
+      for i, item in ipairs(container:getItems()) do
+        if item:isContainer() then
+          return g_game.open(item, container)
+        end
+      end
     end
   end
 
