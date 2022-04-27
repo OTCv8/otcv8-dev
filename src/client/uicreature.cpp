@@ -50,10 +50,7 @@ void UICreature::drawSelf(Fw::DrawPane drawPane)
             }
         }
 
-        if(m_scale >= 0.01) // TODO: make it correctly
-           m_creature->drawOutfit(Rect(getPaddingRect().topLeft(), g_sprites.spriteSize() * m_scale, g_sprites.spriteSize() * m_scale), m_direction, m_imageColor, m_animate, true);
-        else
-           m_creature->drawOutfit(getPaddingRect(), m_direction, m_imageColor, m_animate, true);
+        m_creature->drawOutfit(Rect(getPaddingRect().topLeft(), getSize() * m_scale), m_direction, m_imageColor, m_animate, true);
     }
 }
 
@@ -92,6 +89,10 @@ void UICreature::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
             Outfit outfit = getOutfit();
             outfit.setFeet(node->value<int>());
             setOutfit(outfit);
+        } else if (node->tag() == "outfit-addons") {
+            Outfit outfit = getOutfit();
+            outfit.setAddons(node->value<int>());
+            setOutfit(outfit);
         } else if (node->tag() == "outfit-mount") {
             Outfit outfit = getOutfit();
             outfit.setMount(node->value<int>());
@@ -108,6 +109,8 @@ void UICreature::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
             Outfit outfit = getOutfit();
             outfit.setShader(node->value<std::string>());
             setOutfit(outfit);
+        } else if (node->tag() == "outfit-center") {
+            setCenter(node->value<bool>());
         } else if (node->tag() == "scale") {
             setScale(node->value<float>());
         } else if (node->tag() == "animate") {
@@ -119,4 +122,11 @@ void UICreature::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
 void UICreature::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
     UIWidget::onGeometryChange(oldRect, newRect);
+}
+
+void UICreature::setCenter(bool value)
+{
+    Outfit outfit = getOutfit();
+    outfit.setCenter(value);
+    setOutfit(outfit);
 }

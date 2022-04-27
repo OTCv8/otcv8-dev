@@ -79,6 +79,15 @@ public:
     std::string getHealthBarPath(int id);
     std::string getManaBarPath(int id);
 
+    Point getHealthBarOffset(int id);
+    Point getManaBarOffset(int id);
+
+    Point getHealthBarOffsetBar(int id);
+    Point getManaBarOffsetBar(int id);
+
+    int getHealthBarHeight(int id);
+    int getManaBarHeight(int id);
+
 private:
     std::vector<HealthBarPtr> m_healthBars;
     std::vector<HealthBarPtr> m_manaBars;

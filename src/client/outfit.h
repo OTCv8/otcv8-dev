@@ -54,6 +54,7 @@ public:
     void setShader(const std::string& shader) { m_shader = shader; }
     void setHealthBar(uint8 id) { m_healthBar = id; }
     void setManaBar(uint8 id) { m_manaBar = id; }
+    void setCenter(bool value) { m_center = value; }
 
     void resetClothes();
     void resetShader() { m_shader = ""; }
@@ -78,11 +79,12 @@ private:
     int m_id, m_auxId, m_head, m_body, m_legs, m_feet, m_addons, m_mount = 0, m_wings = 0, m_aura = 0;
     int m_healthBar = 0, m_manaBar = 0;
     std::string m_shader;
+    bool m_center = false;
 };
 
 struct DrawQueueItemOutfit : public DrawQueueItemTexturedRect {
-    DrawQueueItemOutfit(const Rect& rect, const TexturePtr& texture, const Rect& src, const Point& offset, int32_t colors, const Color& color) :
-        DrawQueueItemTexturedRect(rect, texture, src, color), m_offset(offset), m_colors(colors)
+    DrawQueueItemOutfit(const Rect& rect, const TexturePtr& texture, const Rect& src, const Point& offset, int32_t colors, const Color& color, bool doCenter) :
+        DrawQueueItemTexturedRect(rect, texture, src, color), m_offset(offset), m_colors(colors), m_doCenter(doCenter)
     {};
 
     void draw() override;
@@ -91,11 +93,12 @@ struct DrawQueueItemOutfit : public DrawQueueItemTexturedRect {
 
     Point m_offset;
     int32_t m_colors;
+    bool m_doCenter;
 };
 
 struct DrawQueueItemOutfitWithShader : public DrawQueueItemTexturedRect {
-    DrawQueueItemOutfitWithShader(const Rect& rect, const TexturePtr& texture, const Rect& src, const Point& offset, const Point& center, int32_t colors, const std::string& shader) :
-        DrawQueueItemTexturedRect(rect, texture, src, Color::white), m_offset(offset), m_center(center), m_colors(colors), m_shader(shader)
+    DrawQueueItemOutfitWithShader(const Rect& rect, const TexturePtr& texture, const Rect& src, const Point& offset, const Point& center, int32_t colors, const std::string& shader, bool doCenter) :
+        DrawQueueItemTexturedRect(rect, texture, src, Color::white), m_offset(offset), m_center(center), m_colors(colors), m_shader(shader), m_doCenter(doCenter)
     {};
 
     void draw() override;
@@ -110,6 +113,7 @@ struct DrawQueueItemOutfitWithShader : public DrawQueueItemTexturedRect {
     Point m_center;
     int32_t m_colors;
     std::string m_shader;
+    bool m_doCenter;
 };
 
 #endif

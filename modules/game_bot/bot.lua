@@ -497,9 +497,7 @@ function initCallbacks()
     onRemoveItem = botContainerRemoveItem,
     onGameEditText = botGameEditText,
     onSpellCooldown = botSpellCooldown,
-    onSpellGroupCooldown = botGroupSpellCooldown,
-    onQuestLog = botGameQuestLog,
-    onQuestLine = botGameQuestLine
+    onSpellGroupCooldown = botGroupSpellCooldown
   })
   
   connect(Tile, {
@@ -562,9 +560,7 @@ function terminateCallbacks()
     onAttackingCreatureChange = botAttackingCreatureChange,
     onGameEditText = botGameEditText,
     onSpellCooldown = botSpellCooldown,
-    onSpellGroupCooldown = botGroupSpellCooldown,
-    onQuestLog = botGameQuestLog,
-    onQuestLine = botGameQuestLine
+    onSpellGroupCooldown = botGroupSpellCooldown
   })
   
   disconnect(Tile, {
@@ -793,14 +789,4 @@ end
 function botGroupSpellCooldown(iconId, duration)
   if botExecutor == nil then return false end
   safeBotCall(function() botExecutor.callbacks.onGroupSpellCooldown(iconId, duration) end)
-end
-
-function botGameQuestLog(quests)
-  if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onGameQuestLog(quests) end)
-end
-
-function botGameQuestLine(quests)
-  if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onGameQuestLine(questId, questMissions) end)
 end

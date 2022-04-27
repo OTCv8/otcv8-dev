@@ -356,6 +356,12 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_healthBars", "addManaBackground", &HealthBars::addManaBackground, &g_healthBars);
     g_lua.bindSingletonFunction("g_healthBars", "getHealthBarPath", &HealthBars::getHealthBarPath, &g_healthBars);
     g_lua.bindSingletonFunction("g_healthBars", "getManaBarPath", &HealthBars::getManaBarPath, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getHealthBarOffset", &HealthBars::getHealthBarOffset, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getManaBarOffset", &HealthBars::getManaBarOffset, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getHealthBarOffsetBar", &HealthBars::getHealthBarOffsetBar, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getManaBarOffsetBar", &HealthBars::getManaBarOffsetBar, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getHealthBarHeight", &HealthBars::getHealthBarHeight, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getManaBarHeight", &HealthBars::getManaBarHeight, &g_healthBars);
 
     g_lua.bindGlobalFunction("getOutfitColor", Outfit::getColor);
     g_lua.bindGlobalFunction("getAngleFromPos", Position::getAngleFromPositions);
@@ -546,6 +552,10 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("setTitle", &Creature::setTitle);
     g_lua.bindClassMemberFunction<Creature>("clearTitle", &Creature::clearTitle);
     g_lua.bindClassMemberFunction<Creature>("getTitle", &Creature::getTitle);
+    g_lua.bindClassMemberFunction<Creature>("isTimedSquareVisible", &Creature::isTimedSquareVisible);
+    g_lua.bindClassMemberFunction<Creature>("getTimedSquareColor", &Creature::getTimedSquareColor);
+    g_lua.bindClassMemberFunction<Creature>("isStaticSquareVisible", &Creature::isStaticSquareVisible);
+    g_lua.bindClassMemberFunction<Creature>("getStaticSquareColor", &Creature::getStaticSquareColor);
 
     // widgets
     g_lua.bindClassMemberFunction<Creature>("addTopWidget", &Creature::addTopWidget);
@@ -859,10 +869,12 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UICreature>("isFixedCreatureSize", &UICreature::isFixedCreatureSize);
     g_lua.bindClassMemberFunction<UICreature>("setAutoRotating", &UICreature::setAutoRotating);
     g_lua.bindClassMemberFunction<UICreature>("setDirection", &UICreature::setDirection);
+    g_lua.bindClassMemberFunction<UICreature>("getDirection", &UICreature::getDirection);
     g_lua.bindClassMemberFunction<UICreature>("setScale", &UICreature::setScale);
     g_lua.bindClassMemberFunction<UICreature>("getScale", &UICreature::getScale);
     g_lua.bindClassMemberFunction<UICreature>("setAnimate", &UICreature::setAnimate);
     g_lua.bindClassMemberFunction<UICreature>("isAnimating", &UICreature::isAnimating);
+    g_lua.bindClassMemberFunction<UICreature>("setCenter", &UICreature::setCenter);
 
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", []{ return UIMapPtr(new UIMap); });
