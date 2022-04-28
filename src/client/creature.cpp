@@ -92,7 +92,7 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
     Point animationOffset = animate ? m_walkOffset : Point(0, 0);
 
     if (m_showTimedSquare && animate) {
-        g_drawQueue->addBoundingRect(Rect(dest - jumpOffset + (animationOffset - getDisplacement() + 2 * g_sprites.getOffsetFactor()), Size(sprSize - 4, sprSize - 4)), 2 * g_sprites.getOffsetFactor(), m_timedSquareColor);
+        g_drawQueue->addBoundingRect(Rect(dest - jumpOffset + (animationOffset - getDisplacement() + 2 * g_sprites.getOffsetFactor()), Size(sprSize - 4 * g_sprites.getOffsetFactor(), sprSize - 4 * g_sprites.getOffsetFactor())), 2 * g_sprites.getOffsetFactor(), m_timedSquareColor);
     }
 
     if (m_showStaticSquare && animate) {
@@ -146,12 +146,8 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
         fillColor = m_informationColor;
 
     // calculate main rects
-    Rect backgroundRect;
-    if (g_sprites.isHdMod() == false) {
-        backgroundRect = Rect(point.x + m_informationOffset.x - (13.5), point.y + m_informationOffset.y, 27, 4);
-    }else {
-        backgroundRect = Rect(point.x + m_informationOffset.x * g_sprites.getOffsetFactor(), point.y + m_informationOffset.y * g_sprites.getOffsetFactor(), 27, 4);
-    }
+    // calculate main rects - hp/mana
+    Rect backgroundRect = Rect(point.x + m_informationOffset.x - (13.5), point.y + m_informationOffset.y, 27, 4);
     backgroundRect.bind(parentRect);
 
     //debug            
@@ -166,12 +162,7 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     }
 
     Size nameSize = m_nameCache.getTextSize();
-    Rect textRect;
-    if (g_sprites.isHdMod() == false) {
-        textRect = Rect(point.x + m_informationOffset.x - nameSize.width() / 2.0, point.y + m_informationOffset.y - 12, nameSize);
-    } else {
-        textRect = Rect(point.x + m_informationOffset.x - nameSize.width() / 2.0 + 14.5, point.y + m_informationOffset.y - 13, nameSize);
-    }
+    Rect textRect = Rect(point.x + m_informationOffset.x - nameSize.width() / 2.0, point.y + m_informationOffset.y - 12, nameSize);
     textRect.bind(parentRect);
 
     // distance them
@@ -283,7 +274,7 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
 
         if (m_text) {
             auto extraTextSize = m_text->getCachedText().getTextSize();
-            Rect extraTextRect = Rect(point.x + m_informationOffset.x * g_sprites.getOffsetFactor() - extraTextSize.width() / 2.0, point.y + (m_informationOffset.y + 15) * g_sprites.getOffsetFactor(), extraTextSize);
+            Rect extraTextRect = Rect(point.x + m_informationOffset.x - extraTextSize.width() / 2.0, point.y + m_informationOffset.y + 15, extraTextSize);
             m_text->drawText(extraTextRect.center(), extraTextRect);
         }
     }
