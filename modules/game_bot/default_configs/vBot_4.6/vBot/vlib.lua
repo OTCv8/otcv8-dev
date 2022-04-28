@@ -796,10 +796,12 @@ function hasSupplies()
 
     local hasSupplies = true
 
-    for i, supply in pairs(items) do
-        if supply.minAmount and supply.ID then
-            if supply.ID > 100 and itemAmount(supply.ID) <
-                (supply.minAmount / 2) then hasSupplies = false end
+    for i, supply in ipairs(items) do
+        if supply.minAmount and supply.ID and supply.ID > 100 then
+            if itemAmount(supply.ID) < (supply.minAmount / 2) then 
+                hasSupplies = false 
+                break
+            end
         end
     end
 
