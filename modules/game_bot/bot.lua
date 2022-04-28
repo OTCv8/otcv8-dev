@@ -1,3 +1,4 @@
+
 botWindow = nil
 botButton = nil
 contentsPanel = nil
