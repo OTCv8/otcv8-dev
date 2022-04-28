@@ -72,14 +72,11 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
     onGameEditText = {},
     onGroupSpellCooldown = {},
     onSpellCooldown = {},
-    onRemoveItem = {},
-    onInventoryChange = {}
+    onRemoveItem = {}
   }
   
   -- basic functions & classes
   context.print = print
-  context.bit32 = bit32
-  context.bit = bit
   context.pairs = pairs
   context.ipairs = ipairs
   context.tostring = tostring
@@ -119,7 +116,6 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
   context.g_sounds = g_sounds
   context.g_window = g_window
   context.g_mouse = g_mouse
-  context.g_keyboard = g_keyboard
   context.g_things = g_things
   context.g_settings = g_settings
   context.g_platform = {
@@ -393,9 +389,9 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
           callback(container, slot, item)
         end
       end,
-      onStatesChange = function(player, states, oldStates)
+      onStatesChange = function(states, oldStates)
         for i, callback in ipairs(context._callbacks.onStatesChange) do
-          callback(player, states, oldStates)
+          callback(states, oldStates)
         end
       end,
       onGroupSpellCooldown = function(iconId, duration)
@@ -408,16 +404,6 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
           callback(iconId, duration)
         end
       end,
-      onSpellCooldown = function(iconId, duration)
-        for i, callback in ipairs(context._callbacks.onSpellCooldown) do
-          callback(iconId, duration)
-        end
-      end,
-      onInventoryChange = function(player, slot, item, oldItem)
-        for i, callback in ipairs(context._callbacks.onInventoryChange) do
-          callback(player, slot, item, oldItem)
-        end
-      end
     }    
   }
 end
