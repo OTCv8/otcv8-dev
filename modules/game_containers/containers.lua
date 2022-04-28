@@ -99,7 +99,7 @@ function refreshContainerPages(container)
   if pagePanel then
     pagePanel.onMouseWheel = function(widget, mousePos, mouseWheel)
       if pages == 1 then return end
-      if mouseWheel == 1 then
+      if mouseWheel == MouseWheelUp then
         return prevPageButton.onClick()
       else
         return nextPageButton.onClick()
@@ -139,11 +139,11 @@ function onContainerOpen(container, previousContainer)
     end
   end
   containerWindow.onMouseRelease = function(widget, mousePos, mouseButton)
-    if mouseButton == 7 then
+    if mouseButton == MouseButton4 then
       if container:hasParent() then
         return g_game.openParent(container)
       end
-    elseif mouseButton == 8 then
+    elseif mouseButton == MouseButton5 then
       for i, item in ipairs(container:getItems()) do
         if item:isContainer() then
           return g_game.open(item, container)
