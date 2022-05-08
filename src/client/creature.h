@@ -128,6 +128,10 @@ public:
     virtual int getDisplacementY();
     virtual int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0);
     PointF getJumpOffset() { return m_jumpOffset; }
+    bool isTimedSquareVisible() { return m_showTimedSquare; }
+    Color getTimedSquareColor() { return m_timedSquareColor; }
+    bool isStaticSquareVisible() { return m_showStaticSquare; }
+    Color getStaticSquareColor() { return m_staticSquareColor; }
 
     void updateShield();
 

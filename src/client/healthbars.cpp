@@ -80,6 +80,66 @@ std::string HealthBars::getManaBarPath(int id)
     return std::string();
 }
 
+Point HealthBars::getHealthBarOffset(int id)
+{
+    HealthBarPtr bar = getHealthBar(id);
+    if (bar) {
+        return bar->getOffset();
+    }
+
+    return Point();
+}
+
+Point HealthBars::getManaBarOffset(int id)
+{
+    HealthBarPtr bar = getManaBar(id);
+    if (bar) {
+        return bar->getOffset();
+    }
+
+    return Point();
+}
+
+Point HealthBars::getHealthBarOffsetBar(int id)
+{
+    HealthBarPtr bar = getHealthBar(id);
+    if (bar) {
+        return bar->getBarOffset();
+    }
+
+    return Point();
+}
+
+Point HealthBars::getManaBarOffsetBar(int id)
+{
+    HealthBarPtr bar = getManaBar(id);
+    if (bar) {
+        return bar->getBarOffset();
+    }
+
+    return Point();
+}
+
+int HealthBars::getHealthBarHeight(int id)
+{
+    HealthBarPtr bar = getHealthBar(id);
+    if (bar) {
+        return bar->getHeight();
+    }
+
+    return 0;
+}
+
+int HealthBars::getManaBarHeight(int id)
+{
+    HealthBarPtr bar = getManaBar(id);
+    if (bar) {
+        return bar->getHeight();
+    }
+
+    return 0;
+}
+
 void HealthBar::setTexture(const std::string& path)
 {
     m_texture = g_textures.getTexture(path);

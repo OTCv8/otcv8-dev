@@ -84,7 +84,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
 
     if (animate && m_category == ThingCategoryCreature) {
         auto idleAnimator = type->getIdleAnimator();
-        if (idleAnimator) {
+        if (idleAnimator && !ui) {
             if (walkAnimationPhase > 0) {
                 animationPhase += idleAnimator->getAnimationPhases() - 1;
             } else {
@@ -94,6 +94,9 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
             int phases = type->getAnimator() ? type->getAnimator()->getAnimationPhases() : type->getAnimationPhases();
             int ticksPerFrame = 1000 / phases;
             animationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
+            if (idleAnimator && ui) {
+                animationPhase += idleAnimator->getAnimationPhases() - 1;
+            }
             if (!type->isAnimateAlways() && ui) {
                 animationPhase += 1;
             }
@@ -127,6 +130,14 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
                     mountAnimationPhase += idleAnimator->getAnimationPhases() - 1;
                 } else {
                     mountAnimationPhase = idleAnimator->getPhase();
+                }
+            }
+            else if (ui && animate) {
+                int phases = mountType->getAnimator() ? mountType->getAnimator()->getAnimationPhases() : mountType->getAnimationPhases();
+                int ticksPerFrame = 1000 / phases;
+                mountAnimationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
+                if (!mountType->isAnimateAlways()) {
+                    mountAnimationPhase += 1;
                 }
             }
             if (m_wings && g_game.getFeature(Otc::GameWingOffset)) {
@@ -248,7 +259,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
                     continue;
                 if (yPattern == 0)
                     center = outfitParams->dest.center();
-                DrawQueueItemTexturedRect* outfit = new DrawQueueItemOutfitWithShader(outfitParams->dest, outfitParams->texture, outfitParams->src, outfitParams->offset, center, 0, m_shader);
+                DrawQueueItemTexturedRect* outfit = new DrawQueueItemOutfitWithShader(outfitParams->dest, outfitParams->texture, outfitParams->src, outfitParams->offset, center, 0, m_shader, m_center);
                 g_drawQueue->add(outfit);
                 continue;
             }
@@ -263,11 +274,11 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
 
         DrawQueueItemTexturedRect* outfit = nullptr;
         if (m_shader.empty())
-            outfit = new DrawQueueItemOutfit(outfitParams->dest, outfitParams->texture, outfitParams->src, outfitParams->offset, colors, outfitParams->color);
+            outfit = new DrawQueueItemOutfit(outfitParams->dest, outfitParams->texture, outfitParams->src, outfitParams->offset, colors, outfitParams->color, m_center);
         else {
             if (yPattern == 0)
                 center = outfitParams->dest.center();
-            outfit = new DrawQueueItemOutfitWithShader(outfitParams->dest, outfitParams->texture, outfitParams->src, outfitParams->offset, center, colors, m_shader);
+            outfit = new DrawQueueItemOutfitWithShader(outfitParams->dest, outfitParams->texture, outfitParams->src, outfitParams->offset, center, colors, m_shader, m_center);
         }
         g_drawQueue->add(outfit);
     }

@@ -46,6 +46,7 @@ public:
     virtual void resize(const Size& size) = 0;
     virtual void show() = 0;
     virtual void hide() = 0;
+    virtual void minimize() = 0;
     virtual void maximize() = 0;
     virtual void poll() = 0;
     virtual void swapBuffers() = 0;
