@@ -862,12 +862,12 @@ Point Creature::getDrawOffset()
     Point drawOffset;
     if (m_walking) {
         if (m_walkingTile)
-            drawOffset -= Point(1, 1) * m_walkingTile->getDrawElevation();
+            drawOffset -= Point(1, 1) * m_walkingTile->getDrawElevation() * g_sprites.getOffsetFactor();
         drawOffset += m_walkOffset;
     } else {
         const TilePtr& tile = getTile();
         if (tile)
-            drawOffset -= Point(1, 1) * tile->getDrawElevation();
+            drawOffset -= Point(1, 1) * tile->getDrawElevation() * g_sprites.getOffsetFactor();
     }
     return drawOffset;
 }
