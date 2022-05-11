@@ -308,11 +308,11 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
     }
 }
 
-void Outfit::draw(const Rect& dest, Otc::Direction direction, uint animationPhase, bool animate, bool ui)
+void Outfit::draw(const Rect& dest, Otc::Direction direction, uint animationPhase, bool animate, bool ui, bool oldScaling)
 {
     int size = g_drawQueue->size();
     draw(Point(0, 0), direction, animationPhase, animate, nullptr, ui);
-    g_drawQueue->correctOutfit(dest, size);
+    g_drawQueue->correctOutfit(dest, size, oldScaling);
 }
 
 void Outfit::resetClothes()
