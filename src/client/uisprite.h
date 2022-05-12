@@ -32,8 +32,8 @@ public:
     UISprite();
     void drawSelf(Fw::DrawPane drawPane);
 
-    void setSpriteId(int id);
-    int getSpriteId() { return m_spriteId; }
+    void setSpriteId(uint32 id);
+    uint32 getSpriteId() { return m_spriteId; }
     void clearSprite() { setSpriteId(0); }
 
     void setSpriteColor(Color color) { m_spriteColor = color; }
@@ -47,7 +47,7 @@ protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
 
     TexturePtr m_sprite;
-    uint16 m_spriteId;
+    uint32 m_spriteId;
     Color m_spriteColor;
 
     stdext::boolean<true> m_spriteVisible;

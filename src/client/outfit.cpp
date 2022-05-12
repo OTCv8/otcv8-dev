@@ -92,6 +92,9 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
             }
         } else if (type->isAnimateAlways() || ui) {
             int phases = type->getAnimator() ? type->getAnimator()->getAnimationPhases() : type->getAnimationPhases();
+            if (phases < 4) {
+                phases = 2; // old protocols with 2 frames walk animation
+            }
             int ticksPerFrame = 1000 / phases;
             animationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
             if (idleAnimator && ui) {
