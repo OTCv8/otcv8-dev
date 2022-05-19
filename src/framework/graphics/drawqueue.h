@@ -68,6 +68,20 @@ struct DrawQueueItemColoredTextureCoords : public DrawQueueItem {
     std::vector<std::pair<int, Color>> m_colors;
 };
 
+struct DrawQueueItemImageWithShader : public DrawQueueItemTextureCoords {
+    DrawQueueItemImageWithShader(CoordsBuffer& coords, const TexturePtr& texture, const Color& color, const std::string& shader) :
+        DrawQueueItemTextureCoords(coords, texture, color), m_shader(shader)
+    {};
+
+    void draw() override;
+    void draw(const Point& pos) override;
+    bool cache() override {
+        return false;
+    }
+
+    std::string m_shader;
+};
+
 struct DrawQueueItemFilledRect : public DrawQueueItem {
     DrawQueueItemFilledRect(const Rect& rect, const Color& color) :
         DrawQueueItem(nullptr, color), m_dest(rect) {};

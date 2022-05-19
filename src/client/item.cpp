@@ -87,7 +87,12 @@ void Item::draw(const Point& dest, bool animate, LightView* lightView)
     if (m_color != Color::alpha)
         color = m_color;
     size_t drawQueueSize = g_drawQueue->size();
-    rawGetThingType()->draw(dest, 0, xPattern, yPattern, zPattern, animationPhase, color, lightView);
+    if (!m_shader.empty()) {
+        rawGetThingType()->drawWithShader(dest, 0, xPattern, yPattern, zPattern, animationPhase, m_shader, color, lightView);
+    }
+    else {
+        rawGetThingType()->draw(dest, 0, xPattern, yPattern, zPattern, animationPhase, color, lightView);
+    }
     if (m_marked) {
         g_drawQueue->setMark(drawQueueSize, updatedMarkedColor());
     }
@@ -109,7 +114,12 @@ void Item::draw(const Rect& dest, bool animate)
     if (m_color != Color::alpha)
         color = m_color;
 
-    rawGetThingType()->draw(dest, 0, xPattern, yPattern, zPattern, animationPhase, color);
+    if (!m_shader.empty()) {
+        rawGetThingType()->drawWithShader(dest, 0, xPattern, yPattern, zPattern, animationPhase, m_shader, color);
+    }
+    else {
+        rawGetThingType()->draw(dest, 0, xPattern, yPattern, zPattern, animationPhase, color);
+    }
 }
 
 void Item::setId(uint32 id)
@@ -438,4 +448,3 @@ ThingType* Item::rawGetThingType()
 {
     return g_things.rawGetThingType(m_clientId, ThingCategoryItem);
 }
-/* vim: set ts=4 sw=4 et :*/

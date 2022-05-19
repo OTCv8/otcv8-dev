@@ -182,6 +182,8 @@ public:
     DrawQueueItem* draw(const Rect& dest, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, Color color = Color::white);
     std::shared_ptr<DrawOutfitParams> drawOutfit(const Point& dest, int maskLayer, int xPattern, int yPattern, int zPattern, int animationPhase, Color color = Color::white, LightView* lightView = nullptr);
     Rect getDrawSize(const Point& dest, int layer, int xPattern, int yPattern, int zPattern, int animationPhase);
+    void drawWithShader(const Point& dest, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, const std::string& shader, Color color = Color::white, LightView* lightView = nullptr);
+    void drawWithShader(const Rect& dest, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, const std::string& shader, Color color = Color::white);
 
     uint16 getId() { return m_id; }
     ThingCategory getCategory() { return m_category; }
@@ -293,6 +295,25 @@ private:
 
     bool m_loaded = false;
     time_t m_lastUsage;
+};
+
+struct DrawQueueItemThingWithShader : public DrawQueueItemTexturedRect {
+    DrawQueueItemThingWithShader(const Rect& rect, const TexturePtr& texture, const Rect& src, const Point& offset, const Point& center, int32_t colors, const std::string& shader) :
+        DrawQueueItemTexturedRect(rect, texture, src, Color::white), m_offset(offset), m_center(center), m_colors(colors), m_shader(shader)
+    {};
+
+    void draw() override;
+    void draw(const Point& pos) override
+    {}
+    bool cache() override
+    {
+        return false;
+    }
+
+    Point m_offset;
+    Point m_center;
+    int32_t m_colors;
+    std::string m_shader;
 };
 
 #endif

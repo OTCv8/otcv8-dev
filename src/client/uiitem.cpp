@@ -80,26 +80,44 @@ void UIItem::setItemId(int id)
             m_item->setId(id);
     }
 
+    if (m_item)
+        m_item->setShader(m_shader);
+
     callLuaField("onItemChange");
 }
 
 void UIItem::setItemCount(int count)
 {
-    if (m_item)
+    if (m_item) {
         m_item->setCount(count);
-    callLuaField("onItemChange");
+        callLuaField("onItemChange");
+    }
 }
 void UIItem::setItemSubType(int subType)
 {
-    if (m_item)
+    if (m_item) {
         m_item->setSubType(subType);
-    callLuaField("onItemChange");
+        callLuaField("onItemChange");
+    }
 }
 
 void UIItem::setItem(const ItemPtr& item)
 {
     m_item = item;
-    callLuaField("onItemChange");
+    if (m_item) {
+        m_item->setShader(m_shader);
+        callLuaField("onItemChange");
+    }
+}
+
+void UIItem::setItemShader(const std::string& str)
+{
+    m_shader = str;
+
+    if (m_item) {
+        m_item->setShader(m_shader);
+        callLuaField("onItemChange");
+    }
 }
 
 void UIItem::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
@@ -117,5 +135,7 @@ void UIItem::onStyleApply(const std::string& styleName, const OTMLNodePtr& style
             setVirtual(node->value<bool>());
         else if(node->tag() == "show-id")
             m_showId = node->value<bool>();
+        else if(node->tag() == "shader")
+            setItemShader(node->value());
     }
 }
