@@ -589,14 +589,17 @@ void Creature::nextWalkUpdate()
     updateWalk();
 
     // schedules next update
-    if (m_walking) {
-        auto self = static_self_cast<Creature>();
-        m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
-            self->m_walkUpdateEvent = nullptr;
-            self->nextWalkUpdate();
-        }, g_game.getFeature(Otc::GameNewUpdateWalk) && isLocalPlayer() ?
-            std::ceil<uint16>(((float)getStepDuration(true) / g_app.getFps()) * 2) : (float)getStepDuration() / g_sprites.spriteSize());
+    if (!m_walking) {
+        return;
     }
+	
+    auto self = static_self_cast<Creature>();
+    m_walkUpdateEvent = g_dispatcher.scheduleEvent([self]{
+        self->m_walkUpdateEvent = nullptr;
+        self->nextWalkUpdate();
+    }, g_game.getFeature(Otc::GameNewUpdateWalk) ? 
+        std::max(getStepDuration(true) / std::max(g_app.getFps(), 1), 1) : (float)getStepDuration() / g_sprites.spriteSize()
+    );
 }
 
 void Creature::updateWalk()
