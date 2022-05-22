@@ -595,10 +595,10 @@ void Creature::nextWalkUpdate()
 	
     auto self = static_self_cast<Creature>();
     m_walkUpdateEvent = g_dispatcher.scheduleEvent([self]{
-            self->m_walkUpdateEvent = nullptr;
-            self->nextWalkUpdate();
-        }, g_game.getFeature(Otc::GameNewUpdateWalk) ? 
-            std::max(getStepDuration(true) / std::max(g_app.getFps(), 1), 1) : (float)getStepDuration() / g_sprites.spriteSize()
+        self->m_walkUpdateEvent = nullptr;
+        self->nextWalkUpdate();
+    }, g_game.getFeature(Otc::GameNewUpdateWalk) ? 
+        std::max(getStepDuration(true) / std::max(g_app.getFps(), 1), 1) : (float)getStepDuration() / g_sprites.spriteSize()
     );
 }
 
