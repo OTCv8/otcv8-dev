@@ -486,6 +486,7 @@ namespace Otc
         GameQuickLootFlags = 123,
         GameDontMergeAnimatedText = 124,
         GameMissionId = 125,
+        GameItemCustomAttributes = 126,
 
         LastGameFeature = 130
     };

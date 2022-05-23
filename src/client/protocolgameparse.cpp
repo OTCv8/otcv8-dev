@@ -3603,6 +3603,15 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id, bool hasDescri
         item->setTooltip(msg->getString());
     }
 
+    if (g_game.getFeature(Otc::GameItemCustomAttributes)) {
+        uint16 size = msg->getU16();
+        for (uint16 i = 0; i < size; ++i) {
+            uint16 key = msg->getU16();
+            uint64 value = msg->getU64();
+            item->setCustomAttribute(key, value);
+        }
+    }
+
     return item;
 }
 

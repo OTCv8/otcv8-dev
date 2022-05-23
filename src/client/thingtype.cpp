@@ -586,7 +586,7 @@ std::shared_ptr<DrawOutfitParams> ThingType::drawOutfit(const Point& dest, int m
     Size size = textureRect.size();
     if (!size.isValid())
         return nullptr;
-    Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1, 1)) * g_sprites.spriteSize()), textureRect.size());
+    Rect screenRect(dest + (textureOffset - m_displacement * g_sprites.getOffsetFactor() - (m_size.toPoint() - Point(1, 1)) * g_sprites.spriteSize()), textureRect.size());
 
     bool useOpacity = m_opacity < 1.0f;
     if (useOpacity)

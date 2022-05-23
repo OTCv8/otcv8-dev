@@ -157,6 +157,13 @@ public:
     const ThingTypePtr& getThingType();
     ThingType *rawGetThingType();
 
+    void setCustomAttribute(uint16 key, uint64 value) {
+        m_customAttribs.set(key, value);
+    }
+    uint64 getCustomAttribute(uint16 key) {
+        return m_customAttribs.get<uint64>(key);
+    }
+
 private:
     uint16 m_clientId;
     uint16 m_serverId;
@@ -171,6 +178,8 @@ private:
     uint32 m_quickLootFlags;
     uint8 m_phase;
     ticks_t m_lastPhase;
+
+    stdext::packed_storage<uint16> m_customAttribs;
 };
 
 #pragma pack(pop)
