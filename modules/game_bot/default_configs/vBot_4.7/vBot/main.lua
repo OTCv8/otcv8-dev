@@ -1,4 +1,4 @@
-local version = "4.5"
+local version = "4.7"
 local currentVersion
 local available = false
 

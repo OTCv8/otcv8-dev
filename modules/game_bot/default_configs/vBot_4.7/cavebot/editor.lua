@@ -89,9 +89,9 @@ CaveBot.Editor.setup = function()
   registerAction("delay", {
     value="500",
     title="Delay",
-    description="Delay next action (in milliseconds)",
+    description="Delay next action (in milliseconds),randomness (in percent-optional)",
     multiline=false,
-    validation="^\\s*[0-9]{1,10}\\s*$"
+    validation="^[0-9]{1,10}$|^[0-9]{1,10},[0-9]{1,4}$"
   })
   registerAction("gotolabel", "go to label", {
     value="labelName",

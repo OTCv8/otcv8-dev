@@ -520,7 +520,8 @@ function initCallbacks()
     onTurn = botCreatureTurn,
     onWalk = botCreatureWalk,
     onManaChange = botManaChange,
-    onStatesChange = botStatesChange
+    onStatesChange = botStatesChange,
+    onInventoryChange = botInventoryChange
   })
   
   connect(Container, {
@@ -583,7 +584,8 @@ function terminateCallbacks()
     onTurn = botCreatureTurn,
     onWalk = botCreatureWalk,
     onManaChange = botManaChange,
-    onStatesChange = botStatesChange
+    onStatesChange = botStatesChange,
+    onInventoryChange = botInventoryChange
   })
   
   disconnect(Container, {
@@ -766,9 +768,9 @@ function botManaChange(player, mana, maxMana, oldMana, oldMaxMana)
   safeBotCall(function() botExecutor.callbacks.onManaChange(player, mana, maxMana, oldMana, oldMaxMana) end)
 end
 
-function botStatesChange(states, oldStates)
+function botStatesChange(player, states, oldStates)
   if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onStatesChange(states, oldStates) end)
+  safeBotCall(function() botExecutor.callbacks.onStatesChange(player, states, oldStates) end)
 end
 
 function botContainerAddItem(container, slot, item, oldItem)
@@ -789,4 +791,9 @@ end
 function botGroupSpellCooldown(iconId, duration)
   if botExecutor == nil then return false end
   safeBotCall(function() botExecutor.callbacks.onGroupSpellCooldown(iconId, duration) end)
+end
+
+function botInventoryChange(player, slot, item, oldItem)
+  if botExecutor == nil then return false end
+  safeBotCall(function() botExecutor.callbacks.onInventoryChange(player, slot, item, oldItem) end)
 end

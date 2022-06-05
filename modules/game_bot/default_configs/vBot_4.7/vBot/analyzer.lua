@@ -1,5 +1,5 @@
 --[[
-  Bot-based Tibia 12 features v1.0 
+  Bot-based Tibia 12 features v1.1
   made by Vithrax
 
   Credits also to:
@@ -11,7 +11,13 @@
   br, Vithrax
 ]]
 
-
+vBot.CaveBotData = vBot.CaveBotData or {
+  refills = 0,
+  rounds = 0,
+  time = {},
+  lastRefill = os.time(),
+  refillTime = {}
+}
 local lootWorth = 0
 local wasteWorth = 0
 local balance = 0
@@ -58,8 +64,18 @@ storage.analyzers.trackedLoot = storage.analyzers.trackedLoot or {}
 local trackedLoot = storage.analyzers.trackedLoot
 
 --destroy old windows
-local windowsTable = {"MainAnalyzerWindow", "HuntingAnalyzerWindow", "LootAnalyzerWindow", "SupplyAnalyzerWindow", "ImpactAnalyzerWindow", "XPAnalyzerWindow", "PartyAnalyzerWindow", "DropTracker"}
-for i, window in ipairs(windowsTable) do
+local windowsTable = {"MainAnalyzerWindow", 
+                      "HuntingAnalyzerWindow", 
+                      "LootAnalyzerWindow", 
+                      "SupplyAnalyzerWindow", 
+                      "ImpactAnalyzerWindow", 
+                      "XPAnalyzerWindow", 
+                      "PartyAnalyzerWindow", 
+                      "DropTracker", 
+                      "CaveBotStats"
+                     }
+
+                      for i, window in ipairs(windowsTable) do
   local element = g_ui.getRootWidget():recursiveGetChildById(window)
 
   if element then
@@ -69,7 +85,7 @@ end
 
 local mainWindow = UI.createMiniWindow("MainAnalyzerWindow")
 mainWindow:hide()
-mainWindow:setContentMaximumHeight(220)
+mainWindow:setContentMaximumHeight(240)
 local huntingWindow = UI.createMiniWindow("HuntingAnalyzer")
 huntingWindow:hide()
 local lootWindow = UI.createMiniWindow("LootAnalyzer")
@@ -88,6 +104,8 @@ local partyHuntWindow = UI.createMiniWindow("PartyAnalyzerWindow")
 partyHuntWindow:hide()
 local dropTrackerWindow = UI.createMiniWindow("DropTracker")
 dropTrackerWindow:hide()
+local statsWindow = UI.createMiniWindow("CaveBotStats")
+statsWindow:hide()
 
 --f
 local toggle = function()
@@ -193,8 +211,29 @@ end
 mainWindow.contentsPanel.DropTracker.onClick = function()
   toggleAnalyzer(dropTrackerWindow)
 end
+mainWindow.contentsPanel.Stats.onClick = function()
+  toggleAnalyzer(statsWindow)
+end
 
---hunting
+--stats window
+local totalRounds = UI.DualLabel("Total Rounds:", "0", {}, statsWindow.contentsPanel).right
+local avRoundTime = UI.DualLabel("Time by Round:", "00:00h", {}, statsWindow.contentsPanel).right
+UI.Separator(statsWindow.contentsPanel)
+local totalRefills = UI.DualLabel("Total Refills:", "0", {}, statsWindow.contentsPanel).right
+local avRefillTime = UI.DualLabel("Time by Refill:", "00:00h", {}, statsWindow.contentsPanel).right
+local lastRefill = UI.DualLabel("Time since Refill:", "00:00h", {maxWidth = 200}, statsWindow.contentsPanel).right
+UI.Separator(statsWindow.contentsPanel)
+local label = UI.DualLabel("Supplies by Round:", "", {maxWidth = 200}, statsWindow.contentsPanel).left
+label:setColor('#EC9706')
+local suppliesByRound = UI.createWidget("AnalyzerItemsPanel", statsWindow.contentsPanel)
+UI.Separator(statsWindow.contentsPanel)
+label = UI.DualLabel("Supplies by Refill:", "", {maxWidth = 200}, statsWindow.contentsPanel).left
+label:setColor('#ED7117')
+local suppliesByRefill = UI.createWidget("AnalyzerItemsPanel", statsWindow.contentsPanel)
+UI.Separator(statsWindow.contentsPanel)
+
+
+--huntig
 local sessionTimeLabel = UI.DualLabel("Session:", "00:00h", {}, huntingWindow.contentsPanel).right
 local xpGainLabel = UI.DualLabel("XP Gain:", "0", {}, huntingWindow.contentsPanel).right
 local xpHourLabel = UI.DualLabel("XP/h:", "0", {}, huntingWindow.contentsPanel).right
@@ -464,7 +503,9 @@ local xpGraph = UI.createWidget("AnalyzerGraph", xpWindow.contentsPanel)
       xpGraph:setTitle("XP/h")
       drawGraph(xpGraph, 0)
       
-      
+
+
+
 
 --#############################################
 --#############################################   UI DONE
@@ -567,10 +608,13 @@ local expLeft = function()
   return math.floor((50*level*level*level)/3 - 100*level*level + (850*level)/3 - 200) - exp()
 end
 
-niceTimeFormat = function(v) -- v in seconds
+niceTimeFormat = function(v, seconds) -- v in seconds
   local hours = string.format("%02.f", math.floor(v/3600))
   local mins = string.format("%02.f", math.floor(v/60 - (hours*60)))
- return hours .. ":" .. mins .. "h"
+  local secs = string.format("%02.f", math.floor(math.mod(v, 60)))
+
+  local final = string.format('%s:%s%s',hours,mins,seconds and ":"..secs or "")
+ return final
 end
 local uptime
 sessionTime = function()
@@ -860,6 +904,13 @@ local function niceFormat(v)
 end
 
 resetAnalyzerSessionData = function()
+    vBot.CaveBotData = vBot.CaveBotData or {
+      refills = 0,
+      rounds = 0,
+      time = {},
+      lastRefill = os.time(),
+      refillTime = {}
+    }
     launchTime = now
     startExp = exp()
     dmgTable = {}
@@ -923,24 +974,39 @@ local function getFrame(v)
   end
 end
 
+
+displayCondition = function(menuPosition, lookThing, useThing, creatureThing)
+  if lookThing and not lookThing:isCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
+    return true
+  end
+end
+local interface = modules.game_interface
+
 local function setFrames()
   if not storage.analyzers.rarityFrames then return end
   for _, container in pairs(getContainers()) do
       local window = container.itemsPanel
       for i, child in pairs(window:getChildren()) do
           local id = child:getItemId()
+          local price = 0
 
           if id ~= 0 then -- there's item
               local item = Item.create(id)
               local name = item:getMarketData().name:lower()
+              price = getPrice(name)
 
-              local price = getPrice(name)
               -- set rarity frame
               child:setImageSource(getFrame(price))
           else -- empty widget
               -- revert any possible changes
               child:setImageSource("/images/ui/item")
           end
+          child.onHoverChange = function(widget, hovered)
+            if id == 0 or not hovered then
+              return interface.removeMenuHook('analyzer')
+            end
+            interface.addMenuHook('analyzer', 'Price:', function() end, displayCondition, price)          
+        end
       end
   end 
 end 
@@ -1178,20 +1244,21 @@ function refreshLoot()
     lootList:destroyChildren()
 
     for k,v in pairs(lootedItems) do
-        local label1 = UI.createWidget("AnalyzerLootItem", lootItems)
-        local price = v.count and getPrice(v.name) * v.count or getPrice(v.name)
+      local label1 = UI.createWidget("AnalyzerLootItem", lootItems)
+      local price = v.count and getPrice(v.name) * v.count or getPrice(v.name)
 
-        label1:setItemId(k)
-        label1:setItemCount(50)
-        label1:setShowCount(false)
-        label1.count:setText(niceFormat(v.count))
-        label1.count:setColor(getColor(price))
-        local tooltipName = v.count > 1 and v.name.."s" or v.name
-        label1:setTooltip(v.count .. "x " .. tooltipName .. " (Value: "..format_thousand(getPrice(v.name)).."gp, Sum: "..format_thousand(price).."gp)")
-        --hunting window loot list
-        local label2 = UI.createWidget("ListLabel", lootList)
-        label2:setText(v.count .. "x " .. v.name)
+      label1:setItemId(k)
+      label1:setItemCount(50)
+      label1:setShowCount(false)
+      label1.count:setText(niceFormat(v.count))
+      label1.count:setColor(getColor(price))
+      local tooltipName = v.count > 1 and v.name.."s" or v.name
+      label1:setTooltip(v.count .. "x " .. tooltipName .. " (Value: "..format_thousand(getPrice(v.name)).."gp, Sum: "..format_thousand(price).."gp)")
+      --hunting window loot list
+      local label2 = UI.createWidget("ListLabel", lootList)
+      label2:setText(v.count .. "x " .. v.name)
     end
+
     if lootItems:getChildCount() == 0 then
       local label = UI.createWidget("ListLabel", lootList)
       label:setText("None")
@@ -1218,17 +1285,28 @@ refreshKills()
 function refreshWaste()
 
     supplyItems:destroyChildren()
-    for k,v in pairs(usedItems) do
-      local label1 = UI.createWidget("AnalyzerLootItem", supplyItems)
-      local price = v.count and getPrice(v.name) * v.count or getPrice(v.name)
+    suppliesByRefill:destroyChildren()
+    suppliesByRound:destroyChildren()
 
-      label1:setItemId(k)
-      label1:setItemCount(10023)
-      label1:setShowCount(false)
-      label1.count:setText(niceFormat(v.count))
-      label1.count:setColor(getColor(price))
-      local tooltipName = v.count > 1 and v.name.."s" or v.name
-      label1:setTooltip(v.count .. "x " .. tooltipName .. " (Value: "..format_thousand(getPrice(v.name)).."gp, Sum: "..format_thousand(price).."gp)")
+    local parents = {supplyItems, suppliesByRound, suppliesByRefill}    
+
+    for k,v in pairs(usedItems) do
+      for i=1,#parents do
+        local amount = i == 1 and v.count or 
+                       i == 2 and v.count/(vBot.CaveBotData.rounds + 1) or 
+                       i == 3 and v.count/(vBot.CaveBotData.refills + 1)
+        amount = math.floor(amount)
+        local label1 = UI.createWidget("AnalyzerLootItem", parents[i])
+        local price = amount and getPrice(v.name) * amount or getPrice(v.name)
+
+        label1:setItemId(k)
+        label1:setItemCount(50)
+        label1:setShowCount(false)
+        label1.count:setText(niceFormat(amount))
+        label1.count:setColor(getColor(price))
+        local tooltipName = amount > 1 and v.name.."s" or v.name
+        label1:setTooltip(amount .. "x " .. tooltipName .. " (Value: "..format_thousand(getPrice(v.name)).."gp, Sum: "..format_thousand(price).."gp)")
+      end
     end
 end
 
@@ -1296,6 +1374,7 @@ end)
 
 -- waste
 local regex3 = [[\d ([a-z A-Z]*)s...]]
+local lackOfData = {}
 onTextMessage(function(mode, text)
   text = text:lower()
   if not text:find("using one of") then return end
@@ -1304,6 +1383,16 @@ onTextMessage(function(mode, text)
   local re = regexMatch(text, regex3)
   local name = re[1][2]
   local id = WasteItems[name]
+
+  if not id then
+
+    if not lackOfData[name] then
+      lackOfData[name] = true
+      print("[Analyzer] no data for item: "..name.. "inside items.lua -> WasteItems")
+    end
+
+    return
+  end
 
   if not useData[name] then
     useData[name] = amount
@@ -1427,6 +1516,21 @@ function getHuntingData()
   return totalDmg, totalHeal, lootWorth, wasteWorth, balance
 end
 
+function avgTable(t)
+  if type(t) ~= 'table' then return 0 end
+  local val = 0
+
+  for i,v in pairs(t) do
+    val = val + v
+  end
+
+  if #t == 0 then
+    return 0
+  else
+    return val/#t
+  end
+end
+
 --bestdps/hps
 local bestDPS = 0
 local bestHPS = 0
@@ -1489,6 +1593,15 @@ macro(500, function()
     xpHourInXpLabel:setText(expPerHour())
     nextLevelLabel:setText(timeToLevel())
     progressBar:setPercent(modules.game_skills.skillsWindow.contentsPanel.level.percent:getPercent())
+
+
+    --stats
+    totalRounds:setText(vBot.CaveBotData.rounds)
+    avRoundTime:setText(niceTimeFormat(avgTable(vBot.CaveBotData.time),true))
+    totalRefills:setText(vBot.CaveBotData.refills)
+    avRefillTime:setText(niceTimeFormat(avgTable(vBot.CaveBotData.refillTime),true))
+    lastRefill:setText(niceTimeFormat(os.difftime(os.time()-vBot.CaveBotData.lastRefill),true))
+
 end)
 
 --graphs, draw each minute
@@ -1576,4 +1689,33 @@ end
 
 Analyzer.getTimeToNextLevel = function()
   return timeToLevel()
+end
+
+Analyzer.getCaveBotStats = function()
+  local parents = {suppliesByRound, suppliesByRefill}
+  local round = {}
+  local refill = {}
+  for i=1,2 do
+    local data = parents[i]
+    for j, child in ipairs(data:getChildren()) do
+      local id = child:getItemId()
+      local count = child.count
+
+      if i == 1 then
+        round[id] = count
+      else
+        refill[id] = count
+      end
+    end
+  end
+
+  return {
+    totalRounds = totalRounds:getText(),
+    avRoundTime = avRoundTime:getText(),
+    totalRefills = totalRefills:getText(),
+    avRefillTime = avRefillTime:getText(),
+    lastRefill = lastRefill:getText(),
+    roundSupplies = round, -- { [id] = amount, [id2] = amount ...}
+    refillSupplies = refill -- { [id] = amount, [id2] = amount ...}
+  }
 end

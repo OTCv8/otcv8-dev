@@ -22,10 +22,11 @@ Panel
 ]])
 ui:setId(panelName)
 
-if not storage[panelName] then
+if not storage[panelName] or not storage[panelName].bosses then -- no bosses - old ver
     storage[panelName] = {
         enabled = false,
-        rules = {}
+        rules = {},
+        bosses = {}
     }
 end
 
@@ -52,7 +53,8 @@ local conditions = { -- always add new conditions at the bottom
     "Players around is more than:", -- spinbox 12
     "Players around is less than:", -- spinbox 13
     "TargetBot Danger is Above:", -- spinbox 14
-    "Blacklist player in range (sqm)" -- spinbox 15
+    "Blacklist player in range (sqm)", -- spinbox 15
+    "Target is Boss" -- nothing
 }
 
 local conditionNumber = 1
@@ -67,39 +69,13 @@ ui.setup.onClick = function()
     mainWindow:focus()
 end
 
-mainWindow.closeButton.onClick = function()
-    mainWindow:hide()
-    resetFields()
-end
-
 local inputPanel = mainWindow.inputPanel
 local listPanel = mainWindow.listPanel
+local namePanel = mainWindow.profileName
+local eqPanel = mainWindow.setup
+local bossPanel = mainWindow.bossPanel
 
-inputPanel.optionalCondition:hide()
-inputPanel.useSecondCondition.onOptionChange = function(widget, option, data)
-    if option ~= "-" then
-        inputPanel.optionalCondition:show()
-    else
-        inputPanel.optionalCondition:hide()
-    end
-end
-
-inputPanel.unequip.onClick = function()
-    local value = 115
-    local panel = inputPanel.unequipPanel
-    local height = panel:getHeight()
-    if height == 0 then
-        panel:setHeight(value)
-        mainWindow:setHeight(mainWindow:getHeight()+value)
-        inputPanel:setHeight(inputPanel:getHeight()+value)
-        listPanel:setHeight(listPanel:getHeight()+value)
-    else
-        panel:setHeight(0)
-        mainWindow:setHeight(mainWindow:getHeight()-value)
-        inputPanel:setHeight(inputPanel:getHeight()-value)
-        listPanel:setHeight(listPanel:getHeight()-value)
-    end
-end
+local slotWidgets = {eqPanel.head, eqPanel.body, eqPanel.legs, eqPanel.feet, eqPanel.neck, eqPanel["left-hand"], eqPanel["right-hand"], eqPanel.finger, eqPanel.ammo} -- back is disabled
 
 local function setCondition(first, n)
     local widget
@@ -120,7 +96,7 @@ local function setCondition(first, n)
     spinBox:setValue(0)
     textEdit:setText('')
 
-    if n == 1 or n == 10 or n == 11 then
+    if n == 1 or n == 10 or n == 11 or n == 16 then
         spinBox:hide()
         textEdit:hide()
     elseif n == 9 or n == 8 then
@@ -136,6 +112,46 @@ local function setCondition(first, n)
         textEdit:hide()
     end
     widget:setText(conditions[n])
+end
+
+local function resetFields()
+    conditionNumber = 1
+    optionalConditionNumber = 2
+    setCondition(false, optionalConditionNumber)
+    setCondition(true, conditionNumber)
+    for i, widget in ipairs(slotWidgets) do
+        widget:setItemId(0)
+        widget:setChecked(false)
+    end
+    for i, child in ipairs(listPanel.list:getChildren()) do
+        child.display = false
+    end
+    namePanel.profileName:setText("")
+    inputPanel.condition.text:setText('')
+    inputPanel.condition.spinbox:setValue(0)
+    inputPanel.useSecondCondition:setText('-')
+    inputPanel.optionalCondition.text:setText('')
+    inputPanel.optionalCondition.spinbox:setValue(0)
+    inputPanel.optionalCondition:hide()
+    bossPanel:hide()
+    listPanel:show()
+    mainWindow.bossList:setText('Boss List')
+    bossPanel.name:setText('')
+end
+resetFields()
+
+mainWindow.closeButton.onClick = function()
+    resetFields()
+    mainWindow:hide()
+end
+
+inputPanel.optionalCondition:hide()
+inputPanel.useSecondCondition.onOptionChange = function(widget, option, data)
+    if option ~= "-" then
+        inputPanel.optionalCondition:show()
+    else
+        inputPanel.optionalCondition:hide()
+    end
 end
 
 -- add default text & windows
@@ -253,100 +269,105 @@ listPanel.down.onClick = function(widget)
     listPanel.up:setEnabled(true)
     listPanel.list:moveChildToIndex(focused, n+1)
     listPanel.list:ensureChildVisible(focused)
-  end
-
-function getItemsFromBox()
-    local t = {}
-
-    for i, child in ipairs(inputPanel.itemBox:getChildren()) do
-        local id = child:getItemId()
-        if id > 100 then
-            table.insert(t, id)
-        end
-    end
-    return t
 end
 
-function refreshItemBox(reset)
-    local max = 8
-    local box = inputPanel.itemBox
-    local childAmount = box:getChildCount()
-
-    --height
-    if #getItemsFromBox() < 7 then
-        mainWindow:setHeight(345)
-        inputPanel:setHeight(265)
-        listPanel:setHeight(265)
-        box:setHeight(40)
-    else
-        mainWindow:setHeight(370)
-        inputPanel:setHeight(300)
-        listPanel:setHeight(300)
-        box:setHeight(80)
-    end
-
-    if reset then
-        box:destroyChildren()
-        local widget = UI.createWidget("BotItem", box)
-        widget.onItemChange = function(widget)
-            local id = widget:getItemId()
-            local index = box:getChildIndex(widget)
-            if id < 100 or (table.find(getItemsFromBox(), id) ~= index) then
-                widget:destroy()
-            end
-            refreshItemBox()
-        end
-        return
-    end
-
-    if childAmount == 0 then
-        local widget = UI.createWidget("BotItem", box)
-        widget.onItemChange = function(widget)
-            local id = widget:getItemId()
-            local index = box:getChildIndex(widget)
-            if id < 100 or (table.find(getItemsFromBox(), id) ~= index) then
-                widget:destroy()
-            end
-            refreshItemBox()
-        end
-    elseif box:getLastChild():getItemId() > 100 and childAmount <= max then
-        local widget = UI.createWidget("BotItem", box)
-        widget.onItemChange = function(widget)
-            local id = widget:getItemId()
-            local index = box:getChildIndex(widget)
-            if id < 100 or (table.find(getItemsFromBox(), id) ~= index) then
-                widget:destroy()
-            end
-            refreshItemBox()
-        end
-    end
+eqPanel.cloneEq.onClick = function(widget)
+    eqPanel.head:setItemId(getHead() and getHead():getId() or 0)
+    eqPanel.body:setItemId(getBody() and getBody():getId() or 0)
+    eqPanel.legs:setItemId(getLeg() and getLeg():getId() or 0)
+    eqPanel.feet:setItemId(getFeet() and getFeet():getId() or 0)  
+    eqPanel.neck:setItemId(getNeck() and getNeck():getId() or 0)   
+    eqPanel["left-hand"]:setItemId(getLeft() and getLeft():getId() or 0)
+    eqPanel["right-hand"]:setItemId(getRight() and getRight():getId() or 0)
+    eqPanel.finger:setItemId(getFinger() and getFinger():getId() or 0)    
+    eqPanel.ammo:setItemId(getAmmo() and getAmmo():getId() or 0)    
 end
-refreshItemBox()
 
-local function resetFields()
-    refreshItemBox(true)
-    inputPanel.name:setText('')
-    conditionNumber = 1
-    optionalConditionNumber = 2
-    setCondition(false, optionalConditionNumber)
-    setCondition(true, conditionNumber)
-    inputPanel.useSecondCondition:setCurrentOption("-")
-    for i, child in pairs(inputPanel.unequipPanel:getChildren()) do
-        child:setChecked(false)
-    end
-end
+eqPanel.default.onClick = resetFields
 
 -- buttons disabled by default
 listPanel.up:setEnabled(false)
 listPanel.down:setEnabled(false)
-function refreshRules()
+
+-- correct background image
+for i, widget in ipairs(slotWidgets) do
+    widget:setTooltip("Right click to set as slot to unequip")
+    widget.onItemChange = function(widget)
+        local selfId = widget:getItemId()
+        widget:setOn(selfId > 100)
+        if widget:isChecked() then
+            widget:setChecked(selfId < 100)
+        end
+    end
+    widget.onMouseRelease = function(widget, mousePos, mouseButton)
+        if mouseButton == 2 then
+            local clearItem = widget:isChecked() == false
+            widget:setChecked(not widget:isChecked())
+            if clearItem then
+                widget:setItemId(0)
+            end
+        end
+    end
+end
+
+inputPanel.condition.description.onMouseWheel = function(widget, mousePos, scroll)
+    if scroll == 1 then
+        inputPanel.condition.nex.onClick()
+    else
+        inputPanel.condition.pre.onClick()
+    end
+end
+
+inputPanel.optionalCondition.description.onMouseWheel = function(widget, mousePos, scroll)
+    if scroll == 1 then
+        inputPanel.optionalCondition.nex.onClick()
+    else
+        inputPanel.optionalCondition.pre.onClick()
+    end
+end
+
+namePanel.profileName.onTextChange = function(widget, text)
+    local button = inputPanel.add
+    text = text:lower()
+
+    for i, child in ipairs(listPanel.list:getChildren()) do
+        local name = child:getText():lower()
+
+        button:setText(name == text and "Overwrite" or "Add Rule")
+        button:setTooltip(name == text and "Overwrite existing rule named: "..name, "Add new rule to the list: "..name)
+    end
+end
+
+local function setupPreview(display, data)
+    namePanel.profileName:setText('')
+    if not display then
+        resetFields()
+    else
+        for i, value in ipairs(data) do
+            local widget = slotWidgets[i]
+            if value == false then
+                widget:setChecked(false)
+                widget:setItemId(0)
+            elseif value == true then
+                widget:setChecked(true)
+                widget:setItemId(0)
+            else
+                widget:setChecked(false)
+                widget:setItemId(value)       
+            end
+        end
+    end
+end
+
+local function refreshRules()
     local list = listPanel.list
 
     list:destroyChildren()
-    for i,v in pairs(config.rules) do
+    for i,v in ipairs(config.rules) do
         local widget = UI.createWidget('Rule', list)
         widget:setId(v.name)
         widget:setText(v.name)
+        widget.ruleData = v
         widget.remove.onClick = function()
             widget:destroy()
             table.remove(config.rules, table.find(config.rules, v))
@@ -364,15 +385,35 @@ function refreshRules()
             v.enabled = not v.enabled
             widget.enabled:setChecked(v.enabled)
         end
-        local desc 
-        for i, v in ipairs(v.items) do
-            if i == 1 then
-                desc = "items: " .. v
-            else
-                desc = desc .. ", " .. v
+        widget.onHoverChange = function(widget, hover)
+            for i, child in ipairs(list:getChildren()) do
+                if child.display then return end
+            end
+            setupPreview(hover, widget.ruleData.data)
+        end
+        widget.onDoubleClick = function(widget)
+            local ruleData = widget.ruleData
+            widget.display = true
+            setupPreview(true, ruleData.data)
+            conditionNumber = ruleData.mainCondition
+            optionalConditionNumber = ruleData.optionalCondition
+            setCondition(false, optionalConditionNumber)
+            setCondition(true, conditionNumber)
+            inputPanel.useSecondCondition:setOption(ruleData.relation)
+            namePanel.profileName:setText(v.name)
+
+            if type(ruleData.mainValue) == "string" then
+                inputPanel.condition.text:setText(ruleData.mainValue)
+            elseif type(ruleData.mainValue) == "number" then
+                inputPanel.condition.spinbox:setValue(ruleData.mainValue)
+            end
+
+            if type(ruleData.optValue) == "string" then
+                inputPanel.optionalCondition.text:setText(ruleData.optValue)
+            elseif type(ruleData.optValue) == "number" then
+                inputPanel.optionalCondition.spinbox:setValue(ruleData.optValue)
             end
         end
-        widget:setTooltip(desc)
         widget.onClick = function()
             local panel = listPanel
             if #panel.list:getChildren() == 1 then
@@ -389,74 +430,30 @@ function refreshRules()
                 panel.down:setEnabled(true)
             end
         end
-        widget.onDoubleClick = function()
-            -- main
-            conditionNumber = v.mainCondition
-            setCondition(true, conditionNumber)
-            if conditionNumber == 8 or conditionNumber == 9 then
-                inputPanel.condition.text:setText(v.mainValue)
-            elseif conditionNumber ~= 1 then
-                inputPanel.condition.spinbox:setValue(v.mainValue)
-            end
-            -- relation
-            inputPanel.useSecondCondition:setCurrentOption(v.relation)
-            -- optional
-            if v.relation ~= "-" then
-                optionalConditionNumber = v.optionalCondition
-                setCondition(false, optionalConditionNumber)
-                if optionalConditionNumber == 8 or optionalConditionNumber == 9 then
-                    inputPanel.optionalCondition.text:setText(v.optValue)
-                elseif optionalConditionNumber ~= 1 then
-                    inputPanel.optionalCondition.spinbox:setValue(v.optValue)
-                end
-            end
-            -- name
-            inputPanel.name:setText(v.name)
-            -- items
-            inputPanel.itemBox:destroyChildren()
-            for i, item in ipairs(v.items) do
-                local widget = UI.createWidget("BotItem", inputPanel.itemBox)
-                widget:setItemId(item)
-                widget.onItemChange = function(widget)
-                    local id = widget:getItemId()
-                    local index = box:getChildIndex(widget)
-                    if id < 100 or (table.find(getItemsFromBox(), id) ~= index) then
-                        widget:destroy()
-                    end
-                    refreshItemBox()
-                end
-            end
-            -- unequip
-            if type(v.unequip) == "table" then
-                for i, tick in ipairs(v.unequip) do
-                    local checkbox = inputPanel.unequipPanel:getChildren()[i]
-                    checkbox:setChecked(tick)
-                end
-            end
-            refreshItemBox()
-            -- remove value
-            table.remove(config.rules, table.find(config.rules, v))
-            refreshRules()
-        end
     end
 end
 refreshRules()
 
-inputPanel.addButton.onClick = function()
+inputPanel.add.onClick = function(widget)
     local mainVal
     local optVal
+    local t = {}
     local relation = inputPanel.useSecondCondition:getText()
-    local name = inputPanel.name:getText()
-    local items = getItemsFromBox()
-    local unequip = {}
-    local hasUnequip = false
+    local profileName = namePanel.profileName:getText()
+    if profileName:len() == 0 then
+        return warn("Please fill profile name!")
+    end
 
-    for i, child in pairs(inputPanel.unequipPanel:getChildren()) do
-        if child:isChecked() then
-            table.insert(unequip, true)
-            hasUnequip = true
+    for i, widget in ipairs(slotWidgets) do
+        local checked = widget:isChecked()
+        local id = widget:getItemId()
+
+        if checked then
+            table.insert(t, true) -- unequip selected slot
+        elseif id then
+            table.insert(t, id) -- equip selected item
         else
-            table.insert(unequip, false)
+            table.insert(t, false) -- ignore slot
         end
     end
 
@@ -494,21 +491,16 @@ inputPanel.addButton.onClick = function()
         end
     end
 
-    if #items == 0 and not hasUnequip then
-        return warn("[vBot Equipper] Please add items or select unequip slots.")
-    end
-
-    if #name == 0 then
-        return warn("[vBot Equipper] Please fill name of the profile.")
-    end
-    for i, child in pairs(listPanel.list:getChildren()) do
-        if child:getText() == name then
-            return warn("[vBot Equipper] There is already rule with this name! Choose different or remove old one.")
+    local index
+    for i, v in ipairs(config.rules) do
+        if v.name == profileName then
+            index = i   -- search if there's already rule with this name
         end
     end
 
-    -- add
-    table.insert(config.rules, {
+    local ruleData = {
+        name = profileName, 
+        data = t,
         enabled = true,
         visible = true,
         mainCondition = conditionNumber,
@@ -516,37 +508,63 @@ inputPanel.addButton.onClick = function()
         mainValue = mainVal,
         optValue = optVal,
         relation = relation,
-        items = items,
-        name = name,
-        unequip = unequip
-    })
+    }
 
-    refreshRules()
+    if index then
+        config.rules[index] = ruleData -- overwrite
+    else
+        table.insert(config.rules, ruleData) -- create new one
+    end
+
+    for i, child in ipairs(listPanel.list:getChildren()) do
+        child.display = false
+    end
     resetFields()
+    refreshRules()
 end
 
---"Item is available and not worn.", -- nothing 1
---"Monsters around is more than: ", -- spinbox 2
---"Monsters around is less than: ", -- spinbox 3
---"Health precent is below:", -- spinbox 4
---"Health precent is above:", -- spinbox 5
---"Mana precent is below:", -- spinbox 6
---"Mana precent is above:", -- spinbox 7
---"Target name is:", -- BotTextEdit 8
---"Hotkey is being pressed:", -- Button 9
---"Player is paralyzed", -- nothing 10
+mainWindow.bossList.onClick = function(widget)
+    if bossPanel:isVisible() then
+        bossPanel:hide()
+        listPanel:show()
+        widget:setText('Boss List')
+    else
+        bossPanel:show()
+        listPanel:hide()
+        widget:setText('Rule List')
 
-local pressedKey = ""
-local lastPress = now
-onKeyPress(function(keys)
-    pressedKey = keys
-    lastPress = now
-    schedule(100, function()
-        if now - lastPress > 20 then
-            pressedKey = ""
-        end
-    end)
-end)
+    end
+end
+
+-- create boss labels
+for i, v in ipairs(config.bosses) do
+    local widget = UI.createWidget("BossLabel", bossPanel.list)
+    widget:setText(v)
+    widget.remove.onClick = function()
+        table.remove(config.bosses, table.find(config.bosses, v))
+        widget:destroy()
+    end
+end
+
+bossPanel.add.onClick = function()
+    local name = bossPanel.name:getText()
+
+    if name:len() == 0 then
+        return warn("[Equipped] Please enter boss name!")
+    elseif table.find(config.bosses, name:lower(), true) then
+        return warn("[Equipper] Boss already added!")
+    end
+
+    local widget = UI.createWidget("BossLabel", bossPanel.list)
+    widget:setText(name)
+    widget.remove.onClick = function()
+        table.remove(config.bosses, table.find(config.bosses, name))
+        widget:destroy()
+    end    
+
+    table.insert(config.bosses, name)
+    bossPanel.name:setText('')
+end
 
 local function interpreteCondition(n, v)
 
@@ -567,7 +585,7 @@ local function interpreteCondition(n, v)
     elseif n == 8 then
         return target() and target():getName():lower() == v:lower() or false
     elseif n == 9 then
-        return pressedKey == v
+        return g_keyboard.isKeyPressed(v)
     elseif n == 10 then
         return isParalyzed()
     elseif n == 11 then
@@ -580,6 +598,8 @@ local function interpreteCondition(n, v)
         return TargetBot.Danger() > v and TargetBot.isOn()
     elseif n == 15 then
         return isBlackListedPlayerInRange(v)
+    elseif n == 16 then
+        return target() and table.find(config.bosses, target():getName():lower(), true) and true or false
     end
     
 end
@@ -607,73 +627,144 @@ local function isEquipped(id)
 end
 
 local function unequipItem(table)
-    --[[
-        head
-        neck
-        torso
-        left
-        right
-        legs
-        finger
-        ammo slot
-        boots
-    ]]
-    local slots = {getHead(), getNeck(), getBody(), getLeft(), getRight(), getLeg(), getFinger(), getAmmo(), getFeet()}
+    local slots = {getHead(), getBody(), getLeg(), getFeet(), getNeck(), getLeft(), getRight(), getFinger(), getAmmo()}
 
     if type(table) ~= "table" then return end
-    for i, slot in pairs(table) do
+    for i, slot in ipairs(table) do
         local physicalSlot = slots[i]
 
-        if slot and physicalSlot then
-            g_game.equipItemId(physicalSlot:getId())
+        if slot == true and physicalSlot then
+            local id = physicalSlot:getId()
+
+            if g_game.getClientVersion() >= 910 then
+                -- new tibia
+                g_game.equipItemId(id)
+            else
+                -- old tibia
+                local dest
+                for i, container in ipairs(getContainers()) do
+                    local cname = container:getName()
+                    if not containerIsFull(container) then
+                        if not cname:find("loot") and (cname:find("backpack") or cname:find("bag") or cname:find("chess")) then
+                            dest = container
+                        end
+                        break
+                    end
+                end
+
+                if not dest then return true end
+                local pos = dest:getSlotPosition(dest:getItemsCount())
+                g_game.move(physicalSlot, pos, physicalSlot:getCount())
+            end
             return true
         end
     end
     return false
 end
 
+local function equipItem(id, slot)
+    -- need to correct slots...
+    if slot == 2 then
+        slot = 4
+    elseif slot == 3 then
+        slot = 7
+    elseif slot == 8 then
+        slot = 9
+    elseif slot == 5 then
+        slot = 2
+    elseif slot == 4 then
+        slot = 8
+    elseif slot == 9 then
+        slot = 10
+    elseif slot == 7 then
+        slot = 5
+    end
+
+
+    if g_game.getClientVersion() >= 910 then
+        -- new tibia
+        return g_game.equipItemId(id)
+    else
+        -- old tibia
+        local item = findItem(id)
+        return moveToSlot(item, slot)
+    end
+end
+
+
+local function markChild(child)
+    if mainWindow:isVisible() then
+        for i, child in ipairs(listPanel.list:getChildren()) do
+            if child ~= widget then
+                child:setColor('white')
+            end
+        end
+        widget:setColor('green')
+    end
+end
+
+
+local missingItem = false
+local lastRule = false
+local correctEq = false
 EquipManager = macro(50, function()
     if not config.enabled then return end
     if #config.rules == 0 then return end
 
-    for i, rule in ipairs(config.rules) do
-        local widget = listPanel.list:getChildById(rule.name)
-        if mainWindow:isVisible() then
-            for i, child in ipairs(listPanel.list:getChildren()) do
-                if child ~= widget then
-                    child:setColor('white')
-                end
-            end
-        end
+    for i, widget in ipairs(listPanel.list:getChildren()) do
+        local rule = widget.ruleData
         if rule.enabled then
-            widget:setColor('green')
+
+            -- conditions
             local firstCondition = interpreteCondition(rule.mainCondition, rule.mainValue)
             local optionalCondition = nil
             if rule.relation ~= "-" then
                 optionalCondition = interpreteCondition(rule.optionalCondition, rule.optValue)
             end
 
+            -- checks
             if finalCheck(firstCondition, rule.relation, optionalCondition) then
-                if unequipItem(rule.unequip) == true then
+
+                -- performance edits, loop reset
+                local resetLoop = not missingItem and correctEq and lastRule ==  rule
+                if resetLoop then return end
+
+                -- reset executed rule
+
+
+                -- first check unequip
+                if unequipItem(rule.data) == true then
                     delay(200)
                     return
                 end
-                for i, item in ipairs(rule.items) do
-                    if not isEquipped(item) then
-                        if rule.visible then
-                            if itemAmount(item) > 0 then
+
+                -- equiploop 
+                for slot, item in ipairs(rule.data) do
+                    if type(item) == "number" and item > 100 then
+                        if not isEquipped(item) then
+                            if rule.visible then
+                                if findItem(item) then
+                                    missingItem = false
+                                    delay(200)
+                                    return equipItem(item, slot)
+                                else
+                                    missingItem = true
+                                end
+                            else
+                                missingItem = false
                                 delay(200)
-                                return g_game.equipItemId(item)
+                                return equipItem(item, slot)
                             end
-                        else
-                            delay(200)
-                            return g_game.equipItemId(item)
                         end
                     end
                 end
+
+                correctEq = not missingItem and true or false
+                -- even if nothing was done, exit function to hold rule
                 return
             end
+
+
         end
     end
-    pressedKey = ""
 end)

@@ -207,8 +207,12 @@ CaveBot.gotoNextWaypointInRange = function()
         local pos = {x = tonumber(re[1][2]), y = tonumber(re[1][3]), z = tonumber(re[1][4])}
         
         if posz() == pos.z then
-          if distanceFromPlayer(pos) <= storage.extras.gotoMaxDistance/2 then
-            return ui.list:focusChild(child)
+          local maxDist = storage.extras.gotoMaxDistance
+          if distanceFromPlayer(pos) <= maxDist then
+            if findPath(player:getPosition(), pos, maxDist, { ignoreNonPathable = true }) then
+              ui.list:focusChild(ui.list:getChildByIndex(i-1))
+              return true
+            end
           end
         end
       end
@@ -224,8 +228,12 @@ CaveBot.gotoNextWaypointInRange = function()
         local pos = {x = tonumber(re[1][2]), y = tonumber(re[1][3]), z = tonumber(re[1][4])}
 
         if posz() == pos.z then
-          if distanceFromPlayer(pos) <= storage.extras.gotoMaxDistance/2 then
-            return ui.list:focusChild(child)
+          local maxDist = storage.extras.gotoMaxDistance
+          if distanceFromPlayer(pos) <= maxDist then
+            if findPath(player:getPosition(), pos, maxDist, { ignoreNonPathable = true }) then
+              ui.list:focusChild(ui.list:getChildByIndex(i-1))
+              return true
+            end
           end
         end
       end
@@ -432,4 +440,8 @@ CaveBot.save = function()
   end
   table.insert(data, {"extensions", json.encode(extension_data, 2)})
   config.save(data)
+end
+
+CaveBotList = function()
+  return ui.list
 end

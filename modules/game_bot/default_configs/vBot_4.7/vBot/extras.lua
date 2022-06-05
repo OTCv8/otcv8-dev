@@ -114,6 +114,7 @@ addItem("rope", "Rope Item", 9596, leftPanel, "This item will be used in various
 addItem("shovel", "Shovel Item", 9596, leftPanel, "This item will be used in various bot related scripts as default shovel item.")
 addItem("machete", "Machete Item", 9596, leftPanel, "This item will be used in various bot related scripts as default machete item.")
 addItem("scythe", "Scythe Item", 9596, leftPanel, "This item will be used in various bot related scripts as default scythe item.")
+addCheckBox("pathfinding", "CaveBot Pathfinding", true, leftPanel, "Cavebot will automatically search for first reachable waypoint after missing 10 goto's.")
 addScrollBar("talkDelay", "Global NPC Talk Delay", 0, 2000, 1000, leftPanel, "Breaks between each talk action in cavebot (time in miliseconds).")
 addScrollBar("looting", "Max Loot Distance", 0, 50, 40, leftPanel, "Every loot corpse futher than set distance (in sqm) will be ignored and forgotten.")
 addScrollBar("huntRoutes", "Hunting Rounds Limit", 0, 300, 50, leftPanel, "Round limit for supply check, if character already made more rounds than set, on next supply check will return to city.")
@@ -419,7 +420,7 @@ if true then
     if not settings.suppliesControl then return end
     if TargetBot.isOff() then return end
     if CaveBot.isOff() then return end
-    if not hasSupplies() then
+    if type(hasSupplies()) == 'table' then
         TargetBot.setOff()
     end
   end)
@@ -553,7 +554,7 @@ if true then
     end
   end)
 
-  local regex = [[You see ([a-z 'A-z-]*) \(Level ([0-9]*)\)((?:.)* of the ([\w ]*),|)]]
+  local regex = [[You see ([^\(]*) \(Level ([0-9]*)\)((?:.)* of the ([\w ]*),|)]]
   onTextMessage(function(mode, text)
     if not settings.checkPlayer then return end
 

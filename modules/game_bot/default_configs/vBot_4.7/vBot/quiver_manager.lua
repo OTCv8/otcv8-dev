@@ -33,7 +33,8 @@ if voc() == 2 or voc() == 12 then
         local containers = getContainers()
         for i, container in ipairs(containers) do
             if container ~= quiverContainer and not containerIsFull(container) then
-                if container:getName():lower():find("backpack") or container:getName():lower():find("bag") or container:getName():lower():find("chess") then
+                local cname = container:getName():lower()
+                if not cname:find("loot") and (cname:find("backpack") or cname:find("bag") or cname:find("chess")) then
                     dest = container
                 end
             end

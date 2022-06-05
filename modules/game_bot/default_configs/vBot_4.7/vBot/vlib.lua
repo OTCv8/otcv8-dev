@@ -9,6 +9,14 @@ vBot.isUsingPotion = false
 vBot.isUsing = false
 vBot.customCooldowns = {}
 
+function logInfo(text)
+    local timestamp = os.date("%H:%M:%S")
+    text = tostring(text)
+    local start = timestamp.." [vBot]"
+
+    return modules.client_terminal.addLine(start..text, "orange") 
+end
+
 -- scripts / functions
 onPlayerPositionChange(function(x,y)
     vBot.standTime = now
@@ -300,7 +308,7 @@ end)
 
 if onSpellCooldown and onGroupSpellCooldown then
     onSpellCooldown(function(iconId, duration)
-        schedule(5, function()
+        schedule(1, function()
             if not vBot.customCooldowns[lastPhrase] then
                 vBot.customCooldowns[lastPhrase] = {id = iconId}
             end
@@ -308,7 +316,7 @@ if onSpellCooldown and onGroupSpellCooldown then
     end)
 
     onGroupSpellCooldown(function(iconId, duration)
-        schedule(10, function()
+        schedule(2, function()
             if vBot.customCooldowns[lastPhrase] then
                 vBot.customCooldowns[lastPhrase] = {id = vBot.customCooldowns[lastPhrase].id, group = {[iconId] = duration}}
             end
@@ -655,9 +663,9 @@ function getPlayers(range, multifloor)
     if not range then range = 10 end
     local specs = 0;
     for _, spec in pairs(getSpectators(multifloor)) do
-        specs = not spec:isLocalPlayer() and spec:isPlayer() and
-                    distanceFromPlayer(spec:getPosition()) <= range and
-                    not (spec:isPartyMember() or spec:getEmblem() == 1) and specs + 1 or specs;
+        if not spec:isLocalPlayer() and spec:isPlayer() and distanceFromPlayer(spec:getPosition()) <= range and not ((spec:getShield() ~= 1 and spec:isPartyMember()) or spec:getEmblem() == 1) then
+            specs = specs + 1
+        end
     end
     return specs;
 end
@@ -750,21 +758,7 @@ end
 -- also considers equipped items
 -- returns number
 function itemAmount(id)
-    local totalItemCount = 0
-    for _, container in pairs(getContainers()) do
-        if not container:getName():lower():find("depot") and not container:getName():lower():find("your inbox") then
-            for _, item in ipairs(container:getItems()) do
-                totalItemCount = item:getId() == id and totalItemCount +
-                                     item:getCount() or totalItemCount
-            end
-        end
-    end
-
-    local slots = {getHead(), getNeck(), getBack(), getBody(), getRight(), getLeft(), getLeg(), getFeet(), getFinger(), getAmmo()}
-    for i, slot in pairs(slots) do
-        totalItemCount = slot and slot:getId() == id and totalItemCount + 1 or totalItemCount
-    end
-    return totalItemCount
+    return player:getItemsCount(id)
 end
 
 -- self explanatory
@@ -775,35 +769,6 @@ function useOnInvertoryItem(a, b)
     if not item then return end
 
     return useWith(a, item)
-end
-
--- checks if player has at least 50% of minimal supplies given in Supplies window 
--- returns boolean
-function hasSupplies()
-    local supplies = SuppliesConfig.supplies
-    supplies = supplies[supplies.currentProfile]
-    local items = {
-        {ID = supplies.item1, minAmount = supplies.item1Min},
-        {ID = supplies.item2, minAmount = supplies.item2Min},
-        {ID = supplies.item3, minAmount = supplies.item3Min},
-        {ID = supplies.item4, minAmount = supplies.item4Min},
-        {ID = supplies.item5, minAmount = supplies.item5Min},
-        {ID = supplies.item6, minAmount = supplies.item6Min},
-        {ID = supplies.item7, minAmount = supplies.item7Min}
-    }
-    -- false = no supplies
-    -- true = supplies available
-
-    local hasSupplies = true
-
-    for i, supply in pairs(items) do
-        if supply.minAmount and supply.ID then
-            if supply.ID > 100 and itemAmount(supply.ID) <
-                (supply.minAmount / 2) then hasSupplies = false end
-        end
-    end
-
-    return hasSupplies
 end
 
 -- pos can be tile or position
