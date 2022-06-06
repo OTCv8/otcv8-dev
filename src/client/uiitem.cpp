@@ -108,6 +108,7 @@ void UIItem::setItem(const ItemPtr& item)
     m_item = item;
     if (m_item) {
         m_item->setShader(m_shader);
+        cacheCountText();
         callLuaField("onItemChange");
     }
 }
