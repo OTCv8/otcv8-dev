@@ -1,10 +1,13 @@
 CaveBot.Actions = {}
 vBot.lastLabel = ""
 local oldTibia = g_game.getClientVersion() < 960
+local nextTile = nil
 
+local noPath = 0
 
 -- antistuck f()
-local nextPos = nil
+local nextPos = nil -- creature
+local nextPosF = nil -- furniture
 local function modPos(dir)
     local y = 0
     local x = 0
@@ -32,6 +35,103 @@ local function modPos(dir)
     end
 
     return {x, y}
+end
+
+-- stack-covered antystuck, in & out pz
+local lastMoved = now - 200
+onTextMessage(function(mode, text)
+  if text ~= 'There is not enough room.' then return end
+  if CaveBot.isOff() then return end
+
+  local tiles = getNearTiles(pos())
+
+  for i, tile in ipairs(tiles) do
+    if not tile:hasCreature() and tile:isWalkable() and #tile:getItems() > 9 then
+      local topThing = tile:getTopThing()
+      if not isInPz() then
+        return useWith(3197, tile:getTopThing()) -- disintegrate
+      else
+        if now < lastMoved + 200 then return end -- delay to prevent clogging
+        local nearTiles = getNearTiles(tile:getPosition())
+        for i, tile in ipairs(nearTiles) do
+          local tpos = tile:getPosition()
+          if pos() ~= tpos then
+            if tile:isWalkable() then
+              lastMoved = now
+              return g_game.move(topThing, tpos) -- move item
+            end
+          end
+        end
+      end
+    end
+  end
+end)
+
+local furnitureIgnore = { 2986 }
+local function breakFurniture(destPos)
+  if isInPz() then return false end
+  local candidate = {thing=nil, dist=100}
+  for i, tile in ipairs(g_map.getTiles(posz())) do
+    local walkable = tile:isWalkable()
+    local topThing = tile:getTopThing()
+    local isWg = topThing and topThing:getId() == 2130
+    if topThing and (isWg or not table.find(furnitureIgnore, topThing:getId()) and topThing:isItem()) then
+      local moveable = not topThing:isNotMoveable()
+      local tpos = tile:getPosition()
+      local path = findPath(player:getPosition(), tpos, 7, { ignoreNonPathable = true, precision = 1 })
+
+      if path then
+        if isWg or (not walkable and moveable) then
+          local distance = getDistanceBetween(destPos, tpos)
+
+          if distance < candidate.dist then
+            candidate = {thing=topThing, dist=distance}
+          end
+        end
+      end
+    end
+  end
+
+  local thing = candidate.thing
+  if thing then
+    useWith(3197, thing)
+    return true
+  end
+  
+  return false
+end
+
+local function pushPlayer(creature)
+  local cpos = creature:getPosition()
+  local tiles = getNearTiles(cpos)
+
+  for i, tile in ipairs(tiles) do
+    local pos = tile:getPosition()
+    local minimapColor = g_map.getMinimapColor(pos)
+    local stairs = (minimapColor >= 210 and minimapColor <= 213)
+
+    if not stairs and tile:isWalkable() then
+      g_game.move(creature, pos)
+    end
+  end
+
+end
+
+local function pathfinder()
+  if not storage.extras.pathfinding then return end
+  if noPath < 10 then return end
+
+  if not CaveBot.gotoNextWaypointInRange() then
+    if getConfigFromName and getConfigFromName() then
+      local profile = CaveBot.getCurrentProfile()
+      local config = getConfigFromName()
+      local newProfile = profile == '#Unibase' and config or '#Unibase'
+      
+      CaveBot.setCurrentProfile(newProfile)
+    end
+  end
+  noPath = 0
+  return true
 end
 
 -- it adds an action widget to list
@@ -119,7 +219,25 @@ end)
 
 CaveBot.registerAction("delay", "#AAAAAA", function(value, retries, prev)
   if retries == 0 then
-    CaveBot.delay(tonumber(value)) 
+    local data = string.split(value, ",")
+    local val = tonumber(data[1]:trim())
+    local random
+    local final
+
+
+    if #data == 2 then
+      random = tonumber(data[2]:trim())
+    end
+
+    if random then
+      local diff = (val/100) * random
+      local min = val - diff
+      local max = val + diff
+      final = math.random(min, max)
+    end
+    final = final or val
+
+    CaveBot.delay(final) 
     return "retry"
   end
   return true
@@ -165,13 +283,21 @@ CaveBot.registerAction("goto", "green", function(value, retries, prev)
     warn("Invalid cavebot goto action value. It should be position (x,y,z), is: " .. value)
     return false
   end
+
+  -- reset pathfinder
+  nextPosF = nil
+  nextPos = nil
   
   if CaveBot.Config.get("mapClick") then
     if retries >= 5 then
+      noPath = noPath + 1
+      pathfinder()
       return false -- tried 5 times, can't get there
     end
   else
     if retries >= 100 then
+      noPath = noPath + 1
+      pathfinder()
       return false -- tried 100 times, can't get there
     end  
   end
@@ -180,12 +306,16 @@ CaveBot.registerAction("goto", "green", function(value, retries, prev)
   pos = {x=tonumber(pos[1][2]), y=tonumber(pos[1][3]), z=tonumber(pos[1][4])}  
   local playerPos = player:getPosition()
   if pos.z ~= playerPos.z then 
+    noPath = noPath + 1
+    pathfinder()
     return false -- different floor
   end
 
   local maxDist = storage.extras.gotoMaxDistance or 40
   
   if math.abs(pos.x-playerPos.x) + math.abs(pos.y-playerPos.y) > maxDist then
+    noPath = noPath + 1
+    pathfinder()
     return false -- too far way
   end
 
@@ -194,14 +324,23 @@ CaveBot.registerAction("goto", "green", function(value, retries, prev)
   
   if stairs then
     if math.abs(pos.x-playerPos.x) == 0 and math.abs(pos.y-playerPos.y) <= 0 then
+      noPath = 0
       return true -- already at position
     end
   elseif math.abs(pos.x-playerPos.x) == 0 and math.abs(pos.y-playerPos.y) <= (precision or 1) then
+      noPath = 0
       return true -- already at position
   end
   -- check if there's a path to that place, ignore creatures and fields
   local path = findPath(playerPos, pos, maxDist, { ignoreNonPathable = true, precision = 1, ignoreCreatures = true, allowUnseen = true, allowOnlyVisibleTiles = false  })
   if not path then
+    if breakFurniture(pos, storage.extras.machete) then
+      CaveBot.delay(1000)
+      retries = 0
+      return "retry"
+    end
+    noPath = noPath + 1
+    pathfinder()
     return false -- there's no way
   end
 
@@ -222,27 +361,28 @@ CaveBot.registerAction("goto", "green", function(value, retries, prev)
               local hppc = creature:getHealthPercent()
               if creature:isMonster() and (hppc and hppc > 0) and (oldTibia or creature:getType() < 3) then
                   -- real blocking creature can not meet those conditions - ie. it could be player, so just in case check if the next creature is reachable
-                  local path = findPath(playerPos, creature:getPosition(), 20, { ignoreNonPathable = true, precision = 1 }) 
+                  local path = findPath(playerPos, creature:getPosition(), 7, { ignoreNonPathable = true, precision = 1 }) 
                   if path then
                       foundMonster = true
-                      attack(creature)
+                      if g_game.getAttackingCreature() ~= creature then
+                        attack(creature)
+                      end
                       g_game.setChaseMode(1)
-                      CaveBot.setOff()
-                      CaveBot.delay(1000)
-                      schedule(1000, function() CaveBot.setOn() end)
+                      CaveBot.delay(100)
+                      retries = 0 -- reset retries, we are trying to unclog the cavebot
+                      break
                   end
               end
           end
       end
     end
 
-    nextPos = nil -- reset path
     if not foundMonster then
       foundMonster = false
       return false -- no other way
     end
   end
-    
+  
   -- try to find path, don't ignore creatures, don't ignore fields
   if not CaveBot.Config.get("ignoreFields") and CaveBot.walkTo(pos, 40) then
     return "retry"
@@ -265,10 +405,14 @@ CaveBot.registerAction("goto", "green", function(value, retries, prev)
   end
   
   if not CaveBot.Config.get("mapClick") and retries >= 5 then
+    noPath = noPath + 1
+    pathfinder()
     return false
   end
   
   if CaveBot.Config.get("skipBlocked") then
+    noPath = noPath + 1
+    pathfinder()
     return false
   end
 

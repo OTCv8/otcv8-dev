@@ -1,3 +1,23 @@
+--[[
+  configuration for check players
+  example made on server Gunzodus
+
+  example link for player overview:
+  https://www.gunzodus.net/character/show/Sir_Vithrax
+
+  *note that space in character name was replaced with underscore (_) - this character will be important
+
+  in this case:
+  link = "https://www.gunzodus.net/character/show/" -- everything with all the characters up to the start of the name
+  spacing = "_" -- space replacement in character name
+]]
+
+local link = "https://www.gunzodus.net/character/show/"
+local spacing = "_"
+
+
+
+-- do not edit below
 setDefaultTab("Main")
 local tabs = {"Friends", "Enemies", "BlackList"}
 local panelName = "playerList"
@@ -191,8 +211,7 @@ if rootWidget then
                   menu:setId("blzMenu")
                   menu:setGameMenu(true)
                   menu:addOption('Check Player', function()
-                    local name = widget:getText():gsub(" ", "_")
-                    local link = "https://www.gunzodus.net/character/show/"
+                    local name = widget:getText():gsub(" ", spacing)
                     g_platform.openUrl(link..name)
                   end, "")
                   menu:addOption('Copy Name', function()

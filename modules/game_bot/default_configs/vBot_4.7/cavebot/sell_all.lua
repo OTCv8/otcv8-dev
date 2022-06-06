@@ -43,6 +43,7 @@ CaveBot.Extensions.SellAll.setup = function()
     if not NPC.isTrading() then
       CaveBot.OpenNpcTrade()
       delay(storage.extras.talkDelay*2)
+      return "retry"
     else
       sellAllCap = freecap()
     end

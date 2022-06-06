@@ -206,7 +206,7 @@ AnalyzerButton < Button
 MainAnalyzerWindow < MiniWindow
   id: MainAnalyzerWindow
   text: Analytics Selector
-  height: 245
+  height: 266
   icon: /images/topbuttons/analyzers
 
   MiniWindowContents
@@ -238,6 +238,11 @@ MainAnalyzerWindow < MiniWindow
     AnalyzerButton
       id: DropTracker
       text: Drop Tracker
+
+    AnalyzerButton
+      id: Stats
+      text: CaveBot Stats
+      color: #74B73E
 
     AnalyzerButton
       id: PartyHunt
@@ -315,6 +320,18 @@ PartyAnalyzerWindow < MiniWindow
 DropTracker < MiniWindow
   id: DropTracker
   text: Drop Tracker
+  height: 200
+  icon: /images/topbuttons/analyzers
+
+  MiniWindowContents
+    padding-left: 3
+    padding-right: 3
+    padding-top: 1
+    layout: verticalBox
+
+CaveBotStats < MiniWindow
+  id: CaveBotStats
+  text: CaveBot Stats
   height: 200
   icon: /images/topbuttons/analyzers
 

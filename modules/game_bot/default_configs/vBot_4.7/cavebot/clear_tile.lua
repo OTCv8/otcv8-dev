@@ -47,9 +47,9 @@ CaveBot.Extensions.ClearTile.setup = function()
           CaveBot.GoTo(tPos, 0)
           return "retry"
         end
-        print("CaveBot[ClearTile]: tile clear, proceeding")
-        return true
       end
+      print("CaveBot[ClearTile]: tile clear, proceeding")
+      return true
     end
 
     if not CaveBot.MatchPosition(tPos, 3) then
@@ -122,7 +122,7 @@ CaveBot.Extensions.ClearTile.setup = function()
   CaveBot.Editor.registerAction("cleartile", "clear tile", {
     value=function() return posx() .. "," .. posy() .. "," .. posz() end,
     title="position of tile to clear",
-    description="tile position (x,y,z), optional true if open doors",
+    description="tile position (x,y,z), doors/stand - optional",
     multiline=false
 })
 end

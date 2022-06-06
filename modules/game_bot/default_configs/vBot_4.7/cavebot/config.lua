@@ -51,6 +51,7 @@ CaveBot.Config.add = function(id, title, defaultValue)
   local setter -- sets value
   if type(defaultValue) == "number" then
     panel = UI.createWidget("CaveBotConfigNumberValuePanel", CaveBot.Config.ui)
+    panel:setId(id)
     setter = function(value)
       CaveBot.Config.values[id] = value
       panel.value:setText(value, true)
@@ -65,6 +66,7 @@ CaveBot.Config.add = function(id, title, defaultValue)
     end
   elseif type(defaultValue) == "boolean" then
     panel = UI.createWidget("CaveBotConfigBooleanValuePanel", CaveBot.Config.ui)
+    panel:setId(id)
     setter = function(value)
       CaveBot.Config.values[id] = value
       panel.value:setOn(value, true)
@@ -91,4 +93,19 @@ CaveBot.Config.get = function(id)
     return warn("Invalid CaveBot.Config.get, id: " .. id)
   end
   return CaveBot.Config.values[id]
+end
+
+CaveBot.Config.set = function(id, value)
+  local valueType = CaveBot.Config.get(id)
+  local panel = CaveBot.Config.ui[id]
+
+  if valueType == 'boolean' then
+    CaveBot.Config.values[id] = value
+    panel.value:setOn(value, true)
+    CaveBot.save()
+  else
+    CaveBot.Config.values[id] = value
+    panel.value:setText(value, true)
+    CaveBot.save()
+  end
 end

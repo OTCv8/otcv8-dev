@@ -26,7 +26,7 @@ CaveBot.Extensions.Imbuing.setup = function()
     local data = string.split(value, ",")
     local ids = {}
 
-    if #data == 0 then
+    if #data == 0 and value ~= 'name' then
       warn("CaveBot[Imbuing] no items added, proceeding")
       reset()
       return false
@@ -35,11 +35,18 @@ CaveBot.Extensions.Imbuing.setup = function()
     -- setting of equipment manager so it wont disturb imbuing process
     EquipManager.setOff()
 
-    -- convert to number
-    for i, id in ipairs(data) do
-      id = tonumber(id)
-      if not table.find(ids, id) then
+    if value == 'name' then
+      local imbuData = AutoImbueTable[player:getName()]      
+      for id, imbues in pairs(imbuData) do
         table.insert(ids, id)
+      end
+    else
+      -- convert to number
+      for i, id in ipairs(data) do
+        id = tonumber(id)
+        if not table.find(ids, id) then
+          table.insert(ids, id)
+        end
       end
     end
  
@@ -105,8 +112,8 @@ CaveBot.Extensions.Imbuing.setup = function()
   end)
 
  CaveBot.Editor.registerAction("imbuing", "imbuing", {
-  value="item id 1, item id 2",
+  value="name",
   title="Auto Imbuing",
-  description="insert below item ids to be imbued, separated by comma",
+  description="insert below item ids to be imbued, separated by comma\nor 'name' to load from file",
  })
 end

@@ -40,17 +40,27 @@ end
 
 local config = storage[panelName]
 
+UI.Separator()
 local renameContui = setupUI([[
 Panel
-  height: 38
+  height: 50
+
+  Label
+    text-align: center
+    text: Container Panel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+    font: verdana-11px-rounded
 
   BotSwitch
     id: title
-    anchors.top: parent.top
+    anchors.top: prev.bottom
     anchors.left: parent.left
     text-align: center
     width: 130
-    !text: tr('Minimise Containers')
+    !text: tr('Open Minimised')
+    font: verdana-11px-rounded
 
   Button
     id: editContList
@@ -60,16 +70,28 @@ Panel
     margin-left: 3
     height: 17
     text: Setup
+    font: verdana-11px-rounded
 
   Button
     id: reopenCont
-    !text: tr('Reopen Containers')
+    !text: tr('Reopen All')
     anchors.left: parent.left
     anchors.top: prev.bottom
-    anchors.right: parent.right
+    anchors.right: parent.horizontalCenter
+    margin-right: 2
     height: 17
     margin-top: 3
+    font: verdana-11px-rounded
 
+  Button
+    id: minimiseCont
+    !text: tr('Minimise All')
+    anchors.top: prev.top
+    anchors.left: parent.horizontalCenter
+    anchors.right: parent.right
+    margin-right: 2
+    height: 17
+    font: verdana-11px-rounded
   ]])
 renameContui:setId(panelName)
 
@@ -378,6 +400,13 @@ if rootWidget then
         reopenBackpacks()
     end
 
+    renameContui.minimiseCont.onClick = function(widget)
+        for i, container in ipairs(getContainers()) do
+            local containerWindow = container.window
+            containerWindow:setContentHeight(34)
+        end
+    end
+
     renameContui.title:setOn(config.enabled)
     renameContui.title.onClick = function(widget)
         config.enabled = not config.enabled
@@ -569,7 +598,7 @@ local function properTable(t)
     return r
 end
 
-macro(500, function()
+local mainLoop = macro(150, function(macro)
     if not config.sort and not config.purse then return end
 
     local storageVal = config.list
@@ -622,5 +651,24 @@ macro(500, function()
             return use(getPurse())
         end
     end
-    delay(1500)
+    macro:setOff()
+end)
+
+
+onContainerOpen(function(container, previousContainer)
+    mainLoop:setOn()
+end)
+  
+onAddItem(function(container, slot, item, oldItem)
+    mainLoop:setOn()
+end)
+
+onPlayerInventoryChange(function(slot, item, oldItem)
+    mainLoop:setOn()
+end)
+
+onContainerClose(function(container)
+    if not container.lootContainer then
+        mainLoop:setOn()
+    end
 end)
