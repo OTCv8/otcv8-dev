@@ -53,6 +53,7 @@ public:
 
 protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
+    void cacheCountText();
 
     ItemPtr m_item;
     stdext::boolean<false> m_virtual;
@@ -60,6 +61,7 @@ protected:
     stdext::boolean<false> m_showId;
     stdext::boolean<true> m_showCount;
     std::string m_shader;
+    std::string m_countText;
 };
 
 #endif

@@ -95,7 +95,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
             if (ui && phases < 4) {
                 phases = 2; // old protocols with 2 frames walk animation
             }
-            int ticksPerFrame = 1000 / phases;
+            int ticksPerFrame = !g_game.getFeature(Otc::GameEnhancedAnimations) ? 333 : (1000 / phases);
             animationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
             if (idleAnimator && ui) {
                 animationPhase += idleAnimator->getAnimationPhases() - 1;
