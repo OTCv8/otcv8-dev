@@ -125,12 +125,12 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
         lightView->addLight(creatureCenter, light);
 }
 
-void Creature::drawOutfit(const Rect& destRect, Otc::Direction direction, const Color& color, bool animate, bool ui)
+void Creature::drawOutfit(const Rect& destRect, Otc::Direction direction, const Color& color, bool animate, bool ui, bool oldScaling)
 {
     if (direction == Otc::InvalidDirection)
         direction = m_direction;
 
-    m_outfit.draw(destRect, direction, 0, animate, ui);
+    m_outfit.draw(destRect, direction, 0, animate, ui, oldScaling);
 }
 
 void Creature::drawInformation(const Point& point, bool useGray, const Rect& parentRect, int drawFlags)
@@ -145,7 +145,6 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     if (!useGray)
         fillColor = m_informationColor;
 
-    // calculate main rects
     // calculate main rects - hp/mana
     Rect backgroundRect = Rect(point.x + m_informationOffset.x - (13.5), point.y + m_informationOffset.y, 27, 4);
     backgroundRect.bind(parentRect);
@@ -211,7 +210,7 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
         g_drawQueue->addFilledRect(healthRect, fillColor);
 
         if (drawFlags & Otc::DrawManaBar) {
-            int manaPercent = m_manaPercent;
+            int8 manaPercent = m_manaPercent;
             if (isLocalPlayer()) {
                 LocalPlayerPtr player = g_game.getLocalPlayer();
                 if (player) {
@@ -580,14 +579,17 @@ void Creature::nextWalkUpdate()
     updateWalk();
 
     // schedules next update
-    if (m_walking) {
-        auto self = static_self_cast<Creature>();
-        m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
-            self->m_walkUpdateEvent = nullptr;
-            self->nextWalkUpdate();
-        }, g_game.getFeature(Otc::GameNewUpdateWalk) && isLocalPlayer() ?
-            std::ceil<uint16>(((float)getStepDuration(true) / g_app.getFps()) * 2) : (float)getStepDuration() / g_sprites.spriteSize());
+    if (!m_walking) {
+        return;
     }
+	
+	auto self = static_self_cast<Creature>();
+    m_walkUpdateEvent = g_dispatcher.scheduleEvent([self]{
+        self->m_walkUpdateEvent = nullptr;
+        self->nextWalkUpdate();
+    }, g_game.getFeature(Otc::GameNewUpdateWalk) ? 
+        std::max(getStepDuration(true) / std::max(g_app.getFps(), 1), 1) : (float)getStepDuration() / g_sprites.spriteSize()
+    );
 }
 
 void Creature::updateWalk()
@@ -862,12 +864,12 @@ Point Creature::getDrawOffset()
     Point drawOffset;
     if (m_walking) {
         if (m_walkingTile)
-            drawOffset -= Point(1, 1) * m_walkingTile->getDrawElevation();
+            drawOffset -= Point(1, 1) * m_walkingTile->getDrawElevation() * g_sprites.getOffsetFactor();
         drawOffset += m_walkOffset;
     } else {
         const TilePtr& tile = getTile();
         if (tile)
-            drawOffset -= Point(1, 1) * tile->getDrawElevation();
+            drawOffset -= Point(1, 1) * tile->getDrawElevation() * g_sprites.getOffsetFactor();
     }
     return drawOffset;
 }

@@ -103,46 +103,12 @@ function onShowFloorChange(checkBox, checked)
             local newMargin = floor:getMarginRight() + 8
             floor:setMarginRight(newMargin)
             if newMargin >= 64 then
-              for i = 1, floorTiles do
-                local sprites = {}
-                local startIndex = 1 + ((i - 1) * floorTiles)
-                local endIndex = i * floorTiles
-
-                for k = startIndex, endIndex do
-                  sprites[#sprites + 1] = floor:getChildByIndex(k):getSpriteId()
-                end
-
-                table.insert(sprites, #sprites, table.remove(sprites, 1))
-
-                local sid = 1
-                for k = startIndex, endIndex do
-                  floor:getChildByIndex(k):setSpriteId(sprites[sid])
-                  sid = sid + 1
-                end
-              end
               floor:setMarginRight(0)
             end
           elseif direction == Directions.West then
             local newMargin = floor:getMarginLeft() + 8
             floor:setMarginLeft(newMargin)
             if newMargin >= 64 then
-              for i = 1, floorTiles do
-                local sprites = {}
-                local startIndex = 1 + ((i - 1) * floorTiles)
-                local endIndex = i * floorTiles
-
-                for k = startIndex, endIndex do
-                  sprites[#sprites + 1] = floor:getChildByIndex(k):getSpriteId()
-                end
-
-                table.insert(sprites, 1, table.remove(sprites, #sprites))
-
-                local sid = 1
-                for k = startIndex, endIndex do
-                  floor:getChildByIndex(k):setSpriteId(sprites[sid])
-                  sid = sid + 1
-                end
-              end
               floor:setMarginLeft(0)
             end
           end
@@ -218,7 +184,7 @@ function create(currentOutfit, outfitList, mountList, wingList, auraList, shader
   end
 
   if currentOutfit.shader == "" then
-    currentOutfit.shader = "default"
+    currentOutfit.shader = "outfit_default"
   end
 
   loadSettings()
@@ -238,8 +204,7 @@ function create(currentOutfit, outfitList, mountList, wingList, auraList, shader
 
   floor = window.preview.panel.floor
   for i = 1, floorTiles * floorTiles do
-    local tile = g_ui.createWidget("UISprite", floor)
-    tile:setSpriteId(math.random(10057, 10064))
+    g_ui.createWidget("FloorTile", floor)
   end
   floor:hide()
 
@@ -262,13 +227,15 @@ function create(currentOutfit, outfitList, mountList, wingList, auraList, shader
 
   updateAppearanceTexts(currentOutfit)
 
-  local isMount = g_game.getLocalPlayer():isMounted()
-  if isMount then
-    window.configure.mount.check:setEnabled(true)
-    window.configure.mount.check:setChecked(true)
-  else
-    window.configure.mount.check:setEnabled(currentOutfit.mount > 0)
-    window.configure.mount.check:setChecked(isMount and currentOutfit.mount > 0)
+  if g_game.getFeature(GamePlayerMounts) then
+    local isMount = g_game.getLocalPlayer():isMounted()
+    if isMount then
+      window.configure.mount.check:setEnabled(true)
+      window.configure.mount.check:setChecked(true)
+    else
+      window.configure.mount.check:setEnabled(currentOutfit.mount > 0)
+      window.configure.mount.check:setChecked(isMount and currentOutfit.mount > 0)
+    end
   end
 
   if currentOutfit.addons == 3 then
@@ -372,6 +339,8 @@ function create(currentOutfit, outfitList, mountList, wingList, auraList, shader
   window.appearance.settings.manaBar:setVisible(g_game.getFeature(GameHealthInfoBackground))
 
   window.configure.mount:setVisible(g_game.getFeature(GamePlayerMounts))
+
+  window.listSearch.search.onKeyPress = onFilterSearch
 end
 
 function destroy()
@@ -618,7 +587,7 @@ function showOutfits()
     outfit.mount = 0
     outfit.aura = 0
     outfit.wings = 0
-    outfit.shader = "default"
+    outfit.shader = "outfit_default"
     outfit.healthBar = 0
     outfit.manaBar = 0
     button.outfit:setOutfit(outfit)
@@ -777,12 +746,12 @@ function showShaders()
   local focused = nil
   do
     local button = g_ui.createWidget("SelectionButton", window.selectionList)
-    button:setId("default")
+    button:setId("outfit_default")
 
-    button.outfit:setOutfit({type = tempOutfit.type, addons = tempOutfit.addons, shader = "default"})
+    button.outfit:setOutfit({type = tempOutfit.type, addons = tempOutfit.addons, shader = "outfit_default"})
     button.name:setText("None")
-    if tempOutfit.shader == "default" then
-      focused = "default"
+    if tempOutfit.shader == "outfit_default" then
+      focused = "outfit_default"
     end
   end
 
@@ -917,7 +886,9 @@ function onPresetSelect(list, focusedChild, unfocusedChild, reason)
       end
     end
 
-    window.configure.mount.check:setChecked(preset.mounted and tempOutfit.mount > 0)
+    if g_game.getFeature(GamePlayerMounts) then
+      window.configure.mount.check:setChecked(preset.mounted and tempOutfit.mount > 0)
+    end
 
     settings.currentPreset = presetId
 
@@ -1118,7 +1089,9 @@ function updatePreview()
   local previewOutfit = table.copy(tempOutfit)
 
   if not settings.showOutfit then
-    previewOutfit.type = 0
+    previewCreature:hide()
+  else
+    previewCreature:show()
   end
 
   if not settings.showMount then
@@ -1134,7 +1107,7 @@ function updatePreview()
   end
 
   if not settings.showShader then
-    previewOutfit.shader = "default"
+    previewOutfit.shader = "outfit_default"
   end
 
   if not settings.showBars then
@@ -1142,7 +1115,7 @@ function updatePreview()
     previewOutfit.manaBar = 0
     window.preview.panel.bars:hide()
   else
-    if settings.showMount and previewOutfit.mount > 0 then
+    if g_game.getFeature(GamePlayerMounts) and settings.showMount and previewOutfit.mount > 0 then
       window.preview.panel.bars:setMarginTop(45)
       window.preview.panel.bars:setMarginLeft(25)
     else
@@ -1220,6 +1193,29 @@ function rotate(value)
   end
   previewCreature:setDirection(direction)
   floor:setMargin(0)
+end
+
+function onFilterSearch()
+  addEvent(
+    function()
+      local searchText = window.listSearch.search:getText():lower():trim()
+      local children = window.selectionList:getChildren()
+      if searchText:len() >= 1 then
+        for _, child in ipairs(children) do
+          local text = child.name:getText():lower()
+          if text:find(searchText) then
+            child:show()
+          else
+            child:hide()
+          end
+        end
+      else
+        for _, child in ipairs(children) do
+          child:show()
+        end
+      end
+    end
+  )
 end
 
 function saveSettings()

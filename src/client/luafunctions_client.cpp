@@ -689,6 +689,10 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Item>("setTooltip", &Item::setTooltip);
     g_lua.bindClassMemberFunction<Item>("getQuickLootFlags", &Item::getQuickLootFlags);
     g_lua.bindClassMemberFunction<Item>("setQuickLootFlags", &Item::setQuickLootFlags);
+    g_lua.bindClassMemberFunction<Item>("setShader", &Item::setShader);
+    g_lua.bindClassMemberFunction<Item>("getShader", &Item::getShader);
+    g_lua.bindClassMemberFunction<Item>("setCustomAttribute", &Item::setCustomAttribute);
+    g_lua.bindClassMemberFunction<Item>("getCustomAttribute", &Item::getCustomAttribute);
 
     g_lua.registerClass<Effect, Thing>();
     g_lua.bindClassStaticFunction<Effect>("create", []{ return EffectPtr(new Effect); });
@@ -700,6 +704,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Missile>("getId", &Missile::getId);
     g_lua.bindClassMemberFunction<Missile>("getSource", &Missile::getSource);
     g_lua.bindClassMemberFunction<Missile>("getDestination", &Missile::getDestination);
+    g_lua.bindClassMemberFunction<Missile>("setPath", &Missile::setPath);
 
     g_lua.registerClass<StaticText, Thing>();
     g_lua.bindClassStaticFunction<StaticText>("create", []{ return StaticTextPtr(new StaticText); });
@@ -842,6 +847,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIItem>("setItem", &UIItem::setItem);
     g_lua.bindClassMemberFunction<UIItem>("setVirtual", &UIItem::setVirtual);
     g_lua.bindClassMemberFunction<UIItem>("setShowCount", &UIItem::setShowCount);
+    g_lua.bindClassMemberFunction<UIItem>("setItemShader", &UIItem::setItemShader);
     g_lua.bindClassMemberFunction<UIItem>("clearItem", &UIItem::clearItem);
     g_lua.bindClassMemberFunction<UIItem>("getItemId", &UIItem::getItemId);
     g_lua.bindClassMemberFunction<UIItem>("getItemCount", &UIItem::getItemCount);
@@ -875,6 +881,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UICreature>("setAnimate", &UICreature::setAnimate);
     g_lua.bindClassMemberFunction<UICreature>("isAnimating", &UICreature::isAnimating);
     g_lua.bindClassMemberFunction<UICreature>("setCenter", &UICreature::setCenter);
+    g_lua.bindClassMemberFunction<UICreature>("setOldScaling", &UICreature::setOldScaling);
 
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", []{ return UIMapPtr(new UIMap); });

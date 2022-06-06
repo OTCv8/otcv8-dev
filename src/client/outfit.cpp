@@ -92,7 +92,10 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
             }
         } else if (type->isAnimateAlways() || ui) {
             int phases = type->getAnimator() ? type->getAnimator()->getAnimationPhases() : type->getAnimationPhases();
-            int ticksPerFrame = 1000 / phases;
+            if (ui && phases < 4) {
+                phases = 2; // old protocols with 2 frames walk animation
+            }
+            int ticksPerFrame = !g_game.getFeature(Otc::GameEnhancedAnimations) ? 333 : (1000 / phases);
             animationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
             if (idleAnimator && ui) {
                 animationPhase += idleAnimator->getAnimationPhases() - 1;
@@ -308,11 +311,11 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
     }
 }
 
-void Outfit::draw(const Rect& dest, Otc::Direction direction, uint animationPhase, bool animate, bool ui)
+void Outfit::draw(const Rect& dest, Otc::Direction direction, uint animationPhase, bool animate, bool ui, bool oldScaling)
 {
     int size = g_drawQueue->size();
     draw(Point(0, 0), direction, animationPhase, animate, nullptr, ui);
-    g_drawQueue->correctOutfit(dest, size);
+    g_drawQueue->correctOutfit(dest, size, oldScaling);
 }
 
 void Outfit::resetClothes()

@@ -29,6 +29,8 @@
 #include <framework/graphics/texture.h>
 #include <framework/graphics/image.h>
 #include <framework/graphics/texturemanager.h>
+#include <framework/graphics/framebuffermanager.h>
+#include <framework/graphics/shadermanager.h>
 #include <framework/core/filestream.h>
 #include <framework/otml/otml.h>
 
@@ -490,7 +492,6 @@ void ThingType::unload()
     m_loaded = false;
 }
 
-
 DrawQueueItem* ThingType::draw(const Point& dest, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, Color color, LightView* lightView)
 {
     if (m_null)
@@ -622,6 +623,83 @@ Rect ThingType::getDrawSize(const Point& dest, int layer, int xPattern, int yPat
     return Rect(dest + textureOffset - m_displacement - (m_size.toPoint() - Point(1, 1)) * g_sprites.spriteSize(), textureRect.size());
 }
 
+void ThingType::drawWithShader(const Point& dest, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, const std::string& shader, Color color, LightView* lightView)
+{
+    if (m_null)
+        return;
+
+    if (animationPhase < 0 || animationPhase >= m_animationPhases)
+        return;
+
+    const TexturePtr& texture = getTexture(animationPhase); // texture might not exists, neither its rects.
+    if (!texture)
+        return;
+
+    uint frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern);
+    if (frameIndex >= m_texturesFramesRects[animationPhase].size())
+        return;
+
+    Point textureOffset = m_texturesFramesOffsets[animationPhase][frameIndex];
+    Rect textureRect = m_texturesFramesRects[animationPhase][frameIndex];
+
+    Rect screenRect(dest + (textureOffset - m_displacement * g_sprites.getOffsetFactor() - (m_size.toPoint() - Point(1, 1)) * g_sprites.spriteSize()), textureRect.size());
+
+    bool useOpacity = m_opacity < 1.0f;
+    if (useOpacity)
+        color.setAlpha(m_opacity);
+
+    if (lightView && hasLight())
+        lightView->addLight(screenRect.center(), getLight());
+
+    DrawQueueItemTexturedRect* thing = new DrawQueueItemThingWithShader(screenRect, texture, textureRect, textureOffset, screenRect.center(), 0, shader);
+    g_drawQueue->add(thing);
+
+    //return g_drawQueue->addTexturedRect(screenRect, texture, textureRect, color);
+}
+
+void ThingType::drawWithShader(const Rect& dest, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, const std::string& shader, Color color)
+{
+    if (m_null)
+        return;
+
+    if (animationPhase < 0 || animationPhase >= m_animationPhases)
+        return;
+
+    const TexturePtr& texture = getTexture(animationPhase); // texture might not exists, neither its rects.
+    if (!texture)
+        return;
+
+    uint frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern);
+    if (frameIndex >= m_texturesFramesRects[animationPhase].size())
+        return;
+
+    Point textureOffset = m_texturesFramesOffsets[animationPhase][frameIndex];
+    Rect textureRect = m_texturesFramesRects[animationPhase][frameIndex];
+
+    bool useOpacity = m_opacity < 1.0f;
+    if (useOpacity)
+        color.setAlpha(m_opacity);
+
+    Size size = m_size * g_sprites.spriteSize();
+    if (!size.isValid())
+        return;
+
+    // size correction for some too big items
+    if ((m_size.width() > 1 || m_size.height() > 1) &&
+        textureRect.width() <= g_sprites.spriteSize() && textureRect.height() <= g_sprites.spriteSize()) {
+        size = Size(g_sprites.spriteSize(), g_sprites.spriteSize());
+        textureOffset = Point((g_sprites.spriteSize() - textureRect.width()) / m_size.width(),
+            (g_sprites.spriteSize() - textureRect.height()) / m_size.height());
+    }
+
+    float scale = std::min<float>((float)dest.width() / size.width(), (float)dest.height() / size.height());
+
+    Rect screenRect = Rect(dest.topLeft() + (textureOffset * scale), textureRect.size() * scale);
+    DrawQueueItemTexturedRect* thing = new DrawQueueItemThingWithShader(screenRect, texture, textureRect, textureOffset, screenRect.center(), 0, shader);
+    g_drawQueue->add(thing);
+
+    //return g_drawQueue->addTexturedRect(Rect(dest.topLeft() + (textureOffset * scale), textureRect.size() * scale), texture, textureRect, color);
+}
 
 const TexturePtr& ThingType::getTexture(int animationPhase)
 {
@@ -776,4 +854,36 @@ void ThingType::setPathable(bool var)
         m_attribs.remove(ThingAttrNotPathable);
     else
         m_attribs.set(ThingAttrNotPathable, true);
+}
+
+void DrawQueueItemThingWithShader::draw()
+{
+    if (!m_texture) return;
+    PainterShaderProgramPtr shader = g_shaders.getShader(m_shader);
+    if (!shader) return DrawQueueItemTexturedRect::draw();
+    bool useFramebuffer = m_dest.size() != m_src.size();
+
+    if (useFramebuffer) {
+        g_framebuffers.getTemporaryFrameBuffer()->resize(m_src.size());
+        g_framebuffers.getTemporaryFrameBuffer()->bind();
+        g_painter->clear(Color::alpha);
+    }
+
+    g_painter->setShaderProgram(shader);
+    g_painter->setOffset(m_offset);
+    shader->setCenter(m_center);
+    shader->bindMultiTextures();
+    if (useFramebuffer) {
+        g_painter->drawTexturedRect(Rect(0, 0, m_src.size()), m_texture, m_src);
+    }
+    else {
+        g_painter->drawTexturedRect(m_dest, m_texture, m_src);
+    }
+    g_painter->resetShaderProgram();
+
+    if (useFramebuffer) {
+        g_framebuffers.getTemporaryFrameBuffer()->release();
+        g_painter->resetColor();
+        g_framebuffers.getTemporaryFrameBuffer()->draw(m_dest);
+    }
 }

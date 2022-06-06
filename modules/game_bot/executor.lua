@@ -73,7 +73,9 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
     onGroupSpellCooldown = {},
     onSpellCooldown = {},
     onRemoveItem = {},
-    onInventoryChange = {}
+    onInventoryChange = {},
+    onGameQuestLog = {},
+    onGameQuestLine = {}
   }
   
   -- basic functions & classes
@@ -417,7 +419,27 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
         for i, callback in ipairs(context._callbacks.onInventoryChange) do
           callback(player, slot, item, oldItem)
         end
-      end
+      end,
+      onGameQuestLog = function(quests)
+        local tmp = {}
+        for j,questEntry in pairs(quests) do
+          local id, name, completed = unpack(questEntry)
+          table.insert(tmp, { id = id, name = name, completed = completed })
+        end
+        for i, callback in ipairs(context._callbacks.onGameQuestLog) do
+          callback(tmp)
+        end
+      end,
+      onGameQuestLine = function(questId, questMissions)
+        local tmp = {}
+        for i,questMission in pairs(questMissions) do
+          local name, description = unpack(questMission)
+          table.insert(tmp, { name = name, description = description })
+        end
+        for i, callback in ipairs(context._callbacks.onGameQuestLine) do
+          callback(questId, tmp)
+        end
+      end,
     }    
   }
 end

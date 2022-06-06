@@ -38,7 +38,7 @@ public:
     }
 
     void draw(Point dest, Otc::Direction direction, uint walkAnimationPhase, bool animate = true, LightView* lightView = nullptr, bool ui = false);
-    void draw(const Rect& dest, Otc::Direction direction, uint animationPhase, bool animate = true, bool ui = false);
+    void draw(const Rect& dest, Otc::Direction direction, uint animationPhase, bool animate = true, bool ui = false, bool oldScaling = false);
 
     void setId(int id) { m_id = id; }
     void setAuxId(int id) { m_auxId = id; }

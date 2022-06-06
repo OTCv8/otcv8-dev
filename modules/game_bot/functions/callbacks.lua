@@ -230,6 +230,16 @@ context.onInventoryChange = function(callback)
   return context.callback("onInventoryChange", callback)
 end
 
+-- onGameQuestLog - callback = function(quests)
+context.onGameQuestLog = function(callback)
+  return context.callback("onGameQuestLog", callback)
+end
+
+-- onGameQuestLine - callback = function(questMission)
+context.onGameQuestLine = function(callback)
+  return context.callback("onGameQuestLine", callback)
+end
+
 -- CUSTOM CALLBACKS
 
 -- listen(name, callback) -- callback = function(text, channelId, pos)

@@ -52,6 +52,8 @@ public:
 
     void setCenter(bool value);
 
+    void setOldScaling(bool value) { m_oldScaling = value; }
+
 protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
     void onGeometryChange(const Rect& oldRect, const Rect& newRect) override;
@@ -59,6 +61,7 @@ protected:
     CreaturePtr m_creature;
     stdext::boolean<false> m_autoRotating;
     stdext::boolean<false> m_animate;
+    stdext::boolean<false> m_oldScaling;
     Otc::Direction m_direction = Otc::South;
     float m_scale = 1.0;
 };

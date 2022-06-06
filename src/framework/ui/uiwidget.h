@@ -451,6 +451,7 @@ protected:
     stdext::boolean<true> m_imageSmooth;
     stdext::boolean<false> m_imageAutoResize;
     EdgeGroup<int> m_imageBorder;
+    std::string m_shader;
 
 public:
     void setQRCode(const std::string& code, int border);
@@ -474,6 +475,7 @@ public:
     void setImageBorderBottom(int border) { m_imageBorder.bottom = border; configureBorderImage(); }
     void setImageBorderLeft(int border) { m_imageBorder.left = border; configureBorderImage(); }
     void setImageBorder(int border) { m_imageBorder.set(border); configureBorderImage(); }
+    void setImageShader(const std::string& str) { m_shader = str; }
 
     Rect getImageClip() { return m_imageClipRect; }
     int getImageOffsetX() { return m_imageRect.x(); }
@@ -493,6 +495,7 @@ public:
     int getImageBorderLeft() { return m_imageBorder.left; }
     int getImageTextureWidth() { return m_imageTexture ? m_imageTexture->getWidth() : 0; }
     int getImageTextureHeight() { return m_imageTexture ? m_imageTexture->getHeight() : 0; }
+    std::string getImageShader() { return m_shader; }
 
 // text related
 private:

@@ -94,7 +94,7 @@ function refreshContainerPages(container)
     nextPageButton:setEnabled(true)
     nextPageButton.onClick = function() g_game.seekInContainer(container:getId(), container:getFirstIndex() + container:getCapacity()) end
   end
-
+  
   local pagePanel = container.window:recursiveGetChildById('pagePanel')
   if pagePanel then
     pagePanel.onMouseWheel = function(widget, mousePos, mouseWheel)
@@ -147,6 +147,7 @@ function onContainerOpen(container, previousContainer)
       child:onDrop(widget, mousePos, true)        
     end
   end
+  
   containerWindow.onMouseRelease = function(widget, mousePos, mouseButton)
     if mouseButton == MouseButton4 then
       if container:hasParent() then

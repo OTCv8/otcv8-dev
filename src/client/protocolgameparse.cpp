@@ -1586,9 +1586,11 @@ void ProtocolGame::parseCreatureHealth(const InputMessagePtr& msg)
 {
     uint id = msg->getU32();
     int healthPercent = msg->getU8();
-    int manaPercent = 0;
+    int8 manaPercent = -1;
     if (g_game.getFeature(Otc::GameCreaturesMana)) {
-        manaPercent = msg->getU8();
+        if (msg->getU8() == 0x01) {
+            manaPercent = msg->getU8();
+        }
     }
 
     CreaturePtr creature = g_map.getCreatureById(id);
@@ -3446,9 +3448,11 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         }
 
         int healthPercent = msg->getU8();
-        int manaPercent = 0;
+        int8 manaPercent = -1;
         if (g_game.getFeature(Otc::GameCreaturesMana)) {
-            manaPercent = msg->getU8();
+            if (msg->getU8() == 0x01) {
+                manaPercent = msg->getU8();
+            }
         }
         Otc::Direction direction = (Otc::Direction)msg->getU8();
         Outfit outfit = getOutfit(msg);
@@ -3597,6 +3601,15 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id, bool hasDescri
 
     if (g_game.getFeature(Otc::GameItemTooltip) && hasDescription) {
         item->setTooltip(msg->getString());
+    }
+
+    if (g_game.getFeature(Otc::GameItemCustomAttributes)) {
+        uint16 size = msg->getU16();
+        for (uint16 i = 0; i < size; ++i) {
+            uint16 key = msg->getU16();
+            uint64 value = msg->getU64();
+            item->setCustomAttribute(key, value);
+        }
     }
 
     return item;
