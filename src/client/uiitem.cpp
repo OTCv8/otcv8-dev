@@ -151,5 +151,5 @@ void UIItem::cacheCountText()
         return;
     }
 
-    m_countText = stdext::format("%.0fk", count / 1000);
+    m_countText = stdext::format("%.0fk", count / 1000.0);
 }
