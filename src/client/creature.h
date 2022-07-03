@@ -47,7 +47,7 @@ public:
     virtual ~Creature();
 
     virtual void draw(const Point& dest, bool animate = true, LightView* lightView = nullptr);
-    virtual void drawOutfit(const Rect& destRect, Otc::Direction direction = Otc::InvalidDirection, const Color& color = Color::white, bool animate = false);
+    virtual void drawOutfit(const Rect& destRect, Otc::Direction direction = Otc::InvalidDirection, const Color& color = Color::white, bool animate = false, bool ui = false, bool oldScaling = false);
 
     void drawInformation(const Point& point, bool useGray, const Rect& parentRect, int drawFlags);
 
@@ -92,6 +92,10 @@ public:
     std::string getText();
     void clearText() { setText("", Color::white); }
 
+    void setTitle(const std::string& title, const std::string& font, const Color& color);
+    void clearTitle() { setTitle("", "", Color::white); }
+    std::string getTitle() { return m_titleCache.getText(); }
+
     uint32 getId() { return m_id; }
     std::string getName() { return m_name; }
     uint8 getHealthPercent() { return m_healthPercent; }
@@ -124,6 +128,10 @@ public:
     virtual int getDisplacementY();
     virtual int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0);
     PointF getJumpOffset() { return m_jumpOffset; }
+    bool isTimedSquareVisible() { return m_showTimedSquare; }
+    Color getTimedSquareColor() { return m_timedSquareColor; }
+    bool isStaticSquareVisible() { return m_showStaticSquare; }
+    Color getStaticSquareColor() { return m_staticSquareColor; }
 
     void updateShield();
 
@@ -237,6 +245,8 @@ protected:
     Color m_outfitColor;
     ScheduledEventPtr m_outfitColorUpdateEvent;
     Timer m_outfitColorTimer;
+    CachedText m_titleCache;
+    Color m_titleColor;
 
     static std::array<double, Otc::LastSpeedFormula> m_speedFormula;
 

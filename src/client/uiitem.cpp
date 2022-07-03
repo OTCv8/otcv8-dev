@@ -22,6 +22,7 @@
 
 #include "uiitem.h"
 #include "spritemanager.h"
+#include "game.h"
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/fontmanager.h>
@@ -55,7 +56,7 @@ void UIItem::drawSelf(Fw::DrawPane drawPane)
         m_item->draw(drawRect);
 
         if(m_font && m_showCount && (m_item->isStackable() || m_item->isChargeable()) && m_item->getCountOrSubType() > 1) {
-            g_drawQueue->addText(m_font, std::to_string(m_item->getCountOrSubType()), Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Fw::AlignBottomRight, Color(231, 231, 231));
+            g_drawQueue->addText(m_font, m_countText, Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Fw::AlignBottomRight, Color(231, 231, 231));
         }
 
         if (m_showId) {
@@ -80,26 +81,46 @@ void UIItem::setItemId(int id)
             m_item->setId(id);
     }
 
+    if (m_item)
+        m_item->setShader(m_shader);
+
     callLuaField("onItemChange");
 }
 
 void UIItem::setItemCount(int count)
 {
-    if (m_item)
+    if (m_item) {
         m_item->setCount(count);
-    callLuaField("onItemChange");
+        callLuaField("onItemChange");
+        cacheCountText();
+    }
 }
 void UIItem::setItemSubType(int subType)
 {
-    if (m_item)
+    if (m_item) {
         m_item->setSubType(subType);
-    callLuaField("onItemChange");
+        callLuaField("onItemChange");
+    }
 }
 
 void UIItem::setItem(const ItemPtr& item)
 {
     m_item = item;
-    callLuaField("onItemChange");
+    if (m_item) {
+        m_item->setShader(m_shader);
+        cacheCountText();
+        callLuaField("onItemChange");
+    }
+}
+
+void UIItem::setItemShader(const std::string& str)
+{
+    m_shader = str;
+
+    if (m_item) {
+        m_item->setShader(m_shader);
+        callLuaField("onItemChange");
+    }
 }
 
 void UIItem::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
@@ -117,5 +138,18 @@ void UIItem::onStyleApply(const std::string& styleName, const OTMLNodePtr& style
             setVirtual(node->value<bool>());
         else if(node->tag() == "show-id")
             m_showId = node->value<bool>();
+        else if(node->tag() == "shader")
+            setItemShader(node->value());
     }
+}
+
+void UIItem::cacheCountText()
+{
+    int count = m_item->getCountOrSubType();
+    if (!g_game.getFeature(Otc::GameCountU16) || count < 1000) {
+        m_countText = std::to_string(count);
+        return;
+    }
+
+    m_countText = stdext::format("%.0fk", count / 1000.0);
 }

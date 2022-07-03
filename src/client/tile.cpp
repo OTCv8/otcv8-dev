@@ -162,8 +162,8 @@ void Tile::drawTop(const Point& dest, LightView* lightView)
     for (const CreaturePtr& creature : m_walkingCreatures) {
         if (creature->isHidden())
             continue;
-        Point creatureDest(dest.x + ((creature->getPrewalkingPosition().x - m_position.x) * g_sprites.spriteSize() - m_drawElevation),
-                   dest.y + ((creature->getPrewalkingPosition().y - m_position.y) * g_sprites.spriteSize() - m_drawElevation));
+        Point creatureDest(dest.x + ((creature->getPrewalkingPosition().x - m_position.x) * g_sprites.spriteSize() - m_drawElevation * g_sprites.getOffsetFactor()),
+                   dest.y + ((creature->getPrewalkingPosition().y - m_position.y) * g_sprites.spriteSize() - m_drawElevation * g_sprites.getOffsetFactor()));
         creature->draw(creatureDest, true, lightView);
     }
 
@@ -247,6 +247,10 @@ void Tile::drawWidget(Point dest)
         return;
     
     Rect dest_rect = m_widget->getRect();
+    dest.x += m_widget->getMarginLeft();
+    dest.x -= m_widget->getMarginRight();
+    dest.y += m_widget->getMarginTop();
+    dest.y -= m_widget->getMarginBottom();
     dest_rect = Rect(dest - Point(dest_rect.width() / 2 - g_sprites.spriteSize(), dest_rect.height() / 2 - g_sprites.spriteSize()), dest_rect.width(), dest_rect.height());
     m_widget->setRect(dest_rect);
     m_widget->draw(dest_rect, Fw::ForegroundPane);

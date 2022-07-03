@@ -61,6 +61,7 @@ public:
     void resize(const Size& size);
     void show();
     void hide();
+    void minimize();
     void maximize();
     void poll();
     void swapBuffers();
@@ -81,6 +82,8 @@ public:
     Size getDisplaySize();
     std::string getClipboardText();
     std::string getPlatformType();
+
+    void flash() override;
 
 protected:
     int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot);

@@ -44,6 +44,7 @@
     #pragma warning(disable:4305) // 'initializing' : truncation from 'A' to 'B'
     #pragma warning(disable:4146) // unary minus operator applied to unsigned type, result still unsigned
     #pragma warning(disable:4800) // 'A' : forcing value to bool 'true' or 'false' (performance warning)
+    #pragma warning(disable:4996) // depracated warning as error
 
     #if _MSC_VER == 1912 || _MSC_VER == 1911 || _MSC_VER == 1910
     #define BUILD_COMPILER "Visual Studio 2017"

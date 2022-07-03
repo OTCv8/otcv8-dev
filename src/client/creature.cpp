@@ -90,16 +90,17 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
     drawBottomWidgets(creatureCenter, m_walking ? m_walkDirection : m_direction);
 
     Point animationOffset = animate ? m_walkOffset : Point(0, 0);
-    if (m_outfit.getCategory() != ThingCategoryCreature)
-        animationOffset -= getDisplacement();
 
     if (m_showTimedSquare && animate) {
-        g_drawQueue->addBoundingRect(Rect(dest - jumpOffset + (animationOffset - getDisplacement() + 2 * g_sprites.getOffsetFactor()), Size(sprSize - 4, sprSize - 4)), 2 * g_sprites.getOffsetFactor(), m_timedSquareColor);
+        g_drawQueue->addBoundingRect(Rect(dest - jumpOffset + (animationOffset - getDisplacement() + 2 * g_sprites.getOffsetFactor()), Size(sprSize - 4 * g_sprites.getOffsetFactor(), sprSize - 4 * g_sprites.getOffsetFactor())), 2 * g_sprites.getOffsetFactor(), m_timedSquareColor);
     }
 
     if (m_showStaticSquare && animate) {
         g_drawQueue->addBoundingRect(Rect(dest - jumpOffset + (animationOffset - getDisplacement()), Size(sprSize, sprSize)), 2 * g_sprites.getOffsetFactor(), m_staticSquareColor);
     }
+
+    if (m_outfit.getCategory() != ThingCategoryCreature)
+        animationOffset -= getDisplacement();
 
     size_t drawQueueSize = g_drawQueue->size();
     m_outfit.draw(dest - jumpOffset + animationOffset, m_walking ? m_walkDirection : m_direction, m_walkAnimationPhase, true, lightView);
@@ -124,12 +125,12 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
         lightView->addLight(creatureCenter, light);
 }
 
-void Creature::drawOutfit(const Rect& destRect, Otc::Direction direction, const Color& color, bool animate)
+void Creature::drawOutfit(const Rect& destRect, Otc::Direction direction, const Color& color, bool animate, bool ui, bool oldScaling)
 {
     if (direction == Otc::InvalidDirection)
         direction = m_direction;
 
-    m_outfit.draw(destRect, direction, 0, animate);
+    m_outfit.draw(destRect, direction, 0, animate, ui, oldScaling);
 }
 
 void Creature::drawInformation(const Point& point, bool useGray, const Rect& parentRect, int drawFlags)
@@ -144,13 +145,8 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     if (!useGray)
         fillColor = m_informationColor;
 
-    // calculate main rects
-    Rect backgroundRect;
-    if (g_sprites.isHdMod() == false) {
-        backgroundRect = Rect(point.x + m_informationOffset.x - (13.5), point.y + m_informationOffset.y, 27, 4);
-    }else {
-        backgroundRect = Rect(point.x + m_informationOffset.x * g_sprites.getOffsetFactor(), point.y + m_informationOffset.y * g_sprites.getOffsetFactor(), 27, 4);
-    }
+    // calculate main rects - hp/mana
+    Rect backgroundRect = Rect(point.x + m_informationOffset.x - (13.5), point.y + m_informationOffset.y, 27, 4);
     backgroundRect.bind(parentRect);
 
     //debug            
@@ -165,12 +161,7 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     }
 
     Size nameSize = m_nameCache.getTextSize();
-    Rect textRect;
-    if (g_sprites.isHdMod() == false) {
-        textRect = Rect(point.x + m_informationOffset.x - nameSize.width() / 2.0, point.y + m_informationOffset.y - 12, nameSize);
-    } else {
-        textRect = Rect(point.x + m_informationOffset.x - nameSize.width() / 2.0 + 14.5, point.y + m_informationOffset.y - 13, nameSize);
-    }
+    Rect textRect = Rect(point.x + m_informationOffset.x - nameSize.width() / 2.0, point.y + m_informationOffset.y - 12, nameSize);
     textRect.bind(parentRect);
 
     // distance them
@@ -219,7 +210,7 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
         g_drawQueue->addFilledRect(healthRect, fillColor);
 
         if (drawFlags & Otc::DrawManaBar) {
-            int manaPercent = m_manaPercent;
+            int8 manaPercent = m_manaPercent;
             if (isLocalPlayer()) {
                 LocalPlayerPtr player = g_game.getLocalPlayer();
                 if (player) {
@@ -272,9 +263,17 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     if (drawFlags & Otc::DrawNames) {
         m_nameCache.draw(textRect, fillColor);
 
+        if (m_titleCache.hasText()) {
+            Size titleSize = m_titleCache.getTextSize();
+            Point textCenter = textRect.topCenter();
+            textRect.setSize(titleSize);
+            textRect.moveBottomCenter(textCenter);
+            m_titleCache.draw(textRect, m_titleColor);
+        }
+
         if (m_text) {
             auto extraTextSize = m_text->getCachedText().getTextSize();
-            Rect extraTextRect = Rect(point.x + m_informationOffset.x * g_sprites.getOffsetFactor() - extraTextSize.width() / 2.0, point.y + (m_informationOffset.y + 15) * g_sprites.getOffsetFactor(), extraTextSize);
+            Rect extraTextRect = Rect(point.x + m_informationOffset.x - extraTextSize.width() / 2.0, point.y + m_informationOffset.y + 15, extraTextSize);
             m_text->drawText(extraTextRect.center(), extraTextRect);
         }
     }
@@ -580,14 +579,17 @@ void Creature::nextWalkUpdate()
     updateWalk();
 
     // schedules next update
-    if (m_walking) {
-        auto self = static_self_cast<Creature>();
-        m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
-            self->m_walkUpdateEvent = nullptr;
-            self->nextWalkUpdate();
-        }, g_game.getFeature(Otc::GameNewUpdateWalk) && isLocalPlayer() ?
-            std::ceil<uint16>(((float)getStepDuration(true) / g_app.getFps()) * 2) : (float)getStepDuration() / g_sprites.spriteSize());
+    if (!m_walking) {
+        return;
     }
+	
+	auto self = static_self_cast<Creature>();
+    m_walkUpdateEvent = g_dispatcher.scheduleEvent([self]{
+        self->m_walkUpdateEvent = nullptr;
+        self->nextWalkUpdate();
+    }, g_game.getFeature(Otc::GameNewUpdateWalk) ? 
+        std::max(getStepDuration(true) / std::max(g_app.getFps(), 1), 1) : (float)getStepDuration() / g_sprites.spriteSize()
+    );
 }
 
 void Creature::updateWalk()
@@ -862,12 +864,12 @@ Point Creature::getDrawOffset()
     Point drawOffset;
     if (m_walking) {
         if (m_walkingTile)
-            drawOffset -= Point(1, 1) * m_walkingTile->getDrawElevation();
+            drawOffset -= Point(1, 1) * m_walkingTile->getDrawElevation() * g_sprites.getOffsetFactor();
         drawOffset += m_walkOffset;
     } else {
         const TilePtr& tile = getTile();
         if (tile)
-            drawOffset -= Point(1, 1) * tile->getDrawElevation();
+            drawOffset -= Point(1, 1) * tile->getDrawElevation() * g_sprites.getOffsetFactor();
     }
     return drawOffset;
 }
@@ -1202,4 +1204,13 @@ void Creature::updateProgressBar(uint32 duration, bool ltr)
         m_progressBarPercent = 0;
     }
     callLuaField("onProgressBarUpdate", m_progressBarPercent, duration, ltr);
+}
+
+void Creature::setTitle(const std::string& title, const std::string& font, const Color& color)
+{
+    m_titleCache.setText(title);
+    if (!font.empty()) {
+        m_titleCache.setFont(g_fonts.getFont(font));
+    }
+    m_titleColor = color;
 }

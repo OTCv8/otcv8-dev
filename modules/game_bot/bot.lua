@@ -190,7 +190,13 @@ function refresh()
 
   -- storage
   botStorage = {}
-  botStorageFile = "/bot/" .. configName .. "/storage.json"
+  
+  local path = "/bot/" .. configName .. "/storage/"
+  if not g_resources.directoryExists(path) then
+    g_resources.makeDir(path)
+  end
+
+  botStorageFile = path.."profile_" .. g_settings.getNumber('profile') .. ".json"
   if g_resources.fileExists(botStorageFile) then
     local status, result = pcall(function() 
       return json.decode(g_resources.readFileContents(botStorageFile)) 
@@ -255,7 +261,9 @@ end
 
 function online()
   botButton:show()
-  scheduleEvent(refresh, 20)
+  if not modules.client_profiles.ChangedProfile then
+    scheduleEvent(refresh, 20)
+  end
 end
 
 function offline()
@@ -489,7 +497,9 @@ function initCallbacks()
     onRemoveItem = botContainerRemoveItem,
     onGameEditText = botGameEditText,
     onSpellCooldown = botSpellCooldown,
-    onSpellGroupCooldown = botGroupSpellCooldown
+    onSpellGroupCooldown = botGroupSpellCooldown,
+    onQuestLog = botGameQuestLog,
+    onQuestLine = botGameQuestLine
   })
   
   connect(Tile, {
@@ -512,7 +522,8 @@ function initCallbacks()
     onTurn = botCreatureTurn,
     onWalk = botCreatureWalk,
     onManaChange = botManaChange,
-    onStatesChange = botStatesChange
+    onStatesChange = botStatesChange,
+    onInventoryChange = botInventoryChange
   })
   
   connect(Container, {
@@ -552,7 +563,9 @@ function terminateCallbacks()
     onAttackingCreatureChange = botAttackingCreatureChange,
     onGameEditText = botGameEditText,
     onSpellCooldown = botSpellCooldown,
-    onSpellGroupCooldown = botGroupSpellCooldown
+    onSpellGroupCooldown = botGroupSpellCooldown,
+    onQuestLog = botGameQuestLog,
+    onQuestLine = botGameQuestLine
   })
   
   disconnect(Tile, {
@@ -575,7 +588,8 @@ function terminateCallbacks()
     onTurn = botCreatureTurn,
     onWalk = botCreatureWalk,
     onManaChange = botManaChange,
-    onStatesChange = botStatesChange
+    onStatesChange = botStatesChange,
+    onInventoryChange = botInventoryChange
   })
   
   disconnect(Container, {
@@ -758,9 +772,9 @@ function botManaChange(player, mana, maxMana, oldMana, oldMaxMana)
   safeBotCall(function() botExecutor.callbacks.onManaChange(player, mana, maxMana, oldMana, oldMaxMana) end)
 end
 
-function botStatesChange(states, oldStates)
+function botStatesChange(player, states, oldStates)
   if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onStatesChange(states, oldStates) end)
+  safeBotCall(function() botExecutor.callbacks.onStatesChange(player, states, oldStates) end)
 end
 
 function botContainerAddItem(container, slot, item, oldItem)
@@ -781,4 +795,19 @@ end
 function botGroupSpellCooldown(iconId, duration)
   if botExecutor == nil then return false end
   safeBotCall(function() botExecutor.callbacks.onGroupSpellCooldown(iconId, duration) end)
+end
+
+function botInventoryChange(player, slot, item, oldItem)
+  if botExecutor == nil then return false end
+  safeBotCall(function() botExecutor.callbacks.onInventoryChange(player, slot, item, oldItem) end)
+end
+
+function botGameQuestLog(quests)
+  if botExecutor == nil then return false end
+  safeBotCall(function() botExecutor.callbacks.onGameQuestLog(quests) end)
+end
+
+function botGameQuestLine(quests)
+  if botExecutor == nil then return false end
+  safeBotCall(function() botExecutor.callbacks.onGameQuestLine(questId, questMissions) end)
 end

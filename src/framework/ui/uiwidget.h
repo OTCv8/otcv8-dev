@@ -307,6 +307,7 @@ protected:
     Color m_iconColor;
     Rect m_iconRect;
     Rect m_iconClipRect;
+    std::string m_iconPath;
     Fw::AlignmentFlag m_iconAlign;
     EdgeGroup<Color> m_borderColor;
     EdgeGroup<int> m_borderWidth;
@@ -371,6 +372,8 @@ public:
     void setPaddingLeft(int padding) { m_padding.left = padding; updateLayout(); }
     void setOpacity(float opacity) { m_opacity = stdext::clamp<float>(opacity, 0.0f, 1.0f); }
     void setRotation(float degrees) { m_rotation = degrees; }
+    void setChangeCursorImage(bool enable) { m_changeCursorImage = enable; }
+    void setCursor(const std::string& cursor);
 
     int getX() { return m_rect.x(); }
     int getY() { return m_rect.y(); }
@@ -397,6 +400,7 @@ public:
     Size getIconSize() { return m_iconRect.size(); }
     Rect getIconRect() { return m_iconRect; }
     Rect getIconClip() { return m_iconClipRect; }
+    std::string getIconPath() { return m_iconPath; }
     Fw::AlignmentFlag getIconAlign() { return m_iconAlign; }
     Color getBorderTopColor() { return m_borderColor.top; }
     Color getBorderRightColor() { return m_borderColor.right; }
@@ -416,6 +420,7 @@ public:
     int getPaddingLeft() { return m_padding.left; }
     float getOpacity() { return m_opacity; }
     float getRotation() { return m_rotation; }
+    bool isChangingCursorImage() { return m_changeCursorImage; }
 
 // image
 private:
@@ -430,6 +435,9 @@ private:
     stdext::boolean<true> m_imageMustRecache;
     stdext::boolean<false> m_imageBordered;
 
+    std::string m_cursor;
+    stdext::boolean<false> m_changeCursorImage;
+
 protected:
     void drawImage(const Rect& screenCoords);
 
@@ -443,6 +451,7 @@ protected:
     stdext::boolean<true> m_imageSmooth;
     stdext::boolean<false> m_imageAutoResize;
     EdgeGroup<int> m_imageBorder;
+    std::string m_shader;
 
 public:
     void setQRCode(const std::string& code, int border);
@@ -466,6 +475,7 @@ public:
     void setImageBorderBottom(int border) { m_imageBorder.bottom = border; configureBorderImage(); }
     void setImageBorderLeft(int border) { m_imageBorder.left = border; configureBorderImage(); }
     void setImageBorder(int border) { m_imageBorder.set(border); configureBorderImage(); }
+    void setImageShader(const std::string& str) { m_shader = str; }
 
     Rect getImageClip() { return m_imageClipRect; }
     int getImageOffsetX() { return m_imageRect.x(); }
@@ -485,6 +495,7 @@ public:
     int getImageBorderLeft() { return m_imageBorder.left; }
     int getImageTextureWidth() { return m_imageTexture ? m_imageTexture->getWidth() : 0; }
     int getImageTextureHeight() { return m_imageTexture ? m_imageTexture->getHeight() : 0; }
+    std::string getImageShader() { return m_shader; }
 
 // text related
 private:
@@ -512,6 +523,7 @@ protected:
     BitmapFontPtr m_font;
     std::vector<std::pair<int, Color>> m_textColors;
     std::vector<std::pair<int, Color>> m_drawTextColors;
+    stdext::boolean<false> m_shadow;
 
 public:
     void resizeToText() { setSize(getTextSize()); }
@@ -527,6 +539,7 @@ public:
     void setTextVerticalAutoResize(bool textAutoResize) { m_textVerticalAutoResize = textAutoResize; updateText(); }
     void setTextOnlyUpperCase(bool textOnlyUpperCase) { m_textOnlyUpperCase = textOnlyUpperCase; setText(m_text); }
     void setFont(const std::string& fontName);
+    void setShadow(bool shadow) { m_shadow = shadow; }
 
     std::string getText() { return m_text; }
     std::string getDrawText() { return m_drawText; }

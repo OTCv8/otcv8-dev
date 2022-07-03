@@ -18,7 +18,7 @@ void UIGraph::drawSelf(Fw::DrawPane drawPane)
 
     Rect dest = getPaddingRect();
 
-    float offsetX = dest.left() + 5;
+    float offsetX = dest.left();
     float offsetY = dest.top();
     size_t elements = std::min<size_t>(m_values.size(), dest.width() / (m_width * 2) - 1);
     size_t start = m_values.size() - elements;

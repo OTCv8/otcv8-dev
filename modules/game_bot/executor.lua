@@ -72,11 +72,16 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
     onGameEditText = {},
     onGroupSpellCooldown = {},
     onSpellCooldown = {},
-    onRemoveItem = {}
+    onRemoveItem = {},
+    onInventoryChange = {},
+    onGameQuestLog = {},
+    onGameQuestLine = {}
   }
   
   -- basic functions & classes
   context.print = print
+  context.bit32 = bit32
+  context.bit = bit
   context.pairs = pairs
   context.ipairs = ipairs
   context.tostring = tostring
@@ -89,7 +94,6 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
   context.pcall = pcall
   context.os = {
     time = os.time,
-    date = os.date,
     difftime = os.difftime,
     date = os.date,
     clock = os.clock
@@ -117,7 +121,9 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
   context.g_sounds = g_sounds
   context.g_window = g_window
   context.g_mouse = g_mouse
+  context.g_keyboard = g_keyboard
   context.g_things = g_things
+  context.g_settings = g_settings
   context.g_platform = {
     openUrl = g_platform.openUrl,
     openDir = g_platform.openDir,
@@ -389,9 +395,9 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
           callback(container, slot, item)
         end
       end,
-      onStatesChange = function(states, oldStates)
+      onStatesChange = function(player, states, oldStates)
         for i, callback in ipairs(context._callbacks.onStatesChange) do
-          callback(states, oldStates)
+          callback(player, states, oldStates)
         end
       end,
       onGroupSpellCooldown = function(iconId, duration)
@@ -402,6 +408,36 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
       onSpellCooldown = function(iconId, duration)
         for i, callback in ipairs(context._callbacks.onSpellCooldown) do
           callback(iconId, duration)
+        end
+      end,
+      onSpellCooldown = function(iconId, duration)
+        for i, callback in ipairs(context._callbacks.onSpellCooldown) do
+          callback(iconId, duration)
+        end
+      end,
+      onInventoryChange = function(player, slot, item, oldItem)
+        for i, callback in ipairs(context._callbacks.onInventoryChange) do
+          callback(player, slot, item, oldItem)
+        end
+      end,
+      onGameQuestLog = function(quests)
+        local tmp = {}
+        for j,questEntry in pairs(quests) do
+          local id, name, completed = unpack(questEntry)
+          table.insert(tmp, { id = id, name = name, completed = completed })
+        end
+        for i, callback in ipairs(context._callbacks.onGameQuestLog) do
+          callback(tmp)
+        end
+      end,
+      onGameQuestLine = function(questId, questMissions)
+        local tmp = {}
+        for i,questMission in pairs(questMissions) do
+          local name, description = unpack(questMission)
+          table.insert(tmp, { name = name, description = description })
+        end
+        for i, callback in ipairs(context._callbacks.onGameQuestLine) do
+          callback(questId, tmp)
         end
       end,
     }    

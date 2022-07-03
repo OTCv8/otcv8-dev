@@ -41,7 +41,7 @@ Outfit::Outfit()
     resetClothes();
 }
 
-void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase, bool animate, LightView* lightView)
+void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase, bool animate, LightView* lightView, bool ui)
 {
     // direction correction
     if (m_category != ThingCategoryCreature)
@@ -73,7 +73,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
             auto idleAnimator = type->getIdleAnimator();
             if (idleAnimator) {
                 animationPhase = idleAnimator->getPhase();
-            }             else {
+            } else {
                 animationPhase = 0;
             }
         }
@@ -84,16 +84,25 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
 
     if (animate && m_category == ThingCategoryCreature) {
         auto idleAnimator = type->getIdleAnimator();
-        if (idleAnimator) {
+        if (idleAnimator && !ui) {
             if (walkAnimationPhase > 0) {
-                animationPhase += idleAnimator->getAnimationPhases() - 1;;
+                animationPhase += idleAnimator->getAnimationPhases() - 1;
             } else {
                 animationPhase = idleAnimator->getPhase();
             }
-        } else if (type->isAnimateAlways()) {
+        } else if (type->isAnimateAlways() || ui) {
             int phases = type->getAnimator() ? type->getAnimator()->getAnimationPhases() : type->getAnimationPhases();
-            int ticksPerFrame = 1000 / phases;
+            if (ui && phases < 4) {
+                phases = 2; // old protocols with 2 frames walk animation
+            }
+            int ticksPerFrame = !g_game.getFeature(Otc::GameEnhancedAnimations) ? 333 : (1000 / phases);
             animationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
+            if (idleAnimator && ui) {
+                animationPhase += idleAnimator->getAnimationPhases() - 1;
+            }
+            if (!type->isAnimateAlways() && ui) {
+                animationPhase += 1;
+            }
         }
         if (g_game.getFeature(Otc::GameWingOffset) && m_wings) {
             wingBounce();
@@ -126,6 +135,14 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
                     mountAnimationPhase = idleAnimator->getPhase();
                 }
             }
+            else if (ui && animate) {
+                int phases = mountType->getAnimator() ? mountType->getAnimator()->getAnimationPhases() : mountType->getAnimationPhases();
+                int ticksPerFrame = 1000 / phases;
+                mountAnimationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
+                if (!mountType->isAnimateAlways()) {
+                    mountAnimationPhase += 1;
+                }
+            }
             if (m_wings && g_game.getFeature(Otc::GameWingOffset)) {
                 if (idleAnimator) {
                     mountAnimationPhase = idleAnimator->getPhase();
@@ -153,7 +170,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
                 }                 else {
                     wingAnimationPhase = idleAnimator->getPhase();
                 }
-            }             else if (wingsType->isAnimateAlways()) {
+            } else if (wingsType->isAnimateAlways()) {
                 int phases = wingsType->getAnimator() ? wingsType->getAnimator()->getAnimationPhases() : wingsType->getAnimationPhases();
                 int ticksPerFrame = 1000 / phases;
                 wingAnimationPhase = (g_clock.millis() % (ticksPerFrame * phases)) / ticksPerFrame;
@@ -245,7 +262,7 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
                     continue;
                 if (yPattern == 0)
                     center = outfitParams->dest.center();
-                DrawQueueItemTexturedRect* outfit = new DrawQueueItemOutfitWithShader(outfitParams->dest, outfitParams->texture, outfitParams->src, outfitParams->offset, center, 0, m_shader);
+                DrawQueueItemTexturedRect* outfit = new DrawQueueItemOutfitWithShader(outfitParams->dest, outfitParams->texture, outfitParams->src, outfitParams->offset, center, 0, m_shader, m_center);
                 g_drawQueue->add(outfit);
                 continue;
             }
@@ -260,11 +277,11 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
 
         DrawQueueItemTexturedRect* outfit = nullptr;
         if (m_shader.empty())
-            outfit = new DrawQueueItemOutfit(outfitParams->dest, outfitParams->texture, outfitParams->src, outfitParams->offset, colors, outfitParams->color);
+            outfit = new DrawQueueItemOutfit(outfitParams->dest, outfitParams->texture, outfitParams->src, outfitParams->offset, colors, outfitParams->color, m_center);
         else {
             if (yPattern == 0)
                 center = outfitParams->dest.center();
-            outfit = new DrawQueueItemOutfitWithShader(outfitParams->dest, outfitParams->texture, outfitParams->src, outfitParams->offset, center, colors, m_shader);
+            outfit = new DrawQueueItemOutfitWithShader(outfitParams->dest, outfitParams->texture, outfitParams->src, outfitParams->offset, center, colors, m_shader, m_center);
         }
         g_drawQueue->add(outfit);
     }
@@ -294,11 +311,11 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
     }
 }
 
-void Outfit::draw(const Rect& dest, Otc::Direction direction, uint animationPhase, bool animate)
+void Outfit::draw(const Rect& dest, Otc::Direction direction, uint animationPhase, bool animate, bool ui, bool oldScaling)
 {
     int size = g_drawQueue->size();
-    draw(Point(0, 0), direction, animationPhase, animate);
-    g_drawQueue->correctOutfit(dest, size);
+    draw(Point(0, 0), direction, animationPhase, animate, nullptr, ui);
+    g_drawQueue->correctOutfit(dest, size, oldScaling);
 }
 
 void Outfit::resetClothes()

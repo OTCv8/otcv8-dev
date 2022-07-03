@@ -356,6 +356,12 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_healthBars", "addManaBackground", &HealthBars::addManaBackground, &g_healthBars);
     g_lua.bindSingletonFunction("g_healthBars", "getHealthBarPath", &HealthBars::getHealthBarPath, &g_healthBars);
     g_lua.bindSingletonFunction("g_healthBars", "getManaBarPath", &HealthBars::getManaBarPath, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getHealthBarOffset", &HealthBars::getHealthBarOffset, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getManaBarOffset", &HealthBars::getManaBarOffset, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getHealthBarOffsetBar", &HealthBars::getHealthBarOffsetBar, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getManaBarOffsetBar", &HealthBars::getManaBarOffsetBar, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getHealthBarHeight", &HealthBars::getHealthBarHeight, &g_healthBars);
+    g_lua.bindSingletonFunction("g_healthBars", "getManaBarHeight", &HealthBars::getManaBarHeight, &g_healthBars);
 
     g_lua.bindGlobalFunction("getOutfitColor", Outfit::getColor);
     g_lua.bindGlobalFunction("getAngleFromPos", Position::getAngleFromPositions);
@@ -543,6 +549,13 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("setText", &Creature::setText);
     g_lua.bindClassMemberFunction<Creature>("getText", &Creature::getText);
     g_lua.bindClassMemberFunction<Creature>("clearText", &Creature::clearText);
+    g_lua.bindClassMemberFunction<Creature>("setTitle", &Creature::setTitle);
+    g_lua.bindClassMemberFunction<Creature>("clearTitle", &Creature::clearTitle);
+    g_lua.bindClassMemberFunction<Creature>("getTitle", &Creature::getTitle);
+    g_lua.bindClassMemberFunction<Creature>("isTimedSquareVisible", &Creature::isTimedSquareVisible);
+    g_lua.bindClassMemberFunction<Creature>("getTimedSquareColor", &Creature::getTimedSquareColor);
+    g_lua.bindClassMemberFunction<Creature>("isStaticSquareVisible", &Creature::isStaticSquareVisible);
+    g_lua.bindClassMemberFunction<Creature>("getStaticSquareColor", &Creature::getStaticSquareColor);
 
     // widgets
     g_lua.bindClassMemberFunction<Creature>("addTopWidget", &Creature::addTopWidget);
@@ -676,6 +689,10 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Item>("setTooltip", &Item::setTooltip);
     g_lua.bindClassMemberFunction<Item>("getQuickLootFlags", &Item::getQuickLootFlags);
     g_lua.bindClassMemberFunction<Item>("setQuickLootFlags", &Item::setQuickLootFlags);
+    g_lua.bindClassMemberFunction<Item>("setShader", &Item::setShader);
+    g_lua.bindClassMemberFunction<Item>("getShader", &Item::getShader);
+    g_lua.bindClassMemberFunction<Item>("setCustomAttribute", &Item::setCustomAttribute);
+    g_lua.bindClassMemberFunction<Item>("getCustomAttribute", &Item::getCustomAttribute);
 
     g_lua.registerClass<Effect, Thing>();
     g_lua.bindClassStaticFunction<Effect>("create", []{ return EffectPtr(new Effect); });
@@ -687,6 +704,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Missile>("getId", &Missile::getId);
     g_lua.bindClassMemberFunction<Missile>("getSource", &Missile::getSource);
     g_lua.bindClassMemberFunction<Missile>("getDestination", &Missile::getDestination);
+    g_lua.bindClassMemberFunction<Missile>("setPath", &Missile::setPath);
 
     g_lua.registerClass<StaticText, Thing>();
     g_lua.bindClassStaticFunction<StaticText>("create", []{ return StaticTextPtr(new StaticText); });
@@ -829,6 +847,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIItem>("setItem", &UIItem::setItem);
     g_lua.bindClassMemberFunction<UIItem>("setVirtual", &UIItem::setVirtual);
     g_lua.bindClassMemberFunction<UIItem>("setShowCount", &UIItem::setShowCount);
+    g_lua.bindClassMemberFunction<UIItem>("setItemShader", &UIItem::setItemShader);
     g_lua.bindClassMemberFunction<UIItem>("clearItem", &UIItem::clearItem);
     g_lua.bindClassMemberFunction<UIItem>("getItemId", &UIItem::getItemId);
     g_lua.bindClassMemberFunction<UIItem>("getItemCount", &UIItem::getItemCount);
@@ -856,10 +875,13 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UICreature>("isFixedCreatureSize", &UICreature::isFixedCreatureSize);
     g_lua.bindClassMemberFunction<UICreature>("setAutoRotating", &UICreature::setAutoRotating);
     g_lua.bindClassMemberFunction<UICreature>("setDirection", &UICreature::setDirection);
+    g_lua.bindClassMemberFunction<UICreature>("getDirection", &UICreature::getDirection);
     g_lua.bindClassMemberFunction<UICreature>("setScale", &UICreature::setScale);
     g_lua.bindClassMemberFunction<UICreature>("getScale", &UICreature::getScale);
     g_lua.bindClassMemberFunction<UICreature>("setAnimate", &UICreature::setAnimate);
     g_lua.bindClassMemberFunction<UICreature>("isAnimating", &UICreature::isAnimating);
+    g_lua.bindClassMemberFunction<UICreature>("setCenter", &UICreature::setCenter);
+    g_lua.bindClassMemberFunction<UICreature>("setOldScaling", &UICreature::setOldScaling);
 
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", []{ return UIMapPtr(new UIMap); });

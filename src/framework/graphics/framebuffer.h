@@ -44,7 +44,7 @@ public:
     void draw(const Rect& dest);
     void draw(const Rect& dest, const Rect& src);
 
-    void setSmooth(bool enabled) { m_smooth = enabled; }
+    void setSmooth(bool enabled);
 
     TexturePtr getTexture() { return m_texture; }
     Size getSize();
@@ -56,6 +56,8 @@ public:
 #endif
 
     std::vector<uint32_t> readPixels();
+
+    void doScreenshot(std::string fileName);
 
 private:
     void internalCreate();

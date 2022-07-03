@@ -85,7 +85,7 @@ private:
     UIWidgetPtr m_keyboardReceiver;
     UIWidgetPtr m_draggingWidget;
     UIWidgetPtr m_hoveredWidget;
-    UIWidgetPtr m_pressedWidget[Fw::MouseButtonLast] = { nullptr };
+    UIWidgetPtr m_pressedWidget[Fw::MouseButtonLast + 1] = { nullptr };
     stdext::boolean<false> m_hoverUpdateScheduled;
     stdext::boolean<false> m_drawDebugBoxes;
     std::unordered_map<std::string, OTMLNodePtr> m_styles;

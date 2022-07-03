@@ -46,6 +46,7 @@ public:
     virtual void resize(const Size& size) = 0;
     virtual void show() = 0;
     virtual void hide() = 0;
+    virtual void minimize() = 0;
     virtual void maximize() = 0;
     virtual void poll() = 0;
     virtual void swapBuffers() = 0;
@@ -101,6 +102,8 @@ public:
 
     void setScaling(float scaling) { m_scaling = scaling; }
 
+    virtual void flash();
+
 protected:
     virtual int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot) = 0;
 
@@ -123,7 +126,7 @@ protected:
     Size m_unmaximizedSize;
     Point m_unmaximizedPos;
     InputEvent m_inputEvent;
-    stdext::boolean<false> m_mouseButtonStates[Fw::MouseButtonLast];
+    stdext::boolean<false> m_mouseButtonStates[Fw::MouseButtonLast + 1];
 
     stdext::boolean<false> m_created;
     stdext::boolean<false> m_visible;

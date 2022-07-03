@@ -42,12 +42,17 @@ public:
 
     void setAutoRotating(bool value) { m_autoRotating = value; }
     void setDirection(Otc::Direction direction) { m_direction = direction; }
+    Otc::Direction getDirection() { return m_direction; }
 
     void setScale(float scale) { m_scale = scale; }
     float getScale() { return m_scale; }
 
     void setAnimate(bool value) { m_animate = value; }
     bool isAnimating() { return m_animate; }
+
+    void setCenter(bool value);
+
+    void setOldScaling(bool value) { m_oldScaling = value; }
 
 protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
@@ -56,8 +61,9 @@ protected:
     CreaturePtr m_creature;
     stdext::boolean<false> m_autoRotating;
     stdext::boolean<false> m_animate;
+    stdext::boolean<false> m_oldScaling;
     Otc::Direction m_direction = Otc::South;
-    float m_scale = 0;
+    float m_scale = 1.0;
 };
 
 #endif

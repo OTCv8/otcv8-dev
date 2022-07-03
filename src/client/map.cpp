@@ -136,15 +136,18 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
 
             AnimatedTextPtr prevAnimatedText;
             bool merged = false;
-            for(auto other : m_animatedTexts) {
-                if(other->getPosition() == pos) {
-                    prevAnimatedText = other;
-                    if(other->merge(animatedText)) {
-                        merged = true;
-                        break;
-                    }
-                }
-            }
+			for (auto other : m_animatedTexts) {
+				if (other->getPosition() == pos) {
+					prevAnimatedText = other;
+					if (!g_game.getFeature(Otc::GameDontMergeAnimatedText)) {
+						if (other->merge(animatedText)) {
+							merged = true;
+							break;
+						}
+					}
+				}
+			}
+
             if(!merged) {
                 if(prevAnimatedText) {
                     Point offset = prevAnimatedText->getOffset();

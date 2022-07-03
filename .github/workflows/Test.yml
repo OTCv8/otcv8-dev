@@ -4,8 +4,8 @@ on: [push, pull_request]
 jobs:
   Windows:
     name: build-windows
-    runs-on: windows-latest
-    timeout-minutes: 30
+    runs-on: windows-2019
+    timeout-minutes: 60
 
     steps:
     - name: Checkout
@@ -24,14 +24,14 @@ jobs:
         7z x tests.7z -aoa
 
     - name: Compile 
-      timeout-minutes: 5
+      timeout-minutes: 30
       run: |
         cd vc16
         MSBuild
         cd ..
 
     - name: Run OTCv8
-      timeout-minutes: 10
+      timeout-minutes: 30
       run: |        
         $process = (Start-Process -Wait -PassThru otclient_debug.exe --test)        
         Get-Content otclientv8.log

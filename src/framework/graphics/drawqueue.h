@@ -68,6 +68,20 @@ struct DrawQueueItemColoredTextureCoords : public DrawQueueItem {
     std::vector<std::pair<int, Color>> m_colors;
 };
 
+struct DrawQueueItemImageWithShader : public DrawQueueItemTextureCoords {
+    DrawQueueItemImageWithShader(CoordsBuffer& coords, const TexturePtr& texture, const Color& color, const std::string& shader) :
+        DrawQueueItemTextureCoords(coords, texture, color), m_shader(shader)
+    {};
+
+    void draw() override;
+    void draw(const Point& pos) override;
+    bool cache() override {
+        return false;
+    }
+
+    std::string m_shader;
+};
+
 struct DrawQueueItemFilledRect : public DrawQueueItem {
     DrawQueueItemFilledRect(const Rect& rect, const Color& color) :
         DrawQueueItem(nullptr, color), m_dest(rect) {};
@@ -95,24 +109,26 @@ struct DrawQueueItemFillCoords : public DrawQueueItem {
 };
 
 struct DrawQueueItemText : public DrawQueueItem {
-    DrawQueueItemText(const Point& point, const TexturePtr& texture, uint64_t hash, const Color& color) :
-        DrawQueueItem(texture, color), m_point(point), m_hash(hash)
+    DrawQueueItemText(const Point& point, const TexturePtr& texture, uint64_t hash, const Color& color, bool shadow = false) :
+        DrawQueueItem(texture, color), m_point(point), m_hash(hash), m_shadow(shadow)
     {};
     void draw();
 
     Point m_point;
     uint64_t m_hash;
+    bool m_shadow = false;
 };
 
 struct DrawQueueItemTextColored : public DrawQueueItem {
-    DrawQueueItemTextColored(const Point& point, const TexturePtr& texture, uint64_t hash, const std::vector<std::pair<int, Color>>& colors) :
-        DrawQueueItem(texture), m_point(point), m_hash(hash), m_colors(colors)
+    DrawQueueItemTextColored(const Point& point, const TexturePtr& texture, uint64_t hash, const std::vector<std::pair<int, Color>>& colors, bool shadow = false) :
+        DrawQueueItem(texture), m_point(point), m_hash(hash), m_colors(colors), m_shadow(shadow)
     {};
     void draw();
 
     Point m_point;
     uint64_t m_hash;
     std::vector<std::pair<int, Color>> m_colors;
+    bool m_shadow = false;
 };
 
 struct DrawQueueItemLine : public DrawQueueItem {
@@ -217,8 +233,8 @@ public:
     {
         m_queue.push_back(new DrawQueueItemClearRect(dest, color));
     }
-    void addText(BitmapFontPtr font, const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft, const Color& color = Color::white);
-    void addColoredText(BitmapFontPtr font, const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align, const std::vector<std::pair<int, Color>>& colors);
+    void addText(BitmapFontPtr font, const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft, const Color& color = Color::white, bool shadow = false);
+    void addColoredText(BitmapFontPtr font, const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align, const std::vector<std::pair<int, Color>>& colors, bool shadow = false);
 
     void addFilledTriangle(const Point& a, const Point& b, const Point& c, const Color& color = Color::white)
     {
@@ -299,7 +315,7 @@ public:
     {
         mapPosition = m_queue.size();
     }
-    void correctOutfit(const Rect& dest, int fromPos);
+    void correctOutfit(const Rect& dest, int fromPos, bool oldScaling);
 
     void setShader(const std::string& shader)
     {

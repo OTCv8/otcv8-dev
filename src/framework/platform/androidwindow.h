@@ -41,6 +41,7 @@ public:
     void resize(const Size& size);
     void show();
     void hide();
+    void minimize();
     void maximize();
     void poll();
     void swapBuffers();
