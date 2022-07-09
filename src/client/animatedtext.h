@@ -39,6 +39,7 @@ public:
     void setColor(int color);
     void setText(const std::string& text);
     void setOffset(const Point& offset) { m_offset = offset; }
+    void setFont(const std::string& fontName);
 
     Color getColor() { return m_color; }
     const CachedText& getCachedText() const { return m_cachedText; }

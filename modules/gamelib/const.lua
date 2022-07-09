@@ -212,6 +212,7 @@ GameQuickLootFlags = 123 -- enables quick loot feature for all protocols
 GameDontMergeAnimatedText = 124
 GameMissionId = 125
 GameItemCustomAttributes = 126
+GameAnimatedTextCustomFont = 127
 
 LastGameFeature = 130
         

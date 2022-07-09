@@ -80,6 +80,11 @@ void AnimatedText::setText(const std::string& text)
     m_cachedText.setText(text);
 }
 
+void AnimatedText::setFont(const std::string& fontName)
+{
+    m_cachedText.setFont(g_fonts.getFont(fontName));
+}
+
 bool AnimatedText::merge(const AnimatedTextPtr& other)
 {
     if(other->getColor() != m_color)

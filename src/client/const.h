@@ -487,6 +487,7 @@ namespace Otc
         GameDontMergeAnimatedText = 124,
         GameMissionId = 125,
         GameItemCustomAttributes = 126,
+        GameAnimatedTextCustomFont = 127,
 
         LastGameFeature = 130
     };

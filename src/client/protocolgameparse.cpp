@@ -1524,11 +1524,17 @@ void ProtocolGame::parseAnimatedText(const InputMessagePtr& msg)
 {
     Position position = getPosition(msg);
     int color = msg->getU8();
+    std::string font;
+    if(g_game.getFeature(Otc::GameAnimatedTextCustomFont))
+        font = msg->getString();
     std::string text = msg->getString();
 
     AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
     animatedText->setColor(color);
     animatedText->setText(text);
+    if (font.size())
+        animatedText->setFont(font);
+
     g_map.addThing(animatedText, position);
 }
 
@@ -2271,6 +2277,7 @@ void ProtocolGame::parseTextMessage(const InputMessagePtr& msg)
     int code = msg->getU8();
     Otc::MessageMode mode = Proto::translateMessageModeFromServer(code);
     std::string text;
+    std::string font;
 
     switch (mode) {
     case Otc::MessageChannelManagement:
@@ -2302,6 +2309,8 @@ void ProtocolGame::parseTextMessage(const InputMessagePtr& msg)
         // magic damage
         value[1] = msg->getU32();
         color[1] = msg->getU8();
+        if(g_game.getFeature(Otc::GameAnimatedTextCustomFont))
+            font = msg->getString();
         text = msg->getString();
 
         for (int i = 0; i < 2; ++i) {
@@ -2310,6 +2319,9 @@ void ProtocolGame::parseTextMessage(const InputMessagePtr& msg)
             AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
             animatedText->setColor(color[i]);
             animatedText->setText(stdext::to_string(value[i]));
+            if (font.size())
+                animatedText->setFont(font);
+
             g_map.addThing(animatedText, pos);
         }
         break;
@@ -2323,11 +2335,15 @@ void ProtocolGame::parseTextMessage(const InputMessagePtr& msg)
         Position pos = getPosition(msg);
         uint value = msg->getU32();
         int color = msg->getU8();
+        if(g_game.getFeature(Otc::GameAnimatedTextCustomFont))
+            font = msg->getString();
         text = msg->getString();
 
         AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
         animatedText->setColor(color);
         animatedText->setText(stdext::to_string(value));
+        if(font.size())
+            animatedText->setFont(font);
         g_map.addThing(animatedText, pos);
         break;
     }
