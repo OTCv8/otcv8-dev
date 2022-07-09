@@ -41,6 +41,7 @@ public:
     virtual void quick_exit();
     virtual void close();
     void restart();
+    void restartArgs(const std::vector<std::string>& args);
 
     void setName(const std::string& name) { m_appName = name; }
     void setCompactName(const std::string& compactName) { m_appCompactName = compactName; }

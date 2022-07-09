@@ -96,6 +96,7 @@ enum ThingAttr : uint8 {
     ThingAttrWrapable         = 35,
     ThingAttrUnwrapable       = 36,
     ThingAttrTopEffect        = 37,
+    ThingAttrBones            = 38,
 
     // additional
     ThingAttrOpacity          = 100,
@@ -208,6 +209,7 @@ public:
     int getDisplacementX() { return getDisplacement().x; }
     int getDisplacementY() { return getDisplacement().y; }
     int getElevation() { return m_elevation; }
+    const Point& getBones(int direction) { return m_bones[direction]; }
 
     int getGroundSpeed() { return m_attribs.get<uint16>(ThingAttrGround); }
     int getMaxTextLength() { return m_attribs.has(ThingAttrWritableOnce) ? m_attribs.get<uint16>(ThingAttrWritableOnce) : m_attribs.get<uint16>(ThingAttrWritable); }
@@ -255,6 +257,7 @@ public:
     bool isWrapable() { return m_attribs.has(ThingAttrWrapable); }
     bool isUnwrapable() { return m_attribs.has(ThingAttrUnwrapable); }
     bool isTopEffect() { return m_attribs.has(ThingAttrTopEffect); }
+    bool hasBones() { return m_attribs.has(ThingAttrBones); }
 
     std::vector<int> getSprites() { return m_spritesIndex; }
 
@@ -278,6 +281,7 @@ private:
     Point m_displacement;
     AnimatorPtr m_animator;
     AnimatorPtr m_idleAnimator;
+    std::vector<Point> m_bones;
     int m_animationPhases;
     int m_exactSize;
     int m_realSize;

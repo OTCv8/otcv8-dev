@@ -240,6 +240,14 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
     drawMount();
 
     if (m_wings && (direction == Otc::South || direction == Otc::East)) {
+        auto wingsType = g_things.rawGetThingType(m_wings, ThingCategoryCreature);
+        if (wingsType) {
+            if (type->hasBones() && wingsType->hasBones()) {
+                auto outfitBones = type->getBones(direction);
+                auto wingsBones = wingsType->getBones(direction);
+                wingDest = dest + (outfitBones - wingsBones) * g_sprites.getOffsetFactor();
+            }
+        }
         if (g_game.getFeature(Otc::GameWingOffset) && zPattern > 0) {
             if (direction == Otc::East)
                 wingDest -= Point(6, 2) * g_sprites.getOffsetFactor();
@@ -287,6 +295,14 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
     }
 
     if (m_wings && (direction == Otc::North || direction == Otc::West)) {
+        auto wingsType = g_things.rawGetThingType(m_wings, ThingCategoryCreature);
+        if (wingsType) {
+            if (type->hasBones() && wingsType->hasBones()) {
+                auto outfitBones = type->getBones(direction);
+                auto wingsBones = wingsType->getBones(direction);
+                wingDest = dest + (outfitBones - wingsBones) * g_sprites.getOffsetFactor();
+            }
+        }
         if (g_game.getFeature(Otc::GameWingOffset) && zPattern > 0)
             wingDest += Point(4, 6);
 

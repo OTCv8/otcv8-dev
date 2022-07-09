@@ -488,6 +488,7 @@ namespace Otc
         GameMissionId = 125,
         GameItemCustomAttributes = 126,
         GameAnimatedTextCustomFont = 127,
+        GameOutfitBones = 128,
 
         LastGameFeature = 130
     };

@@ -101,6 +101,15 @@ void ThingType::serialize(const FileStreamPtr& fin)
             case ThingAttrLensHelp:
                 fin->addU16(m_attribs.get<uint16>(attr));
                 break;
+            case ThingAttrBones: {
+                m_bones.resize(4);
+                m_bones[Otc::North] = Point(fin->getU16(), fin->getU16());
+                m_bones[Otc::South] = Point(fin->getU16(), fin->getU16());
+                m_bones[Otc::East] = Point(fin->getU16(), fin->getU16());
+                m_bones[Otc::West] = Point(fin->getU16(), fin->getU16());
+                m_attribs.set(attr, true);
+                break;
+            }
             default:
                 break;
         };

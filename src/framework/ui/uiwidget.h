@@ -392,9 +392,9 @@ public:
     Size getBackgroundSize() { return m_backgroundRect.size(); }
     Rect getBackgroundRect() { return m_backgroundRect; }
     Color getIconColor() { return m_iconColor; }
-    int getIconOffsetX() { return m_iconRect.x(); }
-    int getIconOffsetY() { return m_iconRect.y(); }
-    Point getIconOffset() { return m_iconRect.topLeft(); }
+    int getIconOffsetX() { return m_iconOffset.x; }
+    int getIconOffsetY() { return m_iconOffset.y; }
+    Point getIconOffset() { return m_iconOffset; }
     int getIconWidth() { return m_iconRect.width(); }
     int getIconHeight() { return m_iconRect.height(); }
     Size getIconSize() { return m_iconRect.size(); }
