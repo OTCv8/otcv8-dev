@@ -101,15 +101,6 @@ void ThingType::serialize(const FileStreamPtr& fin)
             case ThingAttrLensHelp:
                 fin->addU16(m_attribs.get<uint16>(attr));
                 break;
-            case ThingAttrBones: {
-                m_bones.resize(4);
-                m_bones[Otc::North] = Point(fin->getU16(), fin->getU16());
-                m_bones[Otc::South] = Point(fin->getU16(), fin->getU16());
-                m_bones[Otc::East] = Point(fin->getU16(), fin->getU16());
-                m_bones[Otc::West] = Point(fin->getU16(), fin->getU16());
-                m_attribs.set(attr, true);
-                break;
-            }
             default:
                 break;
         };
@@ -269,6 +260,19 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             case ThingAttrLensHelp:
                 m_attribs.set(attr, fin->getU16());
                 break;
+            case ThingAttrBones: {
+                m_bones.resize(4);
+                uint16 x = fin->getU16(), y = fin->getU16();
+                m_bones[Otc::North] = Point(x, y);
+                x = fin->getU16(), y = fin->getU16();
+                m_bones[Otc::South] = Point(x, y);
+                x = fin->getU16(), y = fin->getU16();
+                m_bones[Otc::East] = Point(x, y);
+                x = fin->getU16(), y = fin->getU16();
+                m_bones[Otc::West] = Point(x, y);
+                m_attribs.set(attr, true);
+                break;
+            }
             default:
                 m_attribs.set(attr, true);
                 break;

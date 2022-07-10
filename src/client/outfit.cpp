@@ -244,8 +244,12 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         if (wingsType) {
             if (type->hasBones() && wingsType->hasBones()) {
                 auto outfitBones = type->getBones(direction);
+                auto outfitWidth = type->getWidth();
+                auto wingsWidth = wingsType->getWidth();
+                int bonusOffset = std::abs(wingsWidth - outfitWidth) * 32;
                 auto wingsBones = wingsType->getBones(direction);
-                wingDest = dest + (outfitBones - wingsBones) * g_sprites.getOffsetFactor();
+                auto boneOffset = Point((outfitBones.x - wingsBones.x) + bonusOffset, (outfitBones.y - wingsBones.y) + bonusOffset);
+                wingDest = dest + boneOffset * g_sprites.getOffsetFactor();
             }
         }
         if (g_game.getFeature(Otc::GameWingOffset) && zPattern > 0) {
@@ -299,8 +303,12 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
         if (wingsType) {
             if (type->hasBones() && wingsType->hasBones()) {
                 auto outfitBones = type->getBones(direction);
+                auto outfitWidth = type->getWidth();
+                auto wingsWidth = wingsType->getWidth();
+                int bonusOffset = std::abs(wingsWidth - outfitWidth) * 32;
                 auto wingsBones = wingsType->getBones(direction);
-                wingDest = dest + (outfitBones - wingsBones) * g_sprites.getOffsetFactor();
+                auto boneOffset = Point((outfitBones.x - wingsBones.x) + bonusOffset, (outfitBones.y - wingsBones.y) + bonusOffset);
+                wingDest = dest + boneOffset * g_sprites.getOffsetFactor();
             }
         }
         if (g_game.getFeature(Otc::GameWingOffset) && zPattern > 0)
