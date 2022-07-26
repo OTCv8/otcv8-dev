@@ -86,6 +86,7 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
 
     const int sprSize = g_sprites.spriteSize();
     Point jumpOffset = Point(m_jumpOffset.x, m_jumpOffset.y);
+    Point outfitOffset = Point(m_outfitOffset.x, m_outfitOffset.y);
     Point creatureCenter = dest - jumpOffset + m_walkOffset - getDisplacement() + Point(sprSize / 2, sprSize / 2);
     drawBottomWidgets(creatureCenter, m_walking ? m_walkDirection : m_direction);
 
@@ -103,7 +104,7 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
         animationOffset -= getDisplacement();
 
     size_t drawQueueSize = g_drawQueue->size();
-    m_outfit.draw(dest - jumpOffset + animationOffset, m_walking ? m_walkDirection : m_direction, m_walkAnimationPhase, true, lightView);
+    m_outfit.draw(dest + outfitOffset - jumpOffset + animationOffset, m_walking ? m_walkDirection : m_direction, m_walkAnimationPhase, true, lightView);
     if (m_marked) {
         g_drawQueue->setMark(drawQueueSize, updatedMarkedColor());
     }

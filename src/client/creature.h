@@ -87,6 +87,8 @@ public:
 
     Point getInformationOffset() { return m_informationOffset; }
     void setInformationOffset(int x, int y) { m_informationOffset = Point(x, y); }
+    Point getOutfitOffset() { return m_outfitOffset; }
+    void setOutfitOffset(int x, int y) { m_outfitOffset = Point(x,y); }
 
     void setText(const std::string& text, const Color& color);
     std::string getText();
@@ -242,6 +244,7 @@ protected:
     Color m_informationColor;
     bool m_useCustomInformationColor = false;
     Point m_informationOffset;
+    Point m_outfitOffset;
     Color m_outfitColor;
     ScheduledEventPtr m_outfitColorUpdateEvent;
     Timer m_outfitColorTimer;
