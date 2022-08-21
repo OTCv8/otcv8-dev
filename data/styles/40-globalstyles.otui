@@ -1,0 +1,110 @@
+OutsetCheckBox < UICheckBox
+  size: 20 20
+  opacity: 1.0
+  change-cursor-image: true
+  cursor: pointer
+  border-width: 1
+  border-color-top: #747474
+  border-color-right: #282827
+  border-color-bottom: #282827
+  border-color-left: #747474
+  on: true
+  @onClick: |
+    self:setChecked(not self:isChecked())
+
+  $checked on !disabled:
+    border-color-top: #282827
+    border-color-right: #747474
+    border-color-bottom: #747474
+    border-color-left: #282827
+
+  $disabled:
+    color: #dfdfdf88
+    opacity: 0.8
+    change-cursor-image: false  
+
+OutsetButton < UIButton
+  font: verdana-11px-antialised
+  color: #dfdfdfff
+  size: 106 23
+  text-offset: 0 1
+  padding: 5 10 5 10
+  opacity: 1.0
+  change-cursor-image: true
+  cursor: pointer
+  border-width: 1
+  border-color-top: #747474
+  border-color-right: #282827
+  border-color-bottom: #282827
+  border-color-left: #747474
+
+  $pressed on !disabled:
+    border-color-top: #282827
+    border-color-right: #747474
+    border-color-bottom: #747474
+    border-color-left: #282827
+
+  $disabled:
+    color: #dfdfdf88
+    opacity: 0.8
+    change-cursor-image: false
+
+ThickOutsetButton < OutsetButton
+  border-width: 2
+
+OutsetLabel < Label
+  text-offset: 10 10
+  text-wrap: true
+  border-width: 1
+  border-color-top: #747474
+  border-color-right: #282827
+  border-color-bottom: #282827
+  border-color-left: #747474
+  padding: 10
+
+ThickOutsetLabel < OutsetLabel
+  border-width: 2
+
+GoldLabel < Panel
+  padding: 5
+  height: 21
+  image-source: /images/ui/dark_label_background
+  image-border: 1
+  
+  UIWidget
+    id: gold
+    anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
+    image-source: /images/game/prey/prey_gold
+    tooltip: Gold Coins
+
+  UIWidget
+    id: text
+    anchors.right: prev.left
+    margin-right: 5
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    text-align: right
+    color: #C0C0C0
+
+CardLabel < Panel
+  padding: 5
+  height: 21
+  image-source: /images/ui/dark_label_background
+  image-border: 1
+  
+  UIWidget
+    id: gold
+    anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
+    image-source: /images/game/prey/prey_wildcard
+    tooltip: Gold Coins
+
+  UIWidget
+    id: text
+    anchors.right: prev.left
+    margin-right: 5
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    text-align: right
+    color: #C0C0C0
