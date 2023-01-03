@@ -1660,7 +1660,7 @@ int Game::getOs()
         return m_clientCustomOs;
 
     if(g_app.getOs() == "windows")
-        return 20;
+        return 21;
     if(g_app.getOs() == "mac")
         return 22;
     if (g_app.getOs() == "android")
@@ -1669,5 +1669,5 @@ int Game::getOs()
         return 24;
     if (g_app.getOs() == "web")
         return 25;
-    return 21; // linux
+    return 20; // linux
 }
