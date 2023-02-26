@@ -1,0 +1,35 @@
+{
+  "name": "otclient",
+  "version-string": "1.0.0",
+  "dependencies": [
+    "boost-asio",
+    "boost-system",
+    "boost-beast",
+    "boost-uuid",
+    "boost-process",
+    "boost-iostreams",
+    "boost-variant",
+    "boost-lockfree",
+    "boost-process",
+    "boost-program-options",
+    "boost-filesystem",
+    "opengl",
+    "libogg",
+    "libvorbis",
+    "nlohmann-json",
+    "openal-soft",
+    "openssl",
+    "physfs",
+    "protobuf",
+    "zlib",
+    "liblzma",
+    "libzip",
+    "parallel-hashmap",
+    "stduuid",
+    "luajit",
+    {
+      "name": "glew",
+      "platform": "windows"
+    }
+  ]
+}
