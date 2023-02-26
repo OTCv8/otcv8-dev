@@ -4,6 +4,7 @@
 #include <chrono>
 
 #include "session.h"
+#include <string_view>
 
 void HttpSession::start() {
     if (m_result->redirects >= 10) {
@@ -121,11 +122,11 @@ void HttpSession::on_read_header(const boost::system::error_code& ec, size_t byt
 
     auto msg = m_response.get();
     m_result->status = msg.result_int();
-    m_result->size = atoi(msg["Content-Length"].to_string().c_str());
+    m_result->size = atoi(std::string(msg["Content-Length"]).c_str());
     auto location = msg["Location"];
 
     if (!location.empty()) {        
-        auto session = std::make_shared<HttpSession>(m_service, location.to_string(), m_agent, m_timeout, m_isJson, m_result, m_callback);
+        auto session = std::make_shared<HttpSession>(m_service, std::string(location), m_agent, m_timeout, m_isJson, m_result, m_callback);
         session->start();
         return close();
     }
