@@ -3272,7 +3272,7 @@ int ProtocolGame::setTileDescription(const InputMessagePtr& msg, Position positi
         if (msg->peekU16() >= 0xff00)
             return msg->getU16() & 0xff;
 
-        if (stackPos > 10)
+        if (!g_game.getFeature(Otc::GameNewCreatureStacking) && stackPos > Tile::MAX_THINGS)
             g_logger.traceError(stdext::format("too many things, pos=%s, stackpos=%d", stdext::to_string(position), stackPos));
 
         ThingPtr thing = getThing(msg);
