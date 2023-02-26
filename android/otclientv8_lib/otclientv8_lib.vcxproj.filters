@@ -1,0 +1,1078 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\src\client\animatedtext.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\animator.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\client.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\container.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\creature.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\creatures.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\effect.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\game.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\houses.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\item.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\itemtype.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\lightview.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\localplayer.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\luafunctions_client.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\luavaluecasts_client.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\map.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\mapio.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\mapview.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\minimap.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\missile.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\outfit.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\player.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\protocolcodes.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\protocolgame.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\protocolgameparse.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\protocolgamesend.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\spritemanager.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\statictext.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\thing.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\thingtype.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\thingtypemanager.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\tile.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\towns.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\uicreature.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\uiitem.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\uimap.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\uimapanchorlayout.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\uiminimap.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\uiprogressrect.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\uisprite.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\luafunctions.cpp">
+      <Filter>framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\adaptiverenderer.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\application.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\asyncdispatcher.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\binarytree.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\clock.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\config.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\configmanager.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\event.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\eventdispatcher.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\filestream.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\graphicalapplication.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\logger.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\module.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\modulemanager.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\resourcemanager.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\scheduledevent.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\core\timer.cpp">
+      <Filter>framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\http\http.cpp">
+      <Filter>framework\http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\http\session.cpp">
+      <Filter>framework\http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\http\websocket.cpp">
+      <Filter>framework\http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\input\mouse.cpp">
+      <Filter>framework\input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\luaengine\lbitlib.cpp">
+      <Filter>framework\luaengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\luaengine\luaexception.cpp">
+      <Filter>framework\luaengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\luaengine\luainterface.cpp">
+      <Filter>framework\luaengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\luaengine\luaobject.cpp">
+      <Filter>framework\luaengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\luaengine\luavaluecasts.cpp">
+      <Filter>framework\luaengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\net\connection.cpp">
+      <Filter>framework\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\net\inputmessage.cpp">
+      <Filter>framework\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\net\outputmessage.cpp">
+      <Filter>framework\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\net\protocol.cpp">
+      <Filter>framework\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\net\server.cpp">
+      <Filter>framework\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\xml\tinystr.cpp">
+      <Filter>framework\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\xml\tinyxml.cpp">
+      <Filter>framework\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\xml\tinyxmlerror.cpp">
+      <Filter>framework\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\xml\tinyxmlparser.cpp">
+      <Filter>framework\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\ui\uianchorlayout.cpp">
+      <Filter>framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\ui\uiboxlayout.cpp">
+      <Filter>framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\ui\uigridlayout.cpp">
+      <Filter>framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\ui\uihorizontallayout.cpp">
+      <Filter>framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\ui\uilayout.cpp">
+      <Filter>framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\ui\uimanager.cpp">
+      <Filter>framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\ui\uitextedit.cpp">
+      <Filter>framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\ui\uitranslator.cpp">
+      <Filter>framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\ui\uiverticallayout.cpp">
+      <Filter>framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\ui\uiwidget.cpp">
+      <Filter>framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\ui\uiwidgetbasestyle.cpp">
+      <Filter>framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\ui\uiwidgetimage.cpp">
+      <Filter>framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\ui\uiwidgettext.cpp">
+      <Filter>framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\util\color.cpp">
+      <Filter>framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\util\crypt.cpp">
+      <Filter>framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\util\extras.cpp">
+      <Filter>framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\util\qrcodegen.c">
+      <Filter>framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\util\stats.cpp">
+      <Filter>framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\stdext\demangle.cpp">
+      <Filter>framework\stdext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\stdext\math.cpp">
+      <Filter>framework\stdext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\stdext\net.cpp">
+      <Filter>framework\stdext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\stdext\string.cpp">
+      <Filter>framework\stdext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\stdext\time.cpp">
+      <Filter>framework\stdext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\stdext\uri.cpp">
+      <Filter>framework\stdext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\sound\combinedsoundsource.cpp">
+      <Filter>framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\sound\oggsoundfile.cpp">
+      <Filter>framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\sound\soundbuffer.cpp">
+      <Filter>framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\sound\soundchannel.cpp">
+      <Filter>framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\sound\soundfile.cpp">
+      <Filter>framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\sound\soundmanager.cpp">
+      <Filter>framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\sound\soundsource.cpp">
+      <Filter>framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\sound\streamsoundsource.cpp">
+      <Filter>framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\platform\platform.cpp">
+      <Filter>framework\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\platform\platformwindow.cpp">
+      <Filter>framework\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\otml\otmldocument.cpp">
+      <Filter>framework\otml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\otml\otmlemitter.cpp">
+      <Filter>framework\otml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\otml\otmlexception.cpp">
+      <Filter>framework\otml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\otml\otmlnode.cpp">
+      <Filter>framework\otml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\otml\otmlparser.cpp">
+      <Filter>framework\otml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\platform\androidplatform.cpp">
+      <Filter>framework\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\platform\androidwindow.cpp">
+      <Filter>framework\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\android\android_native_app_glue.cpp">
+      <Filter>android</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\android\dependencies.cpp">
+      <Filter>android</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\animatedtexture.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\apngloader.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\atlas.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\bitmapfont.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\cachedtext.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\coordsbuffer.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\drawcache.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\drawqueue.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\fontmanager.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\framebuffer.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\framebuffermanager.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\graphics.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\hardwarebuffer.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\image.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\painter.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\paintershaderprogram.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\shader.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\shaderprogram.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\textrender.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\texture.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\texturemanager.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\graph.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\net\packet_player.cpp">
+      <Filter>framework\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\net\packet_recorder.cpp">
+      <Filter>framework\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\proxy\proxy.cpp">
+      <Filter>framework\proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\proxy\proxy_client.cpp">
+      <Filter>framework\proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\graphics\shadermanager.cpp">
+      <Filter>framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\healthbars.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\client\uigraph.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\framework\util\pngunpacker.cpp">
+      <Filter>framework\util</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\client\animatedtext.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\animator.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\client.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\const.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\container.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\creature.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\creatures.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\declarations.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\effect.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\game.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\global.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\houses.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\item.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\itemtype.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\lightview.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\localplayer.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\luavaluecasts_client.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\map.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\mapview.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\minimap.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\missile.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\outfit.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\player.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\position.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\protocolcodes.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\protocolgame.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\spritemanager.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\statictext.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\thing.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\thingstype.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\thingtype.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\thingtypemanager.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\tile.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\towns.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\uicreature.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\uiitem.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\uimap.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\uimapanchorlayout.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\uiminimap.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\uiprogressrect.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\uisprite.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\walkmatrix.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\const.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\global.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\pch.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\adaptiverenderer.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\application.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\asyncdispatcher.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\binarytree.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\clock.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\config.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\configmanager.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\declarations.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\event.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\eventdispatcher.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\filestream.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\graphicalapplication.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\inputevent.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\logger.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\module.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\modulemanager.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\resourcemanager.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\scheduledevent.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\core\timer.h">
+      <Filter>framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\http\http.h">
+      <Filter>framework\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\http\result.h">
+      <Filter>framework\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\http\session.h">
+      <Filter>framework\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\http\websocket.h">
+      <Filter>framework\http</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\input\mouse.h">
+      <Filter>framework\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\luaengine\declarations.h">
+      <Filter>framework\luaengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\luaengine\lbitlib.h">
+      <Filter>framework\luaengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\luaengine\luabinder.h">
+      <Filter>framework\luaengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\luaengine\luaexception.h">
+      <Filter>framework\luaengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\luaengine\luainterface.h">
+      <Filter>framework\luaengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\luaengine\luaobject.h">
+      <Filter>framework\luaengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\luaengine\luavaluecasts.h">
+      <Filter>framework\luaengine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\net\connection.h">
+      <Filter>framework\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\net\declarations.h">
+      <Filter>framework\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\net\inputmessage.h">
+      <Filter>framework\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\net\outputmessage.h">
+      <Filter>framework\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\net\protocol.h">
+      <Filter>framework\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\net\server.h">
+      <Filter>framework\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\xml\tinystr.h">
+      <Filter>framework\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\xml\tinyxml.h">
+      <Filter>framework\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\ui\declarations.h">
+      <Filter>framework\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\ui\ui.h">
+      <Filter>framework\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\ui\uianchorlayout.h">
+      <Filter>framework\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\ui\uiboxlayout.h">
+      <Filter>framework\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\ui\uigridlayout.h">
+      <Filter>framework\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\ui\uihorizontallayout.h">
+      <Filter>framework\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\ui\uilayout.h">
+      <Filter>framework\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\ui\uimanager.h">
+      <Filter>framework\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\ui\uitextedit.h">
+      <Filter>framework\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\ui\uitranslator.h">
+      <Filter>framework\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\ui\uiverticallayout.h">
+      <Filter>framework\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\ui\uiwidget.h">
+      <Filter>framework\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\util\color.h">
+      <Filter>framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\util\crypt.h">
+      <Filter>framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\util\databuffer.h">
+      <Filter>framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\util\extras.h">
+      <Filter>framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\util\framecounter.h">
+      <Filter>framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\util\matrix.h">
+      <Filter>framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\util\point.h">
+      <Filter>framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\util\qrcodegen.h">
+      <Filter>framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\util\rect.h">
+      <Filter>framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\util\size.h">
+      <Filter>framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\util\stats.h">
+      <Filter>framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\any.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\boolean.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\cast.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\compiler.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\demangle.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\dumper.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\dynamic_storage.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\exception.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\fastrand.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\format.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\math.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\net.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\packed_any.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\packed_storage.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\shared_object.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\stdext.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\string.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\thread.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\time.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\traits.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\types.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\stdext\uri.h">
+      <Filter>framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\sound\combinedsoundsource.h">
+      <Filter>framework\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\sound\declarations.h">
+      <Filter>framework\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\sound\oggsoundfile.h">
+      <Filter>framework\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\sound\soundbuffer.h">
+      <Filter>framework\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\sound\soundchannel.h">
+      <Filter>framework\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\sound\soundfile.h">
+      <Filter>framework\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\sound\soundmanager.h">
+      <Filter>framework\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\sound\soundsource.h">
+      <Filter>framework\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\sound\streamsoundsource.h">
+      <Filter>framework\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\platform\crashhandler.h">
+      <Filter>framework\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\platform\platform.h">
+      <Filter>framework\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\platform\platformwindow.h">
+      <Filter>framework\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\otml\declarations.h">
+      <Filter>framework\otml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\otml\otml.h">
+      <Filter>framework\otml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\otml\otmldocument.h">
+      <Filter>framework\otml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\otml\otmlemitter.h">
+      <Filter>framework\otml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\otml\otmlexception.h">
+      <Filter>framework\otml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\otml\otmlnode.h">
+      <Filter>framework\otml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\otml\otmlparser.h">
+      <Filter>framework\otml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\android\android_native_app_glue.h">
+      <Filter>android</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\android\pch.h">
+      <Filter>android</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\platform\androidwindow.h">
+      <Filter>framework\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\animatedtexture.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\apngloader.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\atlas.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\bitmapfont.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\cachedtext.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\colorarray.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\coordsbuffer.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\declarations.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\deptharray.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\drawcache.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\drawqueue.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\fontmanager.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\framebuffer.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\framebuffermanager.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\glutil.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\graphics.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\hardwarebuffer.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\image.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\painter.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\paintershaderprogram.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\shader.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\shaderprogram.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\textrender.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\texture.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\texturemanager.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\vertexarray.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\shaders\newshader.h">
+      <Filter>framework\graphics\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\shaders\shaders.h">
+      <Filter>framework\graphics\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\shaders\shadersources.h">
+      <Filter>framework\graphics\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\graph.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\net\packet_player.h">
+      <Filter>framework\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\net\packet_recorder.h">
+      <Filter>framework\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\proxy\proxy.h">
+      <Filter>framework\proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\proxy\proxy_client.h">
+      <Filter>framework\proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\graphics\shadermanager.h">
+      <Filter>framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\healthbars.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\client\uigraph.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\framework\util\pngunpacker.h">
+      <Filter>framework\util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="client">
+      <UniqueIdentifier>{4cf84561-6c9b-40fe-9c20-afd85af503d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework">
+      <UniqueIdentifier>{b55a81ff-4b28-40a4-ab4f-8b813852a8d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="android">
+      <UniqueIdentifier>{36113479-22cb-47f8-8c25-39a610bb24b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\core">
+      <UniqueIdentifier>{a57e747b-2ec3-4604-8a37-e5862df86437}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\http">
+      <UniqueIdentifier>{f5051c56-1836-4933-96b0-e2125694f6a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\input">
+      <UniqueIdentifier>{628e66da-0e5b-4ef6-a51e-8d72fdcdf0a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\luaengine">
+      <UniqueIdentifier>{a2cb2ff5-47eb-4b36-97c6-eff9bad26c1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\net">
+      <UniqueIdentifier>{4a25cfde-4906-41e8-90c7-cd06e2537a90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\otml">
+      <UniqueIdentifier>{155626b2-508c-4c09-bf29-a4cffebdbb85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\platform">
+      <UniqueIdentifier>{952e8550-301c-4eab-bd5f-b9a47ca1c0f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\sound">
+      <UniqueIdentifier>{a4b7f6fb-46ce-44ed-bc5c-227f59bd58a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\stdext">
+      <UniqueIdentifier>{40595184-80a3-4e99-8fb8-636845aecde8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\util">
+      <UniqueIdentifier>{f4f024a4-c20e-4f66-9992-8b81feef61e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\ui">
+      <UniqueIdentifier>{3c0808e0-c950-4b8f-8219-f7ff9e487ee1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\xml">
+      <UniqueIdentifier>{b9924ce1-09fb-440a-b9db-d23ac5f537bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\graphics">
+      <UniqueIdentifier>{ca9ac688-a118-41d1-9b63-369489453044}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\graphics\shaders">
+      <UniqueIdentifier>{11e87172-6eea-46eb-81d1-9fbbf91a65b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework\proxy">
+      <UniqueIdentifier>{4ffa42e4-f1ba-409d-aad1-aa9ee9b639e6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

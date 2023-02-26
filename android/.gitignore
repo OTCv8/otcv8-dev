@@ -1,0 +1,8 @@
+ARM/*
+*/ARM/*
+*/ARM/*
+.workspace
+.vs
+!.xml
+!*/*.xml
+!otclientv8/res/*/*.xml

@@ -1,0 +1,48 @@
+name: Build and test pull request
+on: [pull_request]
+
+jobs:
+  Windows:
+    name: build-windows
+    runs-on: windows-2019
+    timeout-minutes: 60
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+          submodules: recursive
+
+    - name: Setup MSBuild and add to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Run vcpkg
+      uses: lukka/run-vcpkg@v7
+      with:
+        vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
+        vcpkgTriplet: x86-windows-static
+        vcpkgGitCommitId: 3b3bd424827a1f7f4813216f6b32b6c61e386b2e
+        vcpkgArguments: >
+          boost-iostreams boost-asio boost-beast boost-system boost-variant boost-lockfree boost-process boost-program-options boost-uuid boost-filesystem
+          luajit glew physfs openal-soft libogg libvorbis zlib libzip bzip2 openssl
+
+    - name: Integrate vcpkg
+      run: |
+        ${{ runner.workspace }}\vcpkg\vcpkg integrate install
+
+    - name: Compile otclient_dx
+      timeout-minutes: 20
+      run: |
+        cd otclient/vc16
+        MSBuild /property:Configuration=DirectX
+
+    - name: Run tests
+      timeout-minutes: 10
+      run: |
+        cd otclient
+        7z x tests.7z -aoa
+        $process = (Start-Process -Wait -PassThru otclient_dx.exe --test)
+        Get-Content otclientv8.log
+        if ($process.ExitCode -ne 0) {
+          throw "Invalid exit code: " + $process.ExitCode;
+        }

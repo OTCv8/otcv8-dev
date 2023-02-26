@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\framework">
+      <UniqueIdentifier>{deed4021-9019-4ad1-97c4-c44bada73547}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\client">
       <UniqueIdentifier>{5c843160-5a3a-4841-b64f-a1be3d5c2df6}</UniqueIdentifier>
     </Filter>
@@ -21,6 +24,39 @@
     </Filter>
     <Filter Include="Header Files\framework">
       <UniqueIdentifier>{be8876e0-a2cf-45f5-ac85-f822d0c85be4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\framework\core">
+      <UniqueIdentifier>{60155256-af95-4f4e-b96f-6c3b464a0af4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\framework\graphics">
+      <UniqueIdentifier>{18bfca39-a00b-49f3-b749-94db8eee6b2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\framework\luaengine">
+      <UniqueIdentifier>{8b0e61e9-ff3c-4aeb-ae21-a2c4fc01f3ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\framework\net">
+      <UniqueIdentifier>{4e189bf2-9f98-4bcc-a0d1-c05b92ff72e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\framework\otml">
+      <UniqueIdentifier>{5eb3cbb9-25ea-46dd-b849-deacc39f7859}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\framework\platform">
+      <UniqueIdentifier>{e829c892-b1f1-4c9a-9bcb-e891daed8b33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\framework\sound">
+      <UniqueIdentifier>{8e08379a-c5cd-4d00-8a70-a11968e9bf8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\framework\stdext">
+      <UniqueIdentifier>{268f4929-8e27-4e1c-94c5-ed3a5507aa52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\framework\ui">
+      <UniqueIdentifier>{eeaed1e5-b9d0-4db1-abc8-267c3991f774}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\framework\util">
+      <UniqueIdentifier>{72db416b-9ce3-4263-a2c2-8a0c2b70d560}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\framework\xml">
+      <UniqueIdentifier>{54796849-74ed-4598-9e80-fcbceb7d5f2d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\framework\core">
       <UniqueIdentifier>{795a6eac-124a-40b3-9b1e-239b14c4356e}</UniqueIdentifier>
@@ -61,14 +97,275 @@
     <Filter Include="Header Files\framework\http">
       <UniqueIdentifier>{c3bd7dca-bac4-49e4-929b-b56b91bc51cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\framework\http">
+      <UniqueIdentifier>{67a00e24-c036-48ed-9f50-23ed60b336b7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\framework\graphics\shaders">
       <UniqueIdentifier>{10c8d6a0-582a-4226-8dd3-943b203acabf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\framework\input">
+      <UniqueIdentifier>{1f73f301-1d35-408a-b566-0d52b6820292}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\framework\proxy">
       <UniqueIdentifier>{79aae350-b529-4234-914e-75e37cc993ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\framework\proxy">
+      <UniqueIdentifier>{02ae06e3-ad5a-44f4-8fde-5b7553943b95}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\framework\core\application.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\asyncdispatcher.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\binarytree.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\clock.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\configmanager.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\event.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\eventdispatcher.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\filestream.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\logger.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\module.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\modulemanager.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\resourcemanager.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\scheduledevent.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\timer.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\animatedtexture.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\apngloader.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\bitmapfont.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\cachedtext.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\coordsbuffer.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\fontmanager.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\framebuffer.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\framebuffermanager.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\graphics.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\hardwarebuffer.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\image.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\painter.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\paintershaderprogram.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\shader.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\shaderprogram.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\texture.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\texturemanager.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\input\mouse.cpp">
+      <Filter>Source Files\framework\input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\luaengine\lbitlib.cpp">
+      <Filter>Source Files\framework\luaengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\luaengine\luaexception.cpp">
+      <Filter>Source Files\framework\luaengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\luaengine\luainterface.cpp">
+      <Filter>Source Files\framework\luaengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\luaengine\luaobject.cpp">
+      <Filter>Source Files\framework\luaengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\luaengine\luavaluecasts.cpp">
+      <Filter>Source Files\framework\luaengine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\net\connection.cpp">
+      <Filter>Source Files\framework\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\net\inputmessage.cpp">
+      <Filter>Source Files\framework\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\net\outputmessage.cpp">
+      <Filter>Source Files\framework\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\net\protocol.cpp">
+      <Filter>Source Files\framework\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\net\server.cpp">
+      <Filter>Source Files\framework\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\otml\otmldocument.cpp">
+      <Filter>Source Files\framework\otml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\otml\otmlemitter.cpp">
+      <Filter>Source Files\framework\otml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\otml\otmlexception.cpp">
+      <Filter>Source Files\framework\otml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\otml\otmlnode.cpp">
+      <Filter>Source Files\framework\otml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\otml\otmlparser.cpp">
+      <Filter>Source Files\framework\otml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\platform\platform.cpp">
+      <Filter>Source Files\framework\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\platform\platformwindow.cpp">
+      <Filter>Source Files\framework\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\platform\win32crashhandler.cpp">
+      <Filter>Source Files\framework\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\platform\win32platform.cpp">
+      <Filter>Source Files\framework\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\platform\win32window.cpp">
+      <Filter>Source Files\framework\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\sound\combinedsoundsource.cpp">
+      <Filter>Source Files\framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\sound\oggsoundfile.cpp">
+      <Filter>Source Files\framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\sound\soundbuffer.cpp">
+      <Filter>Source Files\framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\sound\soundchannel.cpp">
+      <Filter>Source Files\framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\sound\soundfile.cpp">
+      <Filter>Source Files\framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\sound\soundmanager.cpp">
+      <Filter>Source Files\framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\sound\soundsource.cpp">
+      <Filter>Source Files\framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\sound\streamsoundsource.cpp">
+      <Filter>Source Files\framework\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\stdext\demangle.cpp">
+      <Filter>Source Files\framework\stdext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\stdext\math.cpp">
+      <Filter>Source Files\framework\stdext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\stdext\net.cpp">
+      <Filter>Source Files\framework\stdext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\stdext\string.cpp">
+      <Filter>Source Files\framework\stdext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\stdext\time.cpp">
+      <Filter>Source Files\framework\stdext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\ui\uianchorlayout.cpp">
+      <Filter>Source Files\framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\ui\uiboxlayout.cpp">
+      <Filter>Source Files\framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\ui\uigridlayout.cpp">
+      <Filter>Source Files\framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\ui\uihorizontallayout.cpp">
+      <Filter>Source Files\framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\ui\uilayout.cpp">
+      <Filter>Source Files\framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\ui\uimanager.cpp">
+      <Filter>Source Files\framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\ui\uitextedit.cpp">
+      <Filter>Source Files\framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\ui\uitranslator.cpp">
+      <Filter>Source Files\framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\ui\uiverticallayout.cpp">
+      <Filter>Source Files\framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\ui\uiwidget.cpp">
+      <Filter>Source Files\framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\ui\uiwidgetbasestyle.cpp">
+      <Filter>Source Files\framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\ui\uiwidgetimage.cpp">
+      <Filter>Source Files\framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\ui\uiwidgettext.cpp">
+      <Filter>Source Files\framework\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\util\color.cpp">
+      <Filter>Source Files\framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\util\crypt.cpp">
+      <Filter>Source Files\framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\xml\tinystr.cpp">
+      <Filter>Source Files\framework\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\xml\tinyxml.cpp">
+      <Filter>Source Files\framework\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\xml\tinyxmlerror.cpp">
+      <Filter>Source Files\framework\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\xml\tinyxmlparser.cpp">
+      <Filter>Source Files\framework\xml</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\client\animatedtext.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
@@ -183,8 +480,47 @@
     <ClCompile Include="..\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\framework\core\config.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\client\animator.cpp">
       <Filter>Source Files\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\util\stats.cpp">
+      <Filter>Source Files\framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\util\extras.cpp">
+      <Filter>Source Files\framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\adaptiverenderer.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\http\http.cpp">
+      <Filter>Source Files\framework\http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\http\session.cpp">
+      <Filter>Source Files\framework\http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\drawqueue.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\atlas.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\http\websocket.cpp">
+      <Filter>Source Files\framework\http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\stdext\uri.cpp">
+      <Filter>Source Files\framework\stdext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\util\qrcodegen.c">
+      <Filter>Source Files\framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\textrender.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\drawcache.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\src\client\luafunctions_client.cpp">
       <Filter>Source Files\client</Filter>
@@ -192,8 +528,38 @@
     <ClCompile Include="..\src\client\luavaluecasts_client.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\graph.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\luafunctions.cpp">
+      <Filter>Source Files\framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\graphicalapplication.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\net\packet_player.cpp">
+      <Filter>Source Files\framework\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\net\packet_recorder.cpp">
+      <Filter>Source Files\framework\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\proxy\proxy.cpp">
+      <Filter>Source Files\framework\proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\proxy\proxy_client.cpp">
+      <Filter>Source Files\framework\proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\shadermanager.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\client\healthbars.cpp">
       <Filter>Source Files\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\client\uigraph.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\util\pngunpacker.cpp">
+      <Filter>Source Files\framework\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -753,6 +1119,9 @@
       <Filter>Header Files\framework\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\src\client\healthbars.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\client\uigraph.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
     <ClInclude Include="..\src\framework\util\pngunpacker.h">

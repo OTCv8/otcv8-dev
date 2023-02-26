@@ -1,0 +1,200 @@
+name: Build on request
+on: [workflow_dispatch]
+
+jobs:
+  Windows:
+    name: Build windows version
+    runs-on: windows-2019
+    timeout-minutes: 120
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+          submodules: recursive
+
+    - name: Setup MSBuild and add to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+      id: setup_msbuild
+
+    - name: Run vcpkg
+      uses: lukka/run-vcpkg@v7
+      with:
+        vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
+        vcpkgTriplet: x86-windows-static
+        vcpkgGitCommitId: 3b3bd424827a1f7f4813216f6b32b6c61e386b2e
+        vcpkgArguments: >
+          boost-iostreams boost-asio boost-beast boost-system boost-variant boost-lockfree boost-process boost-program-options boost-uuid boost-filesystem
+          luajit glew physfs openal-soft libogg libvorbis zlib libzip bzip2 openssl
+
+    - name: Integrate vcpkg
+      run: |
+        ${{ runner.workspace }}/vcpkg/vcpkg integrate install
+        
+    - name: Compile otclient_dx
+      timeout-minutes: 20
+      run: |
+        cd vc16
+        MSBuild /property:Configuration=DirectX /p:BUILD_REVISION=${{github.run_number}}
+        
+    - name: Compile otclient_gl
+      timeout-minutes: 20
+      run: |
+        cd vc16
+        MSBuild /property:Configuration=OpenGL /p:BUILD_REVISION=${{github.run_number}}
+
+    #- name: Sign binaries
+    #  run: |
+    #     .\tools\sign\signtool.exe sign /f .\tools\sign\certificate.pfx /p ${{ secrets.SIGN_PASSWORD }} /fd SHA256 /t http://timestamp.digicert.com /d "OTclientV8" otclient_gl.exe
+    #     .\tools\sign\signtool.exe sign /f .\tools\sign\certificate.pfx /p ${{ secrets.SIGN_PASSWORD }} /fd SHA256 /t http://timestamp.digicert.com /d "OTclientV8" otclient_dx.exe
+
+    - name: Upload binaries
+      uses: 'actions/upload-artifact@v2'
+      with:
+        name: Download-binaries
+        path: |
+          otclient_gl.exe
+          otclient_dx.exe
+        if-no-files-found: error
+
+  Android:
+    name: Build android version
+    runs-on: windows-2019
+    timeout-minutes: 120
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+          submodules: recursive
+
+    - name: Setup MSBuild and add to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+      id: setup_msbuild
+
+    - name: Create data.zip for android
+      run: |
+        powershell -ExecutionPolicy Bypass -File .\create_android_assets.ps1
+
+    - name: Decompress android libs
+      run: |
+        7z x android_libs.7z -aoa -oC:\android
+
+    - name: Install android
+      run: |
+        $sdkRoot = "C:\Android\android-sdk"
+        $sdkManager = "$sdkRoot\cmdline-tools\latest\bin\sdkmanager.bat"
+        Install-AndroidSDKPackages -AndroidSDKManagerPath $sdkManager `
+                                  -AndroidSDKRootPath $sdkRoot `
+                                  -AndroidPackages "ndk;21.4.7075529"
+
+    - name: Build for android
+      timeout-minutes: 25
+      run: |
+        cd android
+        $env:VS_NdkRoot="C:\Android\android-sdk\ndk\21.4.7075529"
+        MSBuild.exe /p:Configuration=Release /p:Platform="ARM64" /p:BUILD_REVISION=${{github.run_number}}
+
+    - name: Upload binaries
+      uses: 'actions/upload-artifact@v2'
+      with:
+        name: Download-binaries
+        path: |
+          otclientv8.apk
+        if-no-files-found: error
+
+  Mac:
+    name: Build mac os version
+    runs-on: 	macos-11
+    timeout-minutes: 120
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+          submodules: recursive
+
+    - name: Get latest CMake
+      uses: lukka/get-cmake@latest
+
+    - name: MacOS - install physfs pkgconfig luajit xquartz
+      run: brew install physfs pkgconfig luajit xquartz
+
+    - name: Run vcpkg
+      uses: lukka/run-vcpkg@v7
+      with:
+        vcpkgArguments: >
+          boost-iostreams boost-asio boost-system boost-variant boost-lockfree boost-beast glew 
+          boost-filesystem boost-uuid libogg libvorbis zlib opengl libzip openal-soft bzip2
+          boost-process openssl
+        vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
+        vcpkgTriplet: x64-osx
+        vcpkgGitCommitId: 761c81d43335a5d5ccc2ec8ad90bd7e2cbba734e
+
+    - name: Build with CMake
+      uses: lukka/run-cmake@v3
+      with:
+        buildDirectory: ${{ runner.workspace }}/build
+        cmakeAppendedArgs: '-G Ninja -DCMAKE_BUILD_TYPE="Release" -DVERSION=${{github.run_number}}'
+        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
+        useVcpkgToolchainFile: true
+
+    - name: Change name
+      run: |
+        mv '${{ runner.workspace }}/build/otclient' '${{ runner.workspace }}/build/otclient_mac'
+
+    - name: Upload otclient
+      uses: actions/upload-artifact@v2
+      with:
+        name: Download-binaries
+        path: |
+          ${{ runner.workspace }}/build/otclient_mac
+        if-no-files-found: error
+
+  Linux:
+    name: Build linux version
+    runs-on: ubuntu-20.04
+    timeout-minutes: 120
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+          submodules: recursive
+
+    - name: Get latest CMake
+      uses: lukka/get-cmake@latest
+
+    - name: Ubuntu - install opengl lua5.1 luajit
+      run: sudo apt update && sudo apt install -y libglew-dev liblua5.1-0-dev libluajit-5.1-dev
+
+    - name: Run vcpkg
+      uses: lukka/run-vcpkg@v7
+      with:
+        vcpkgArguments: >
+          boost-iostreams boost-asio boost-system boost-variant boost-lockfree boost-beast glew 
+          boost-filesystem boost-uuid libogg libvorbis zlib opengl libzip openal-soft bzip2
+          boost-process openssl physfs
+        vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
+        vcpkgTriplet: x64-linux
+        vcpkgGitCommitId: 761c81d43335a5d5ccc2ec8ad90bd7e2cbba734e
+
+    - name: Build with CMake
+      uses: lukka/run-cmake@v3
+      with:
+        buildDirectory: ${{ runner.workspace }}/build
+        cmakeAppendedArgs: '-G Ninja -DCMAKE_BUILD_TYPE="Release" -DVERSION=${{github.run_number}}'
+        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
+        useVcpkgToolchainFile: true
+
+    - name: Change name
+      run: |
+        mv '${{ runner.workspace }}/build/otclient' '${{ runner.workspace }}/build/otclient_linux'
+
+    - name: Upload otclient
+      uses: actions/upload-artifact@v2
+      with:
+        name: Download-binaries
+        path: |
+          ${{ runner.workspace }}/build/otclient_linux
+        if-no-files-found: error

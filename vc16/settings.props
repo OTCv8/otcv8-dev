@@ -6,7 +6,7 @@
         WIN32;
         _CRT_SECURE_NO_WARNINGS;
         _WIN32_WINNT=0x0501;
-    		WINVER=0x0501;
+		    WINVER=0x0501;
         OTCLIENT;
         CRASH_HANDLER;
         FW_GRAPHICS;
@@ -17,11 +17,44 @@
         AB;
         NOMINMAX;
     </PREPROCESSOR_DEFS>
+    
+    <OTCLIENT_LIBDEPS>
+        zlib.lib;
+        libssl.lib;
+        physfs-static.lib;
+        winmm.lib;
+        lua51.lib;
+        dbghelp.lib;
+        kernel32.lib;
+        user32.lib;
+        shell32.lib;
+        gdi32.lib;
+        advapi32.lib;
+    		Ole32.lib;
+        psapi.lib;
+        bcrypt.lib;		
+        ucrt.lib;
+        vcruntime.lib;
+        msvcrt.lib;
+        mincore_downlevel.lib;
+        mincore.lib;    
+    </OTCLIENT_LIBDEPS>
   </PropertyGroup>
   <PropertyGroup>
     <OutDir>$(ProjectDir)../</OutDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Label="Globals">
+   <VcpkgConfiguration>Release</VcpkgConfiguration>
+	 <VcpkgTriplet Condition="'$(Platform)'=='Win32'">x86-windows-static</VcpkgTriplet>
+	 <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-static</VcpkgTriplet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(BUILD_REVISION)' != '' ">
+    <PREPROCESSOR_DEFS>
+      $(PREPROCESSOR_DEFS);
+      BUILD_REVISION=$(BUILD_REVISION)
+    </PREPROCESSOR_DEFS>
+  </PropertyGroup>  
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>

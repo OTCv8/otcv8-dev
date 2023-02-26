@@ -1,0 +1,364 @@
+name: Build, Test, Release 3.2
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  Windows:
+    name: Build windows version
+    runs-on: windows-2019
+    timeout-minutes: 90
+    if: |
+      !contains(github.event.head_commit.message, '[skip release]')
+      && (
+        startsWith(github.ref, 'refs/tags/')
+        || github.ref == 'refs/heads/main'
+        || github.ref == 'refs/heads/master'
+      )
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+          submodules: recursive
+
+    - name: Setup MSBuild and add to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+      id: setup_msbuild
+
+    - name: Run vcpkg
+      uses: lukka/run-vcpkg@v7
+      with:
+        vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
+        vcpkgTriplet: x86-windows-static
+        vcpkgGitCommitId: 3b3bd424827a1f7f4813216f6b32b6c61e386b2e
+        vcpkgArguments: >
+          boost-iostreams boost-asio boost-beast boost-system boost-variant boost-lockfree boost-process boost-program-options boost-uuid boost-filesystem
+          luajit glew physfs openal-soft libogg libvorbis zlib libzip bzip2 openssl liblzma
+
+    - name: Integrate vcpkg
+      run: |
+        ${{ runner.workspace }}\vcpkg\vcpkg integrate install
+        
+    - name: Compile 
+      timeout-minutes: 60
+      run: |
+        cd vc16
+        MSBuild /property:Configuration=DirectX /p:BUILD_REVISION=${{github.run_number}}
+        MSBuild /property:Configuration=OpenGL /p:BUILD_REVISION=${{github.run_number}}
+
+    #- name: Sign binaries
+    #  run: |
+    #     .\tools\sign\signtool.exe sign /f .\tools\sign\certificate.pfx /p ${{ secrets.SIGN_PASSWORD }} /fd SHA256 /t http://timestamp.digicert.com /d "OTclientV8" otclient_gl.exe
+    #     .\tools\sign\signtool.exe sign /f .\tools\sign\certificate.pfx /p ${{ secrets.SIGN_PASSWORD }} /fd SHA256 /t http://timestamp.digicert.com /d "OTclientV8" otclient_dx.exe
+
+    - name: Upload binaries
+      uses: 'actions/upload-artifact@v2'
+      with:
+        name: Binaries
+        path: |
+          otclient_gl.exe
+          otclient_dx.exe
+          lib.7z
+        if-no-files-found: error
+
+  Android:
+    name: Build android version
+    runs-on: windows-2019
+    timeout-minutes: 60
+    if: |
+      !contains(github.event.head_commit.message, '[skip release]')
+      && (
+        startsWith(github.ref, 'refs/tags/')
+        || github.ref == 'refs/heads/main'
+        || github.ref == 'refs/heads/master'
+      )
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+          submodules: recursive
+
+    - name: Setup MSBuild and add to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+      id: setup_msbuild
+
+    - name: Create data.zip for android
+      run: |
+        powershell -ExecutionPolicy Bypass -File .\create_android_assets.ps1
+
+    - name: Decompress android libs
+      run: |
+        7z x android_libs.7z -aoa -oC:\android
+
+    - name: Install android
+      run: |
+        $sdkRoot = "C:\Android\android-sdk"
+        $sdkManager = "$sdkRoot\cmdline-tools\latest\bin\sdkmanager.bat"
+        Install-AndroidSDKPackages -AndroidSDKManagerPath $sdkManager `
+                                  -AndroidSDKRootPath $sdkRoot `
+                                  -AndroidPackages "ndk;21.4.7075529"
+
+    - name: Build for android
+      timeout-minutes: 25
+      run: |
+        cd android
+        $env:VS_NdkRoot="C:\Android\android-sdk\ndk\21.4.7075529"
+        MSBuild.exe /p:Configuration=Release /p:Platform="ARM64" /p:BUILD_REVISION=${{github.run_number}}
+
+    - name: Upload binaries
+      uses: 'actions/upload-artifact@v2'
+      with:
+        name: Binaries
+        path: |
+          otclientv8.apk
+        if-no-files-found: error
+
+  Mac:
+    name: Build mac os version
+    runs-on: 	macos-11
+    timeout-minutes: 60
+    if: |
+      !contains(github.event.head_commit.message, '[skip release]')
+      && (
+        startsWith(github.ref, 'refs/tags/')
+        || github.ref == 'refs/heads/main'
+        || github.ref == 'refs/heads/master'
+      )
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+          submodules: recursive
+
+    - name: Get latest CMake
+      uses: lukka/get-cmake@latest
+
+    - name: MacOS - install physfs pkgconfig luajit xquartz
+      run: brew install physfs pkgconfig luajit xquartz
+
+    - name: Run vcpkg
+      uses: lukka/run-vcpkg@v7
+      with:
+        vcpkgArguments: >
+          boost-iostreams boost-asio boost-system boost-variant boost-lockfree boost-beast glew 
+          boost-filesystem boost-uuid libogg libvorbis zlib opengl libzip openal-soft bzip2
+          boost-process openssl
+        vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
+        vcpkgTriplet: x64-osx
+        vcpkgGitCommitId: 761c81d43335a5d5ccc2ec8ad90bd7e2cbba734e
+
+    - name: Build with CMake
+      uses: lukka/run-cmake@v3
+      with:
+        buildDirectory: ${{ runner.workspace }}/build
+        cmakeAppendedArgs: '-G Ninja -DCMAKE_BUILD_TYPE="Release" -DVERSION=${{github.run_number}} -DCMAKE_CXX_FLAGS="-Wno-c++11-narrowing"'
+        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
+        useVcpkgToolchainFile: true
+
+    - name: Change name
+      run: |
+        mv '${{ runner.workspace }}/build/otclient' '${{ runner.workspace }}/build/otclient_mac'
+
+    - name: Upload otclient
+      uses: actions/upload-artifact@v2
+      with:
+        name: Binaries
+        path: |
+          ${{ runner.workspace }}/build/otclient_mac
+        if-no-files-found: error
+
+  Linux:
+    name: Build linux version
+    runs-on: ubuntu-20.04
+    timeout-minutes: 60
+    if: |
+      !contains(github.event.head_commit.message, '[skip release]')
+      && (
+        startsWith(github.ref, 'refs/tags/')
+        || github.ref == 'refs/heads/main'
+        || github.ref == 'refs/heads/master'
+      )
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+          submodules: recursive
+
+    - name: Get latest CMake
+      uses: lukka/get-cmake@latest
+
+    - name: Ubuntu - install opengl lua5.1 luajit
+      run: sudo apt update && sudo apt install -y libglew-dev liblua5.1-0-dev libluajit-5.1-dev
+
+    - name: Run vcpkg
+      uses: lukka/run-vcpkg@v7
+      with:
+        vcpkgArguments: >
+          boost-iostreams boost-asio boost-system boost-variant boost-lockfree boost-beast glew 
+          boost-filesystem boost-uuid libogg libvorbis zlib opengl libzip openal-soft bzip2
+          boost-process openssl physfs
+        vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
+        vcpkgTriplet: x64-linux
+        vcpkgGitCommitId: 761c81d43335a5d5ccc2ec8ad90bd7e2cbba734e
+
+    - name: Build with CMake
+      uses: lukka/run-cmake@v3
+      with:
+        buildDirectory: ${{ runner.workspace }}/build
+        cmakeAppendedArgs: '-G Ninja -DCMAKE_BUILD_TYPE="Release" -DVERSION=${{github.run_number}}'
+        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
+        useVcpkgToolchainFile: true
+
+    - name: Change name
+      run: |
+        mv '${{ runner.workspace }}/build/otclient' '${{ runner.workspace }}/build/otclient_linux'
+
+    - name: Upload otclient
+      uses: actions/upload-artifact@v2
+      with:
+        name: Binaries
+        path: |
+          ${{ runner.workspace }}/build/otclient_linux
+        if-no-files-found: error
+
+  Release:
+    name: Test and release
+    runs-on: windows-2019
+    needs: [Windows, Android, Mac, Linux]
+    timeout-minutes: 120
+    if: |
+      !contains(github.event.head_commit.message, '[skip release]')
+      && (
+        startsWith(github.ref, 'refs/tags/')
+        || github.ref == 'refs/heads/main'
+        || github.ref == 'refs/heads/master'
+      )
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Download binaries
+      uses: actions/download-artifact@v2
+      with:
+        name: Binaries
+
+    - name: Run tests
+      timeout-minutes: 10
+      run: |
+        7z x tests.7z -aoa
+        $process = (Start-Process -Wait -PassThru otclient_dx.exe --test)
+        Get-Content otclientv8.log
+        if ($process.ExitCode -ne 0) {
+          throw "Invalid exit code: " + $process.ExitCode;
+        }
+
+    - name: Upload otclientv8.log
+      uses: actions/upload-artifact@v2
+      with:
+        path: otclientv8.log
+        name: Download-otclientv8.log
+        if-no-files-found: error
+
+    - name: Copy screenshots
+      run: |
+        $location = Get-Location
+        $pillowScript = @"
+        from PIL import Image
+        import glob
+
+        for file in glob.glob('*.png'):
+          Image.open(file).convert('RGB').save(
+            file[:-3] + 'jpg',
+            quality=50,
+          )
+        "@
+        cd $env:appdata\otclientv8\otclientv8
+        pip3 install pillow
+        python3 -c $pillowScript
+        cd $location
+        mkdir screenshots
+        Get-ChildItem $env:appdata\otclientv8\otclientv8 -Filter *.jpg `
+        | Copy-Item -Destination screenshots -Force -PassThru
+
+    - name: Upload screenshot
+      uses: actions/upload-artifact@v2
+      with:
+        path: screenshots
+        name: Download-screenshots
+    
+    - name: Cleanup things
+      run: |
+        Remove-Item 'data\things' -Recurse
+
+    - name: Set version
+      run: |
+        $version = Select-String -path otclientv8.log '(OTCv8 [^(]+)' |
+          select-object -First 1 |
+          % { $_.Matches } |
+          % { $_.Value }
+        "VERSION=${version}" | Add-Content -Path $ENV:GITHUB_ENV
+
+    - name: Upload otclient
+      uses: actions/upload-artifact@v2
+      with:
+        name: Download-otclientv8
+        path: |
+          otclient_gl.exe
+          otclient_dx.exe
+          otclientv8.apk
+          otclient_mac
+          otclient_linux
+          *.dll
+          data
+          modules
+          layouts
+          mods
+          init.lua
+        if-no-files-found: error
+
+    - name: Checkout public otclientv8
+      uses: actions/checkout@v2
+      with:
+        repository: OTCv8/otclientv8
+        path: otclientv8
+        submodules: recursive
+        token: "${{ secrets.otcv8_token }}"
+
+    - name: Update public otclientv8 files
+      run: |
+        cd otclientv8
+        git rm . -f -r --ignore-unmatch
+        git checkout HEAD -- README.md LICENSE
+        cd ..
+
+        robocopy `
+        . `
+        otclientv8 `
+        init.lua `
+        otclient_dx.exe `
+        otclient_gl.exe `
+        otclientv8.apk `
+        otclient_linux `
+        otclient_mac `
+        libGLESv2.dll `
+        libEGL.dll `
+        d3dcompiler_47.dll
+
+        robocopy data otclientv8/data /s
+        robocopy layouts otclientv8/layouts /s
+        robocopy mods otclientv8/mods /s
+        robocopy modules otclientv8/modules /s
+        exit 0 # required, robocopy has exit code 1
+
+    - name: Commit public otclientv8
+      uses: EndBug/add-and-commit@v7
+      with:
+        cwd: otclientv8
+        push: true
+        author_name: OTCv8
+        author_email: otclient@otclient.ovh
+        message: "Updated to ${{ env.VERSION }}"
