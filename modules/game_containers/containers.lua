@@ -1,4 +1,7 @@
 local gameStart = 0
+local characterName = nil
+local settingsFile = "/settings/containers.json"
+local settings = {}
 
 function init()
   connect(Container, { onOpen = onContainerOpen,
@@ -6,11 +9,14 @@ function init()
                        onSizeChange = onContainerChangeSize,
                        onUpdateItem = onContainerUpdateItem })
   connect(g_game, {
-    onGameStart = markStart,
-    onGameEnd = clean
+    onGameStart = online,
+    onGameEnd = offline
   })
 
   reloadContainers()
+  if g_game.isOnline() then
+    online()
+  end
 end
 
 function terminate()
@@ -19,8 +25,8 @@ function terminate()
                           onSizeChange = onContainerChangeSize,
                           onUpdateItem = onContainerUpdateItem })
   disconnect(g_game, { 
-    onGameStart = markStart,
-    onGameEnd = clean
+    onGameStart = online,
+    onGameEnd = offline
   })
 end
 
@@ -37,8 +43,74 @@ function clean()
   end
 end
 
-function markStart()
+function offline()
+  local cache = {}
+  -- save new
+  for containerid, container in pairs(g_game.getContainers()) do
+    local window = container.window
+    if window then
+      local parent = window:getParent():getId()
+      cache[parent] = cache[parent] or {}
+      table.insert(cache[parent], {
+        id = containerid,
+        height = window:getHeight(),
+        index = window:getParent():getChildIndex(window),
+        name = container:getName()
+      })
+    end
+  end
+
+  -- sort
+  for parent, data in pairs(cache) do
+    table.sort(data, function(a,b) return a.index < b.index end)
+  end
+
+  -- load current settings
+  load()
+  settings[characterName] = table.copy(cache)
+
+  -- save to json
+  save()
+
+  characterName = nil
+
+  clean()
+end
+
+function online()
+  -- basics
   gameStart = g_clock.millis()
+  characterName = g_game.getCharacterName()
+
+  -- load json
+  load()
+
+  -- secure data
+  settings[characterName] = settings[characterName] or {}
+
+  -- move to positions
+  scheduleEvent(function()
+    local containers = g_game.getContainers()
+    for parent, array in pairs(settings[characterName]) do
+      for i=1,#array do
+        local data = array[i]
+        local parentWidget = g_ui.getRootWidget():recursiveGetChildById(parent)
+        if parentWidget and parentWidget:isVisible() then
+          local container = containers[data.id]
+          if container and container:getName() == data.name then
+            local window = container.window
+            if window then
+              window:setParent(parentWidget)
+              window:setHeight(data.height)
+              local childs = parentWidget:getChildCount()
+              local index = data.index <= childs and data.index or childs
+              parentWidget:moveChildToIndex(window, index)
+            end
+          end
+        end
+      end
+    end
+  end, 10)
 end
 
 function destroy(container)
@@ -230,4 +302,36 @@ function onContainerUpdateItem(container, slot, item, oldItem)
   if not container.window then return end
   local itemWidget = container.itemsPanel:getChildById('item' .. slot)
   itemWidget:setItem(item)
+end
+
+function save()
+  local status, result = pcall(function() return json.encode(settings, 2) end)
+  if not status then
+      return g_logger.error(
+                 "Error while saving containers settings. Data won't be saved. Details: " ..
+                     result)
+  end
+
+  if result:len() > 100 * 1024 * 1024 then
+      return g_logger.error(
+                 "Something went wrong, file is above 100MB, won't be saved")
+  end
+
+  g_resources.writeFileContents(settingsFile, result)
+end
+
+function load()
+  if g_resources.fileExists(settingsFile) then
+      local status, result = pcall(function()
+          return json.decode(g_resources.readFileContents(settingsFile))
+      end)
+      if not status then
+          return g_logger.error(
+                     "Error while reading containers settings file. To fix this problem you can delete json file. Details: " ..
+                         result)
+      end
+      settings = result
+  else
+    settings = {}
+  end
 end
