@@ -1,14 +1,22 @@
-Slot < Button
-  width: 70
-  height: 66
+Slot < OutsetCheckBox
+  width: 64
+  height: 64
   anchors.verticalCenter: parent.verticalCenter
   enabled: false
-  text-wrap: true
   !tooltip: tr('Items can have up to three imbuements slots. This slot is not available for this item.')
+  @onHoverChange: modules.game_imbuing.onHoverTooltip(self)
+
+  UIWidget
+    id: image
+    anchors.fill: parent
+    margin: 1
+    phantom: true
 
 RequiredItem < Panel
   width: 66
   height: 90
+  anchors.top: parent.top
+  @onHoverChange: modules.game_imbuing.onHoverTooltip(self)
 
   UIItem
     id: item
@@ -16,6 +24,10 @@ RequiredItem < Panel
     width: 66
     anchors.left: parent.left
     anchors.top: parent.top
+    padding: 3
+    image-source: /images/ui/dark_label_background
+    image-border: 1
+    @onHoverChange: modules.game_imbuing.onHoverTooltip(self)
 
   FlatLabel
     id: count
@@ -24,11 +36,18 @@ RequiredItem < Panel
     anchors.left: prev.left
     anchors.right: prev.right
     anchors.top: prev.bottom
+    anchors.bottom: parent.bottom
+    image-source: /images/ui/dark_label_background
+    image-border: 1
+    text-offset: 0 -1
+    color: #C0C0C0
 
 ItemInformation < Panel
   height: 100
-  border: 1 black
-  padding: 5
+  image-source: /images/ui/window
+  image-border: 6
+  image-border-top: 27
+  padding: 2
 
   Label
     id: title
@@ -36,6 +55,7 @@ ItemInformation < Panel
     anchors.left: parent.left 
     anchors.right: parent.right
     text-align: center
+    color: #909090
     !text: tr("Item Information")
 
   UIItem
@@ -59,35 +79,34 @@ ItemInformation < Panel
 
     Slot
       id: slot0
-      !text: tr("Slot 1")
       text-align: center
       anchors.left: parent.left
 
     Slot
       id: slot1
-      !text: tr("Slot 2")
       text-align: center
-      margin-left: 10
+      margin-left: 20
       anchors.left: prev.right
 
     Slot
       id: slot2
-      !text: tr("Slot 3")
       text-align: center
-      margin-left: 10
+      margin-left: 20
       anchors.left: prev.right
 
   Label
     id: selectSlot
     margin-right: 15
     anchors.right: slots.left
-    anchors.VerticalCenter: parent.VerticalCenter
+    anchors.VerticalCenter: prev.VerticalCenter
     !text: tr("Select Slot:")
 
 EmptyImbue < Panel
   height: 240
-  border: 1 black
-  padding: 5
+  image-source: /images/ui/window
+  image-border: 6
+  image-border-top: 27
+  padding: 2 13 10 13
 
   Label
     id: title
@@ -95,6 +114,7 @@ EmptyImbue < Panel
     anchors.left: parent.left 
     anchors.right: parent.right
     text-align: center
+    color: #909090
     !text: tr("Imbue Empty Slot")
 
   ComboBox
@@ -102,8 +122,8 @@ EmptyImbue < Panel
     anchors.top: title.bottom
     anchors.left: parent.left
     anchors.right: parent.HorizontalCenter
-    margin-right: 3
-    margin-top: 5
+    margin-right: 5
+    margin-top: 8
     isdisabled: true
 
   ComboBox
@@ -111,7 +131,7 @@ EmptyImbue < Panel
     anchors.top: prev.top
     anchors.left: groups.right
     anchors.right: parent.right
-    margin-left: 3
+    margin-left: 5
 
   Label
     id: description
@@ -119,7 +139,7 @@ EmptyImbue < Panel
     anchors.left: parent.left
     anchors.right: parent.right
     margin-top: 10
-    height: 85
+    height: 75
 
   Label
     id: info
@@ -143,7 +163,7 @@ EmptyImbue < Panel
 
   Panel
     id: requiredItems
-    width: 210
+    width: 200
     height: 90
     anchors.left: parent.left
     anchors.bottom: parent.bottom
@@ -154,12 +174,12 @@ EmptyImbue < Panel
 
     RequiredItem
       id: item2
-      margin-left: 10
+      margin-left: 5
       anchors.left: prev.right
 
     RequiredItem
       id: item3
-      margin-left: 10
+      margin-left: 5
       anchors.left: prev.right
 
   UIButton
@@ -170,27 +190,25 @@ EmptyImbue < Panel
     anchors.left: prev.right
     image-source: /images/game/imbuing/100percent
     image-clip: 0 0 66 66
-    margin-left: 15
-    !tooltip: ("Bribe the fates! Click here to raise your chance to 100%. For guaranteed success use gold.")
+    margin-left: 10
+    !tooltip: ("Bribe the fates! Click here to raise your chance to 100%. For guaranteed success - use gold.")
+    @onHoverChange: modules.game_imbuing.onHoverTooltip(self)
 
-  FlatLabel
+  GoldLabel
     id: protectionCost
     margin-top: 5
     text-align: center
     anchors.left: prev.left
     anchors.right: prev.right
     anchors.top: prev.bottom
+    anchors.bottom: parent.bottom
 
   UIWidget
     id: horizontalArrow
     anchors.left: prev.right
     anchors.verticalCenter: requiredItems.verticalCenter
     margin-left: 45
-    width: 12
-    height: 21
-    image-source: /images/ui/arrow_horizontal
-    image-rect: 0 0 12 21
-    image-clip: 12 0 12 21
+    image-source: /images/game/imbuing/arrow
     phantom: false
 
   UIButton
@@ -203,22 +221,26 @@ EmptyImbue < Panel
     image-clip: 0 0 128 66
     margin-left: 15
     !tooltip: tr("Click here to carry out the selected imbuement. This will consume the required astral sources and gold.")
+    @onHoverChange: modules.game_imbuing.onHoverTooltip(self)
 
     $pressed:
       image-clip: 0 66 128 66
 
-  FlatLabel
+  GoldLabel
     id: cost
     margin-top: 5
     text-align: center
     anchors.left: prev.left
     anchors.right: prev.right
     anchors.top: prev.bottom
+    anchors.bottom: parent.bottom
 
 ClearImbue < Panel
   height: 240
-  border: 1 black
-  padding: 5
+  image-source: /images/ui/window
+  image-border: 6
+  image-border-top: 27
+  padding: 2 13 10 13
 
   Label
     id: title
@@ -226,6 +248,7 @@ ClearImbue < Panel
     anchors.left: parent.left 
     anchors.right: parent.right
     text-align: center
+    color: #909090
     !text: tr("Clear Imbuement")
 
   ComboBox
@@ -233,8 +256,8 @@ ClearImbue < Panel
     anchors.top: title.bottom
     anchors.left: parent.left
     anchors.right: parent.HorizontalCenter
-    margin-right: 3
-    margin-top: 5
+    margin-right: 5
+    margin-top: 8
     enabled: false
 
   ComboBox
@@ -242,7 +265,7 @@ ClearImbue < Panel
     anchors.top: prev.top
     anchors.left: groups.right
     anchors.right: parent.right
-    margin-left: 3
+    margin-left: 5
     enabled: false
 
   Label
@@ -251,7 +274,7 @@ ClearImbue < Panel
     anchors.left: parent.left
     anchors.right: parent.right
     margin-top: 10
-    height: 85
+    height: 75
 
   Label
     id: info
@@ -265,51 +288,45 @@ ClearImbue < Panel
     anchors.right: parent.right
     !text: tr('Clear imbuement:')
 
-  Panel
+  ProgressBar
     id: time
-    width: 210
-    height: 90
+    width: 300
+    height: 18
     anchors.left: parent.left
-    anchors.bottom: parent.bottom
-
-    FlatLabel
-      id: timeRemaining
-      size: 86 25
-      margin-bottom: 20
-      text-align: center
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.verticalCenter: parent.verticalCenter
+    anchors.verticalCenter: next.verticalCenter
+    background-color: #C28400
+    tooltip: Shows the time the imbuement is still active for.
 
   UIButton
     id: clear
     width: 128
     height: 66
-    anchors.top: time.top
+    anchors.bottom: next.top
     anchors.right: parent.right
     image-source: /images/game/imbuing/clear
     image-clip: 0 0 128 66
-    margin-left: 15
+    margin-bottom: 5
     !tooltip: tr("Your needs have changed? Click here to clear the imbuement from your item for a fee.")
+    @onHoverChange: modules.game_imbuing.onHoverTooltip(self)
 
     $pressed:
       image-clip: 0 66 128 66
 
-  FlatLabel
+  GoldLabel
     id: cost
-    margin-top: 5
     text-align: center
-    anchors.left: prev.left
-    anchors.right: prev.right
-    anchors.top: prev.bottom
+    width: 128
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
 
 
 MainWindow
   id: imbuingWindow
   !text: tr('Imbue Item')
-  size: 550 430
+  size: 550 515
   background-color: #AAAAAA
   @onEscape: modules.game_imbuing.hide()
+  @onHoverChange: modules.game_imbuing.onHoverTooltip(self)
 
   ItemInformation
     id: itemInfo
@@ -322,7 +339,7 @@ MainWindow
     anchors.left: parent.left
     anchors.top: prev.bottom
     anchors.right: parent.right
-    margin-top: 5
+    margin-top: 10
 
   ClearImbue
     id: clearImbue
@@ -330,17 +347,31 @@ MainWindow
     anchors.top: emptyImbue.top
     anchors.right: parent.right
 
+  ThickOutsetLabel
+    id: tooltip
+    anchors.top: prev.bottom
+    margin-top: 10
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 75
+
+  HorizontalSeparator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin-bottom: 10
+
   Button
     id: close
     !text: tr('Close')
-    width: 50
+    size: 45 21
     anchors.right: parent.right
     anchors.bottom: parent.bottom
+    font: cipsoftFont
     @onClick: modules.game_imbuing.hide()
 
-  Label
+  GoldLabel
     id: balance
-    height: 25
-    anchors.right: prev.left
+    size: 105 21
     anchors.left: parent.left
     anchors.bottom: parent.bottom
