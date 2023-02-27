@@ -68,7 +68,7 @@ void Container::onAddItem(const ItemPtr& item, int slot)
 
     if(slot == 0)
         m_items.push_front(item);
-    else
+    else if (slot > 0 && m_items.size() <= m_capacity - 1)
         m_items.push_back(item);
     updateItemsPositions();
 
