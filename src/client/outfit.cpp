@@ -153,7 +153,21 @@ void Outfit::draw(Point dest, Otc::Direction direction, uint walkAnimationPhase,
             }
 
             dest -= mountType->getDisplacement() * g_sprites.getOffsetFactor();
-            mountType->draw(dest, 0, direction, 0, 0, mountAnimationPhase, Color::white, lightView);
+            if (type->hasBones() && mountType->hasBones()) {
+                auto mountDest = dest;
+                auto outfitBones = type->getBones(direction);
+                auto outfitWidth = type->getWidth();
+                auto mountWidth = mountType->getWidth();
+                int bonusOffset = std::abs(mountWidth - outfitWidth) * 32;
+                auto mountBones = mountType->getBones(direction);
+                auto boneOffset = Point((outfitBones.x - mountBones.x) + bonusOffset, (outfitBones.y - mountBones.y) + bonusOffset);
+
+                mountDest = dest + boneOffset * g_sprites.getOffsetFactor();
+                mountType->draw(mountDest, 0, direction, 0, 0, mountAnimationPhase, Color::white, lightView);
+            }
+            else {
+                mountType->draw(dest, 0, direction, 0, 0, mountAnimationPhase, Color::white, lightView);
+            }
             dest += type->getDisplacement() * g_sprites.getOffsetFactor();
         }
     };
