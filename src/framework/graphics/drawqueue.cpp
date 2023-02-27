@@ -253,6 +253,7 @@ void DrawQueue::correctOutfit(const Rect& dest, int fromPos, bool oldScaling)
 
                 if (texture->m_doCenter) {
                     centerX = std::max<int>(centerX, texture->m_dest.center().x);
+                    centerY = std::max<int>(centerY, texture->m_dest.center().y);
                 }
             }
             else if (DrawQueueItemTexturedRect* texture = dynamic_cast<DrawQueueItemTexturedRect*>(m_queue[i])) {
