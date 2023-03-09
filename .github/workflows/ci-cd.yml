@@ -326,7 +326,7 @@ jobs:
         repository: OTCv8/otclientv8
         path: otclientv8
         submodules: recursive
-        token: "${{ secrets.otcv8_token }}"
+        token: "${{ secrets.GITHUB_TOKEN }}"
 
     - name: Update public otclientv8 files
       run: |
