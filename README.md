@@ -14,7 +14,7 @@ Check Actions tab to see test results or to download latest binaries. ![Workflow
 
 ### Automatic
 
-You can clone repoistory and use github action build-on-request workload.
+You can clone repository and use github action build-on-request workload.
 
 ### Windows
 
