@@ -28,6 +28,7 @@
 #include <framework/graphics/atlas.h>
 #include <framework/util/crypt.h>
 #include <framework/util/pngunpacker.h>
+#include "spriteappearances.h"
 
 SpriteManager g_sprites;
 
@@ -304,6 +305,10 @@ void SpriteManager::unload()
 
 ImagePtr SpriteManager::getSpriteImage(int id)
 {
+    if(g_game.getClientVersion() >= 1281) {
+        return g_spriteAppearances.getSpriteImage(id);
+    }
+
     if (m_isHdMod) {
         return getSpriteImageHd(id);
     }

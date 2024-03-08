@@ -200,6 +200,10 @@ private:
     double m_stamina;
     double m_regenerationTime;
     double m_offlineTrainingTime;
+
+    double m_normalCoin = 0;
+    double m_transferCoin = 0;
+    double m_auctionCoin = 0;
 };
 
 #endif

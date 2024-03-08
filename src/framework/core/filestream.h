@@ -76,6 +76,8 @@ public:
 
     FileStreamPtr asFileStream() { return static_self_cast<FileStream>(); }
 
+    std::string getStrData() { return m_strData; }
+
 private:
     bool initFromGzip(const std::string& buffer);
     void checkWrite();
@@ -87,7 +89,7 @@ private:
     bool m_writeable;
     bool m_caching;
 
-    DataBuffer<uint8_t> m_data;
+    DataBuffer<uint8_t> m_data; 
     std::string m_strData;
 };
 

@@ -387,6 +387,9 @@
     <ClCompile Include="..\src\client\game.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\client\protobuf\appearances.pb.cc">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\client\houses.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
@@ -1126,6 +1129,9 @@
     </ClInclude>
     <ClInclude Include="..\src\framework\util\pngunpacker.h">
       <Filter>Header Files\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\client\protobuf\appearances.pb.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

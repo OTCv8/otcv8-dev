@@ -63,6 +63,9 @@ public:
 
     static ImagePtr fromQRCode(const std::string& code, int border);
 
+    void flipVertically();
+    void reverseChannels(); // argb -> bgra or bgra -> argb
+
 private:
     std::vector<uint8> m_pixels;
     Size m_size;

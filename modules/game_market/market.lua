@@ -490,13 +490,13 @@ local function updateSelectedItem(widget)
     clearOffers()
 
     Market.enableCreateOffer(true) -- update offer types
-    MarketProtocol.sendMarketBrowse(selectedItem.item.marketData.tradeAs) -- send browsed msg
+    MarketProtocol.sendMarketBrowse(MarketRequest.MyItems, selectedItem.item.marketData.tradeAs) -- send browsed msg
   else
     Market.clearSelectedItem()
   end
 end
 
-local function updateBalance(balance)
+function Market.updateBalance(balance)
   local balance = tonumber(balance)
   if not balance then
     return
@@ -598,7 +598,7 @@ local function openAmountWindow(callback, actionType, actionText)
 end
 
 local function onSelectSellOffer(table, selectedRow, previousSelectedRow)
-  updateBalance()
+  Market.updateBalance()
   for _, offer in pairs(marketOffers[MarketAction.Sell]) do
     if offer:isEqual(selectedRow.ref) then
       selectedOffer[MarketAction.Buy] = offer
@@ -627,7 +627,7 @@ local function onSelectSellOffer(table, selectedRow, previousSelectedRow)
 end
 
 local function onSelectBuyOffer(table, selectedRow, previousSelectedRow)
-  updateBalance()
+  Market.updateBalance()
   for _, offer in pairs(marketOffers[MarketAction.Buy]) do
     if offer:isEqual(selectedRow.ref) then
       selectedOffer[MarketAction.Sell] = offer
@@ -1356,27 +1356,19 @@ end
 
 -- protocol callback functions
 
-function Market.onMarketEnter(depotItems, offers, balance, vocation, items)
-  if not loaded or (items and #items > 0) then
-    initMarketItems(items)
+function Market.onMarketEnter(depotItems, offers)
+  if not loaded then
+    initMarketItems(nil)
     loaded = true
   end
 
-  updateBalance(balance)
   averagePrice = 0
 
   information.totalOffers = offers
   local player = g_game.getLocalPlayer()
   if player then
     information.player = player
-  end
-  if vocation == -1 then
-    if player then
-      information.vocation = player:getVocation()
-    end
-  else
-    -- vocation must be compatible with < 950
-    information.vocation = vocation
+    information.vocation = player:getVocation()
   end
 
   -- set list of depot items

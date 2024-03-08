@@ -31,7 +31,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='OpenGL|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <WholeProgramOptimization>PGOptimize</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
@@ -39,7 +39,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DirectX|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <WholeProgramOptimization>PGOptimize</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
@@ -47,7 +47,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_lib|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
@@ -55,7 +55,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
@@ -133,17 +133,18 @@
       <ConformanceMode>true</ConformanceMode>
       <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
       <LanguageStandard>stdcpp17</LanguageStandard>
+  
       <EnableModules>false</EnableModules>
       <StringPooling>true</StringPooling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ControlFlowGuard>Guard</ControlFlowGuard>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\vcpkg\packages\protobuf_x86-windows-static\include;E:\vcpkg\packages\nlohmann-json_x86-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <OmitFramePointers>false</OmitFramePointers>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DisableSpecificWarnings>4834</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4834;4251</DisableSpecificWarnings>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
     </ClCompile>
     <Link>
@@ -179,13 +180,13 @@
       <StringPooling>true</StringPooling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ControlFlowGuard>Guard</ControlFlowGuard>
-      <AdditionalIncludeDirectories>$(ProjectDir)angle\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\vcpkg\packages\protobuf_x86-windows-static\include;E:\vcpkg\packages\nlohmann-json_x86-windows/include;$(ProjectDir)angle\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <OmitFramePointers>false</OmitFramePointers>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DisableSpecificWarnings>4326</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4326;4251</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -224,13 +225,13 @@
       <StringPooling>true</StringPooling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ControlFlowGuard>Guard</ControlFlowGuard>
-      <AdditionalIncludeDirectories>$(ProjectDir)angle\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\vcpkg\packages\protobuf_x86-windows-static\include;E:\vcpkg\packages\nlohmann-json_x86-windows\include;$(ProjectDir)angle\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <OmitFramePointers>false</OmitFramePointers>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DisableSpecificWarnings>4326</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4326;4251</DisableSpecificWarnings>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <PreprocessToFile>false</PreprocessToFile>
@@ -254,7 +255,7 @@
     </ResourceCompile>
     <Lib>
       <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
-      <AdditionalDependencies>$(ProjectDir)angle\lib\libGLESv2.dll.lib;$(ProjectDir)angle\lib\libEGL.dll.lib;vorbis.lib;ogg.lib;bz2d.lib;zip.lib;libssl.lib;OpenAL32.lib;lzma.lib;vorbisfile.lib;zlibd.lib;libcrypto.lib;physfs-static.lib;lua51.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)angle\lib\libGLESv2.dll.lib;$(ProjectDir)angle\lib\libEGL.dll.lib;vorbis.lib;ogg.lib;bz2d.lib;zip.lib;libssl.lib;OpenAL32.lib;lzma.lib;vorbisfile.lib;zlibd.lib;libcrypto.lib;physfs-static.lib;lua51.lib;E:\vcpkg\packages\protobuf_x86-windows-static\debug\lib\libprotobufd.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>D:\a\otclient\vcpkg\installed\x86-windows-static\debug\lib</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Lib>
@@ -283,13 +284,13 @@
       <StringPooling>true</StringPooling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <ControlFlowGuard>Guard</ControlFlowGuard>
-      <AdditionalIncludeDirectories>$(ProjectDir)angle\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\vcpkg\packages\protobuf_x86-windows-static\include;E:\vcpkg\packages\nlohmann-json_x86-windows\include;$(ProjectDir)angle\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <OmitFramePointers>false</OmitFramePointers>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DisableSpecificWarnings>4326</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4326;4251</DisableSpecificWarnings>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <PreprocessToFile>false</PreprocessToFile>
@@ -305,7 +306,7 @@
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <PreventDllBinding>true</PreventDllBinding>
       <RegisterOutput>false</RegisterOutput>
-      <AdditionalDependencies>$(ProjectDir)..\otclient_debug_lib.lib;advapi32.lib;ole32.lib;bcrypt.lib;crypt32.lib;dbghelp.lib;gdi32.lib;psapi.lib;shell32.lib;user32.lib;winmm.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)..\otclient_debug_lib.lib;advapi32.lib;ole32.lib;bcrypt.lib;crypt32.lib;dbghelp.lib;gdi32.lib;psapi.lib;shell32.lib;user32.lib;winmm.lib;E:\vcpkg\packages\protobuf_x86-windows-static\debug\lib\libprotobufd.lib</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AdditionalOptions>/VERBOSE:LIB %(AdditionalOptions)</AdditionalOptions>
     </Link>
@@ -323,6 +324,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\src\client\animator.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='OpenGL|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_lib|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\client\spriteappearances.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='OpenGL|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_lib|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -948,6 +954,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_lib|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\src\framework\protobuf\appearances.pb.cc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_lib|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\protobuf\shared.pb.cc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_lib|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\src\main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='OpenGL|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_lib|Win32'">true</ExcludedFromBuild>
@@ -957,6 +971,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\client\animatedtext.h" />
     <ClInclude Include="..\src\client\animator.h" />
+    <ClInclude Include="..\src\client\spriteappearances.h" />
     <ClInclude Include="..\src\client\client.h" />
     <ClInclude Include="..\src\client\const.h" />
     <ClInclude Include="..\src\client\container.h" />
@@ -1142,6 +1157,8 @@
     <ClInclude Include="..\src\framework\util\stats.h" />
     <ClInclude Include="..\src\framework\xml\tinystr.h" />
     <ClInclude Include="..\src\framework\xml\tinyxml.h" />
+    <ClInclude Include="..\src\framework\protobuf\appearances.pb.h" />
+    <ClInclude Include="..\src\framework\protobuf\shared.pb.h" />
     <ClInclude Include="..\src\resource.h" />
   </ItemGroup>
   <ItemGroup>

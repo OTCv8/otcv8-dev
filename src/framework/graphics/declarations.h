@@ -37,6 +37,7 @@ class FrameBufferManager;
 class Shader;
 class ShaderProgram;
 class PainterShaderProgram;
+class SpriteSheet;
 
 typedef stdext::shared_object_ptr<Image> ImagePtr;
 typedef stdext::shared_object_ptr<Texture> TexturePtr;
@@ -48,5 +49,6 @@ typedef stdext::shared_object_ptr<Shader> ShaderPtr;
 typedef stdext::shared_object_ptr<ShaderProgram> ShaderProgramPtr;
 typedef stdext::shared_object_ptr<PainterShaderProgram> PainterShaderProgramPtr;
 typedef std::vector<ShaderPtr> ShaderList;
+typedef stdext::shared_object_ptr<SpriteSheet> SpriteSheetPtr;
 
 #endif

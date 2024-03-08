@@ -304,3 +304,26 @@ ImagePtr Image::fromQRCode(const std::string& code, int border)
     }
     return image;
 }
+
+void Image::flipVertically()
+{
+    uint rowIncrement = m_size.height() * m_bpp;
+    uint8* pixelData = m_pixels.data();
+
+    for(int y = 0; y < (getHeight() / 2); ++y) {
+        uint8* itr1 = &pixelData[y * rowIncrement];
+        uint8* itr2 = &pixelData[(m_size.height() - y - 1) * rowIncrement];
+
+        for(std::size_t x = 0; x < rowIncrement; ++x) {
+            std::swap(*(itr1 + x), *(itr2 + x));
+        }
+    }
+}
+
+void Image::reverseChannels()
+{
+    uint8* pixelData = m_pixels.data();
+    for(uint8* itr = pixelData; itr < pixelData + m_pixels.size(); itr += m_bpp) {
+        std::swap(*(itr + 0), *(itr + 2));
+    }
+}

@@ -50,6 +50,7 @@
 #include "uisprite.h"
 #include "outfit.h"
 #include "healthbars.h"
+#include "spriteappearances.h"
 
 #include <framework/luaengine/luainterface.h>
 
@@ -57,6 +58,7 @@ void Client::registerLuaFunctions()
 {
     g_lua.registerSingletonClass("g_things");
     g_lua.bindSingletonFunction("g_things", "loadDat", &ThingTypeManager::loadDat, &g_things);
+    g_lua.bindSingletonFunction("g_things", "loadAppearances", &ThingTypeManager::loadAppearances, &g_things);
 #ifdef WITH_ENCRYPTION
     g_lua.bindSingletonFunction("g_things", "saveDat", &ThingTypeManager::saveDat, &g_things);
     g_lua.bindSingletonFunction("g_things", "dumpTextures", &ThingTypeManager::dumpTextures, &g_things);
@@ -112,6 +114,10 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_sprites", "isLoaded", &SpriteManager::isLoaded, &g_sprites);
     g_lua.bindSingletonFunction("g_sprites", "getSprSignature", &SpriteManager::getSignature, &g_sprites);
     g_lua.bindSingletonFunction("g_sprites", "getSpritesCount", &SpriteManager::getSpritesCount, &g_sprites);
+
+    g_lua.registerSingletonClass("g_spriteAppearances");
+    g_lua.bindSingletonFunction("g_spriteAppearances", "saveSpriteToFile", &SpriteAppearances::saveSpriteToFile, &g_spriteAppearances);
+    g_lua.bindSingletonFunction("g_spriteAppearances", "saveSheetToFileBySprite", &SpriteAppearances::saveSheetToFileBySprite, &g_spriteAppearances);
 
     g_lua.registerSingletonClass("g_map");
     g_lua.bindSingletonFunction("g_map", "isLookPossible", &Map::isLookPossible, &g_map);
@@ -651,6 +657,13 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<ThingType>("getSprites", &ThingType::getSprites);
     g_lua.bindClassMemberFunction<ThingType>("hasAttribute", &ThingType::hasAttr);
     g_lua.bindClassMemberFunction<ThingType>("exportImage", &ThingType::exportImage);
+    g_lua.bindClassMemberFunction<ThingType>("getClassification", &ThingType::getClassification);
+    g_lua.bindClassMemberFunction<ThingType>("isPodium", &ThingType::isPodium);
+    g_lua.bindClassMemberFunction<ThingType>("hasClockExpire", &ThingType::hasClockExpire);
+    g_lua.bindClassMemberFunction<ThingType>("hasExpire", &ThingType::hasExpire);
+    g_lua.bindClassMemberFunction<ThingType>("hasExpireStop", &ThingType::hasExpireStop);
+    g_lua.bindClassMemberFunction<ThingType>("hasWearOut", &ThingType::hasWearOut);
+    g_lua.bindClassMemberFunction<ThingType>("isDecoKit", &ThingType::isDecoKit);
 
     g_lua.registerClass<Item, Thing>();
     g_lua.bindClassStaticFunction<Item>("create", &Item::create);

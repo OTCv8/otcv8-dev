@@ -39,6 +39,7 @@ public:
     bool isNull() const { return wd==0 && ht==0; }
     bool isEmpty() const { return wd<1 || ht<1; }
     bool isValid() const { return wd>=0 && ht>=0; }
+    bool isUnset() const { return wd == -1 && ht == -1; }
 
     T width() const { return wd; }
     T height() const { return ht; }

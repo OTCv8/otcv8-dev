@@ -56,9 +56,9 @@ Skill = {
   CriticalChance = 7,
   CriticalDamage = 8,
   LifeLeechChance = 9,
-  LifeLeechAmount = 10,
-  ManaLeechChance = 11,
-  ManaLeechAmount = 12
+  --LifeLeechAmount = 10,
+  ManaLeechChance = 10,
+  --ManaLeechAmount = 12
 }
 
 North = Directions.North
@@ -70,7 +70,7 @@ SouthEast = Directions.SouthEast
 SouthWest = Directions.SouthWest
 NorthWest = Directions.NorthWest
 
-FightOffensive = 1
+FightOffensive = 1 
 FightBalanced = 2
 FightDefensive = 3
 
@@ -282,7 +282,13 @@ MessageModes = {
   RVRContinue             = 49,
   GameHighlight           = 50,
   NpcFromStartBlock       = 51,
-  Last                    = 52,
+  Attention               = 52,
+  BoostedCreature         = 53,
+  OfflineTraining         = 54,
+  Transaction             = 55,
+  Potion                  = 56,
+
+  Last                    = 57,
   Invalid                 = 255,
 }
 

@@ -2,6 +2,9 @@ MarketProtocol = {}
 
 -- private functions
 
+local moneyAttribute = 0;
+local balanceAttribute = 0
+
 local silent
 local protocol
 local statistics = runinsandbox('offerstatistic')
@@ -12,25 +15,23 @@ local function send(msg)
   end
 end
 
-local function readMarketOffer(msg, action, var)
+local function readMarketOffer(msg, action, var, itemId)
   local timestamp = msg:getU32()
   local counter = msg:getU16()
-
-  local itemId = 0
-  if var == MarketRequest.MyOffers or var == MarketRequest.MyHistory then
+  if var ~= MarketRequest.MyItems then
     itemId = msg:getU16()
-  else
-    itemId = var
+    local type = g_things.getThingType(itemId, ThingCategoryItem)
+    if (type ~= nil and type:getClassification() > 0) then
+      msg:getU8()
+    end
   end
-
   local amount = msg:getU16()
-  local price = msg:getU32()
+  local price = msg:getU64()
   local playerName
   local state = MarketOfferState.Active
   if var == MarketRequest.MyHistory then
     state = msg:getU8()
-  elseif var == MarketRequest.MyOffers then
-  else
+  elseif var == MarketRequest.MyItems then
     playerName = msg:getString()
   end
 
@@ -39,47 +40,22 @@ end
 
 -- parsing protocols
 local function parseMarketEnter(protocol, msg)
-  local items
-  if g_game.getClientVersion() < 944 then
-    items = {}
-    local itemsCount = msg:getU16()
-    for i = 1, itemsCount do
-      local itemId = msg:getU16()
-      local category = msg:getU8()
-      local name = msg:getString()
-      table.insert(items, {
-        id = itemId,
-        category = category,
-        name = name
-      })
-    end    
-  end
-  
-  local balance = 0
-  if g_game.getProtocolVersion() <= 1250 or not g_game.getFeature(GameTibia12Protocol) then
-    if g_game.getProtocolVersion() >= 981 or g_game.getProtocolVersion() < 944 then
-      balance = msg:getU64()
-    else
-      balance = msg:getU32()
-    end
-  end
-  
-  local vocation = -1
-  if g_game.getProtocolVersion() >= 944 and g_game.getProtocolVersion() < 950 then
-    vocation = msg:getU8() -- get vocation id
-  end
   local offers = msg:getU8()
 
   local depotItems = {}
   local depotCount = msg:getU16()
   for i = 1, depotCount do
     local itemId = msg:getU16() -- item id
+    local type = g_things.getThingType(itemId, ThingCategoryItem)
+    if (type ~= nil and type:getClassification() > 0) then
+      msg:getU8()
+    end
     local itemCount = msg:getU16() -- item count
 
     depotItems[itemId] = itemCount
   end
 
-  signalcall(Market.onMarketEnter, depotItems, offers, balance, vocation, items)
+  signalcall(Market.onMarketEnter, depotItems, offers)
   return true
 end
 
@@ -90,6 +66,10 @@ end
 
 local function parseMarketDetail(protocol, msg)
   local itemId = msg:getU16()
+  local type = g_things.getThingType(itemId, ThingCategoryItem)
+  if (type ~= nil and type:getClassification() > 0) then
+    msg:getU8()
+  end
 
   local descriptions = {}
   for i = MarketItemDescription.First, MarketItemDescription.Last do
@@ -100,23 +80,15 @@ local function parseMarketDetail(protocol, msg)
     end
   end
 
-  if g_game.getProtocolVersion() >= 1100 then -- imbuements
-    if msg:peekU16() ~= 0x00 then
-      table.insert(descriptions, {MarketItemDescription.Last + 1, msg:getString()})
-    else
-      msg:getU16()
-    end  
-  end
-
   local time = (os.time() / 1000) * statistics.SECONDS_PER_DAY;
 
   local purchaseStats = {}
   local count = msg:getU8()
   for i=1, count do
     local transactions = msg:getU32() -- transaction count
-    local totalPrice = msg:getU32() -- total price
-    local highestPrice = msg:getU32() -- highest price
-    local lowestPrice = msg:getU32() -- lowest price
+    local totalPrice = msg:getU64() -- total price
+    local highestPrice = msg:getU64() -- highest price
+    local lowestPrice = msg:getU64() -- lowest price
 
     local tmp = time - statistics.SECONDS_PER_DAY
     table.insert(purchaseStats, OfferStatistic.new(tmp, MarketAction.Buy, transactions, totalPrice, highestPrice, lowestPrice))
@@ -126,9 +98,9 @@ local function parseMarketDetail(protocol, msg)
   count = msg:getU8()
   for i=1, count do
     local transactions = msg:getU32() -- transaction count
-    local totalPrice = msg:getU32() -- total price
-    local highestPrice = msg:getU32() -- highest price
-    local lowestPrice = msg:getU32() -- lowest price
+    local totalPrice = msg:getU64() -- total price
+    local highestPrice = msg:getU64() -- highest price
+    local lowestPrice = msg:getU64() -- lowest price
 
     local tmp = time - statistics.SECONDS_PER_DAY
     table.insert(saleStats, OfferStatistic.new(tmp, MarketAction.Sell, transactions, totalPrice, highestPrice, lowestPrice))
@@ -139,19 +111,24 @@ local function parseMarketDetail(protocol, msg)
 end
 
 local function parseMarketBrowse(protocol, msg)
-  local var = msg:getU16()
+  local itemId = 0
   local offers = {}
-
+  local var = msg:getU8()
+  if (var == MarketRequest.MyItems) then
+    itemId = msg:getU16()
+    local type = g_things.getThingType(itemId, ThingCategoryItem)
+    if (type ~= nil and type:getClassification() > 0) then
+      msg:getU8()
+    end
+  end
   local buyOfferCount = msg:getU32()
   for i = 1, buyOfferCount do
-    table.insert(offers, readMarketOffer(msg, MarketAction.Buy, var))
+    table.insert(offers, readMarketOffer(msg, MarketAction.Buy, var, itemId))
   end
-
   local sellOfferCount = msg:getU32()
   for i = 1, sellOfferCount do
-    table.insert(offers, readMarketOffer(msg, MarketAction.Sell, var))
+    table.insert(offers, readMarketOffer(msg, MarketAction.Sell, var, itemId))
   end
-
   signalcall(Market.onMarketBrowse, offers, var)
   return true
 end
@@ -159,6 +136,7 @@ end
 -- public functions
 function initProtocol()
   connect(g_game, { onGameStart = MarketProtocol.registerProtocol,
+                    onResourceBalance = MarketProtocol.onResourceBalance,
                     onGameEnd = MarketProtocol.unregisterProtocol })
 
   -- reloading module
@@ -171,6 +149,7 @@ end
 
 function terminateProtocol()
   disconnect(g_game, { onGameStart = MarketProtocol.registerProtocol,
+                       onResourceBalance = MarketProtocol.onResourceBalance,
                        onGameEnd = MarketProtocol.unregisterProtocol })
 
   -- reloading module
@@ -180,6 +159,18 @@ end
 
 function MarketProtocol.updateProtocol(_protocol)
   protocol = _protocol
+end
+
+function MarketProtocol.onResourceBalance(type, balance)
+  if type == 0 then -- bank gold
+    balanceAttribute = balance
+  elseif type == 1 then -- inventory gold
+    moneyAttribute = balance
+  else
+    return
+  end
+
+  Market.updateBalance(balanceAttribute + moneyAttribute)
 end
 
 function MarketProtocol.registerProtocol()
@@ -218,11 +209,18 @@ function MarketProtocol.sendMarketLeave()
   end
 end
 
-function MarketProtocol.sendMarketBrowse(browseId)
+function MarketProtocol.sendMarketBrowse(var, itemId)
   if g_game.getFeature(GamePlayerMarket) then
     local msg = OutputMessage.create()
     msg:addU8(ClientOpcodes.ClientMarketBrowse)
-    msg:addU16(browseId)
+    msg:addU8(var)
+    if (var == MarketRequest.MyItems) then
+      msg:addU16(itemId)
+      local type = g_things.getThingType(itemId, ThingCategoryItem)
+      if (type ~= nil and type:getClassification() > 0) then
+        msg:addU8(0)
+      end
+    end
     send(msg)
   else
     g_logger.error('MarketProtocol.sendMarketBrowse does not support the current protocol.')

@@ -166,6 +166,7 @@ private:
     void parseMessage(const InputMessagePtr& msg);
     void parsePendingGame(const InputMessagePtr& msg);
     void parseEnterGame(const InputMessagePtr& msg);
+    void parseBugReportAllow(const InputMessagePtr& msg);
     void parseLogin(const InputMessagePtr& msg);
     void parseGMActions(const InputMessagePtr& msg);
     void parseUpdateNeeded(const InputMessagePtr& msg);
@@ -258,6 +259,12 @@ private:
     void parseQuestLine(const InputMessagePtr& msg);
     void parseChannelEvent(const InputMessagePtr& msg);
     void parseItemInfo(const InputMessagePtr& msg);
+    void parseCreatureData(const InputMessagePtr& msg);
+    void parsePlayerBestiaryTracker(const InputMessagePtr& msg);
+    void parsePlayerPassiveData(const InputMessagePtr& msg);
+    void parsePlayerBosstiaryStatic(const InputMessagePtr& msg);
+    void parsePlayerBosstiaryTracker(const InputMessagePtr& msg);
+    void parsePlayerInventoryImbuements(const InputMessagePtr& msg);
     void parsePlayerInventory(const InputMessagePtr& msg);
     void parseModalDialog(const InputMessagePtr& msg);
     void parseClientCheck(const InputMessagePtr& msg);
@@ -287,6 +294,7 @@ private:
     void parseLootTracker(const InputMessagePtr& msg);
     void parseItemDetail(const InputMessagePtr& msg);
     void parseHunting(const InputMessagePtr& msg);
+    void parseHuntingStatic(const InputMessagePtr& msg);
     void parseExtendedOpcode(const InputMessagePtr& msg);
     void parseChangeMapAwareRange(const InputMessagePtr& msg);
     void parseProgressBar(const InputMessagePtr& msg);

@@ -351,6 +351,10 @@ void ProtocolGame::sendEquipItem(int itemId, int countOrSubType)
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientEquipItem);
     msg->addU16(itemId);
+    ThingType* type = g_things.rawGetThingType(itemId, ThingCategoryItem);
+    if (type && type->getClassification() > 0) {
+        msg->addU8(0); // Tier
+    }
     if (g_game.getFeature(Otc::GameCountU16))
         msg->addU16(countOrSubType);
     else
@@ -391,9 +395,10 @@ void ProtocolGame::sendBuyItem(int itemId, int subType, int amount, bool ignoreC
     msg->addU8(Proto::ClientBuyItem);
     msg->addU16(itemId);
     msg->addU8(subType);
-    msg->addU8(amount);
+    msg->addU16(amount);
     msg->addU8(ignoreCapacity ? 0x01 : 0x00);
     msg->addU8(buyWithBackpack ? 0x01 : 0x00);
+    msg->addU8(0);
     send(msg);
 }
 
@@ -1024,6 +1029,7 @@ void ProtocolGame::sendSeekInContainer(int cid, int index)
     msg->addU8(Proto::ClientSeekInContainer);
     msg->addU8(cid);
     msg->addU16(index);
+    msg->addU8(0); // Filter
     send(msg);
 }
 

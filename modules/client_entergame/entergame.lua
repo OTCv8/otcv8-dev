@@ -15,7 +15,7 @@ local serverSelector
 local clientVersionSelector
 local serverHostTextEdit
 local rememberPasswordBox
-local protos = {"740", "760", "772", "792", "800", "810", "854", "860", "870", "910", "961", "1000", "1077", "1090", "1096", "1098", "1099", "1100", "1200", "1220"}
+local protos = {"1332"}
 
 local checkedByUpdater = {}
 local waitingForHttpResults = 0
@@ -132,15 +132,13 @@ local function onTibia12HTTPResult(session, playdata)
   end
     
   local things = {
-    data = {G.clientVersion .. "/Tibia.dat", ""},
-    sprites = {G.clientVersion .. "/Tibia.cwm", ""},
+    catalog = {G.clientVersion .. "/catalog-content.json", ""}
   }
 
   local incorrectThings = validateThings(things)
   if #incorrectThings > 0 then
     things = {
-      data = {G.clientVersion .. "/Tibia.dat", ""},
-      sprites = {G.clientVersion .. "/Tibia.spr", ""},
+      catalog = {G.clientVersion .. "/catalog-content.json", ""}
     }  
     incorrectThings = validateThings(things)
   end
@@ -194,10 +192,7 @@ local function onTibia12HTTPResult(session, playdata)
   g_game.chooseRsa(G.host)
   g_game.setClientVersion(G.clientVersion)
   g_game.setProtocolVersion(g_game.getClientProtocolVersion(G.clientVersion))
-  g_game.setCustomOs(-1) -- disable
-  if not g_game.getFeature(GameExtendedOpcode) then
-    g_game.setCustomOs(5) -- set os to windows if opcodes are disabled
-  end
+  g_game.setCustomOs(5) -- set os to windows if opcodes are disabled
   
   onCharacterList(nil, characters, account, nil)  
 end
@@ -475,6 +470,7 @@ function EnterGame.doLogin(account, password, token, host)
   local things = {
     data = {G.clientVersion .. "/Tibia.dat", ""},
     sprites = {G.clientVersion .. "/Tibia.cwm", ""},
+    appearances = {G.clientVersion .. "/appearances.dat", ""}
   }
   
   local incorrectThings = validateThings(things)
@@ -482,6 +478,7 @@ function EnterGame.doLogin(account, password, token, host)
     things = {
       data = {G.clientVersion .. "/Tibia.dat", ""},
       sprites = {G.clientVersion .. "/Tibia.spr", ""},
+      appearances = {G.clientVersion .. "/appearances.dat", ""}
     }  
     incorrectThings = validateThings(things)
   end
@@ -520,11 +517,8 @@ function EnterGame.doLogin(account, password, token, host)
   g_game.setClientVersion(G.clientVersion)
   g_game.setProtocolVersion(g_game.getClientProtocolVersion(G.clientVersion))
   g_game.setCustomProtocolVersion(0)
-  g_game.setCustomOs(-1) -- disable
   g_game.chooseRsa(G.host)
-  if #server_params <= 3 and not g_game.getFeature(GameExtendedOpcode) then
-    g_game.setCustomOs(2) -- set os to windows if opcodes are disabled
-  end
+  g_game.setCustomOs(5) -- set os to windows
 
   -- extra features from init.lua
   for i = 4, #server_params do
@@ -580,8 +574,11 @@ function EnterGame.doLoginHttp()
       end
     else
       waitingForHttpResults = 1
-      HTTP.postJSON(G.host, data, onHTTPResult)    
+      HTTP.postJSON(G.host, data, onHTTPResult)
     end
+  else
+    waitingForHttpResults = 1
+    HTTP.postJSON(G.host, data, onHTTPResult)
   end
   EnterGame.hide()
 end

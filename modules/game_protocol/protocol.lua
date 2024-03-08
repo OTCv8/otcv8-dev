@@ -14,17 +14,11 @@ local ServerPackets = {
 	BestiaryTracker = 0xd9,
 	BestiaryTrackerTab = 0xB9,
 	OpenStashSupply = 0x29,
-	UpdateLootTracker = 0xCF,
-	UpdateTrackerAnalyzer = 0xCC,
-	UpdateSupplyTracker = 0xCE,
-	KillTracker = 0xD1,
 	SpecialContainer = 0x2A,
 	isUpdateCoinBalance = 0xF2,
-	UpdateCoinBalance = 0xDF,
 	PartyAnalyzer = 0x2B,
 	GameNews = 0x98,
 	ClientCheck = 0x63,
-	LootStats = 0xCF,
 	LootContainer = 0xC0,
 	TournamentLeaderBoard = 0xC5,
 	CyclopediaCharacterInfo = 0xDA,
@@ -528,16 +522,6 @@ function registerProtocol()
 	end
   end)
 
-  registerOpcode(ServerPackets.UpdateCoinBalance, function(protocol, msg)
-	msg:getU8() -- Is updating
-	msg:getU32() -- Normal coin
-	msg:getU32() -- Transferable coin
-	if g_game.getProtocolVersion() >= 1220 then
-		msg:getU32() -- Reserved auction coin
-		msg:getU32() -- Tournament coin
-	end
-  end)
-
   registerOpcode(ServerPackets.isUpdateCoinBalance, function(protocol, msg)
 	msg:getU8() -- Is updating
   end)
@@ -547,42 +531,6 @@ function registerProtocol()
 	local marketMenu = msg:getU8() -- ('Show in market')
   end)
 
-  registerOpcode(ServerPackets.KillTracker, function(protocol, msg)
-	msg:getString() -- Name
-	msg:getU16() -- lookType
-	msg:getU8() -- lookHead
-	msg:getU8() -- lookBody
-	msg:getU8() -- lookLegs
-	msg:getU8() -- lookFeet
-	msg:getU8() -- lookAddons
-	local size = msg:getU8() -- Corpse size
-	if size > 0 then
-		for i = 1, size do
-			readAddItem(msg)
-		end
-	end
-  end)
-
-  registerOpcode(ServerPackets.UpdateSupplyTracker, function(protocol, msg)
-	msg:getU16() -- Item client ID
-  end)
-
-  registerOpcode(ServerPackets.UpdateTrackerAnalyzer, function(protocol, msg)
-	local type = msg:getU8()
-	msg:getU32() -- Amount
-	if type > 0 then -- ANALYZER_DAMAGE_DEALT
-		msg:getU8() -- Element
-		if type > 1 then -- 
-			msg:getString() -- Target
-		end
-	end
-  end)
-  
-  registerOpcode(ServerPackets.UpdateLootTracker, function(protocol, msg)
-	readAddItem(msg)
-	msg:getString() -- Item name
-  end)
-  
   registerOpcode(ServerPackets.OpenStashSupply, function(protocol, msg)
     local count = msg:getU16() -- List size
     for i = 1, count do
@@ -650,30 +598,66 @@ function registerProtocol()
 end
 
 function readAddItem(msg)
-	msg:getU16() -- Item client ID
- 
-	if g_game.getProtocolVersion() < 1150 then
-		msg:getU8() -- Unmarked
-	end
+	local id = msg:getU16() -- Item client ID
+	local thingType = g_things.getThingType(id, ThingCategoryItem)
+	if not(thingType) then
+		return
+	end	
 
-	local var = msg:getU8()
-	if g_game.getProtocolVersion() > 1150 then
+	if thingType:isStackable() then
+		msg:getU8()
+	elseif thingType:isFluidContainer() or thingType:isSplash() then
+		msg:getU8()
+	elseif thingType:isContaienr() then
+		local var = msg:getU8()
 		if var == 1 then
-			msg:getU32() -- Loot flag
+			msg:getU32()
+		end
+		var = msg:getU8()
+		if var == 1 then
+			msg:getU32()
+		end
+	elseif thingType:hasAttribute(40) then
+		local look = msg:getU16()
+		if (look ~= 0) then
+			msg:getU8()
+			msg:getU8()
+			msg:getU8()
+			msg:getU8()
+			msg:getU8()
+		else
+			msg:getU16()
 		end
 
-		if g_game.getProtocolVersion() >= 1260 then
-			local isQuiver = msg:getU8()
-			if isQuiver == 1 then
-				msg:getU32() -- Quiver count
-			end
+		local mount = msg:getU16()
+		if (mount ~= 0) then
+			msg:getU8()
+			msg:getU8()
+			msg:getU8()
+			msg:getU8()
 		end
-	else
+
+		msg:getU8()
+		msg:getU8()
+	elseif thingType:hasAttribute(41) then
+		msg:getU32()
+		msg:getU8()
+	elseif thingType:hasAttribute(42) then
+		msg:getU32()
+		msg:getU8()
+	elseif thingType:hasAttribute(43) then
+		msg:getU32()
+		msg:getU8()
+	elseif thingType:hasAttribute(44) then
+		msg:getU32()
 		msg:getU8()
 	end
 end
 
 function unregisterProtocol()
+	if (code == nil) then
+		return
+	end
   if registredOpcodes == nil then
     return
   end
@@ -684,6 +668,9 @@ function unregisterProtocol()
 end
 
 function registerOpcode(code, func)
+	if (code == nil) then
+		return
+	end
   if registredOpcodes[code] ~= nil then
     error("Duplicated registed opcode: " .. code)
   end

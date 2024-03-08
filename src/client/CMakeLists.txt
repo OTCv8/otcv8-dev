@@ -22,6 +22,8 @@ set(client_SOURCES ${client_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/effect.h
     ${CMAKE_CURRENT_LIST_DIR}/game.cpp
     ${CMAKE_CURRENT_LIST_DIR}/game.h
+    ${CMAKE_CURRENT_LIST_DIR}/spriteappearances.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/spriteappearances.h
     ${CMAKE_CURRENT_LIST_DIR}/item.cpp
     ${CMAKE_CURRENT_LIST_DIR}/item.h
     ${CMAKE_CURRENT_LIST_DIR}/localplayer.cpp

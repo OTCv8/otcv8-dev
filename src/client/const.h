@@ -161,10 +161,10 @@ namespace Otc
         CriticalChance,
         CriticalDamage,
         LifeLeechChance,
-        LifeLeechAmount,
         ManaLeechChance,
+        LastSkill,
+        LifeLeechAmount,
         ManaLeechAmount,
-        LastSkill
     };
 
     enum Direction {
@@ -347,7 +347,13 @@ namespace Otc
         MessageRVRContinue             = 49,
         MessageGameHighlight           = 50,
         MessageNpcFromStartBlock       = 51,
-        LastMessage                    = 52,
+        MessageAttention               = 52,
+        MessageBoostedCreature         = 53,
+        MessageOfflineTraining         = 54,
+        MessageTransaction             = 55,
+        MessagePotion                  = 56,
+
+        LastMessage                    = 57,
         MessageInvalid                 = 255
     };
 
@@ -646,6 +652,8 @@ namespace Otc
         MAGIC_EFFECTS_CREATE_EFFECT = 3,
         MAGIC_EFFECTS_CREATE_DISTANCEEFFECT = 4,
         MAGIC_EFFECTS_CREATE_DISTANCEEFFECT_REVERSED = 5,
+        MAGIC_EFFECTS_CREATE_PRIMARY_SOUND = 6,
+        MAGIC_EFFECTS_CREATE_SECONDARY_SOUND = 7
     };
 }
 

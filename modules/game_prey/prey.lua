@@ -523,7 +523,6 @@ function onResourceBalance(type, balance)
     bonusRerolls = balance
     preyWindow.wildCards:setText(balance)
   end
-  
   if type == 0 or type == 1 then
     preyWindow.gold:setText(comma_value(bankGold + inventoryGold))
   end

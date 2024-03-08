@@ -31,6 +31,12 @@ void buildMessageModesMap(int version) {
 
     if(version >= 1094) {
         messageModesMap[Otc::MessageMana] = 43;
+        messageModesMap[Otc::MessageBeyondLast] = 44;
+        messageModesMap[Otc::MessageAttention] = 48; // Attention
+        messageModesMap[Otc::MessageBoostedCreature] = 49; // Boosted Creature
+        messageModesMap[Otc::MessageOfflineTraining] = 50; // Offline Training
+        messageModesMap[Otc::MessageTransaction] = 51; // Transaction
+        messageModesMap[Otc::MessagePotion] = 52; // Potion
     }
 
     if(version >= 1055) { // might be 1054

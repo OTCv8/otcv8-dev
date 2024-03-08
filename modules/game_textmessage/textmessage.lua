@@ -48,6 +48,12 @@ MessageTypes = {
   [MessageModes.Report] = MessageSettings.consoleRed,
   [MessageModes.HotkeyUse] = MessageSettings.centerGreen,
 
+  [MessageModes.Attention] = MessageSettings.consoleRed,
+  [MessageModes.BoostedCreature] = MessageSettings.centerWhite,
+  [MessageModes.OfflineTraining] = MessageSettings.centerWhite,
+  [MessageModes.Transaction] = MessageSettings.statusSmall,
+  [MessageModes.Potion] = MessageSettings.status,
+
   [254] = MessageSettings.private
 }
 

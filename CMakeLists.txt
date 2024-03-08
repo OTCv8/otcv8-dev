@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.6)
 project(otclient)
 
+set(CMAKE_TOOLCHAIN_FILE "E:/vcpkg/scripts/buildsystems/vcpkg.cmake")
+
 if(CMAKE_BASE_NAME STREQUAL "em++")
     set(WASM ON)
 endif()

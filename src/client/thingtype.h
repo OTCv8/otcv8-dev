@@ -34,6 +34,9 @@
 #include <framework/luaengine/luaobject.h>
 #include <framework/net/server.h>
 
+using namespace tibia::protobuf;
+using namespace tibia::protobuf::shared;
+
 enum NewDrawType : uint8 {
     NewDrawNormal = 0,
     NewDrawMount = 5,
@@ -45,7 +48,8 @@ enum NewDrawType : uint8 {
 enum FrameGroupType : uint8 {
     FrameGroupDefault = 0,
     FrameGroupIdle = FrameGroupDefault,
-    FrameGroupMoving
+    FrameGroupMoving,
+    FrameGroupInitial
 };
 
 enum ThingCategory : uint8 {
@@ -97,6 +101,13 @@ enum ThingAttr : uint8 {
     ThingAttrUnwrapable       = 36,
     ThingAttrTopEffect        = 37,
     ThingAttrBones            = 38,
+    hingAttrUpgradeClassification = 38,
+    ThingAttrAttrWearOut        = 39,
+    ThingAttrAttrClockExpire    = 40,
+    ThingAttrAttrExpire         = 41,
+    ThingAttrAttrExpireStop     = 42,
+    ThingAttrAttrDecoKit        = 43,
+    ThingAttrAttrPodium = 44,
 
     // additional
     ThingAttrOpacity          = 100,
@@ -153,6 +164,9 @@ struct Imbuement {
 };
 
 struct Light {
+    Light() {}
+    Light(uint8_t intensity, uint8_t color) : pos(pos), intensity(intensity), color(color) {}
+    Light(Point pos, uint8_t intensity, uint8_t color) : pos(pos), intensity(intensity), color(color) {}
     Point pos;
     uint8_t color = 215;
     uint8_t intensity = 0;
@@ -171,6 +185,7 @@ class ThingType : public LuaObject
 public:
     ThingType();
 
+    void unserializeAppearance(uint16 clientId, ThingCategory category, const appearances::Appearance& appearance);
     void unserialize(uint16 clientId, ThingCategory category, const FileStreamPtr& fin);
     void unserializeOtml(const OTMLNodePtr& node);
     void unload();
@@ -210,6 +225,7 @@ public:
     int getDisplacementY() { return getDisplacement().y; }
     int getElevation() { return m_elevation; }
     const Point& getBones(int direction) { return m_bones[direction]; }
+    uint16_t getClassification() { return m_upgradeClassification; }
 
     int getGroundSpeed() { return m_attribs.get<uint16>(ThingAttrGround); }
     int getMaxTextLength() { return m_attribs.has(ThingAttrWritableOnce) ? m_attribs.get<uint16>(ThingAttrWritableOnce) : m_attribs.get<uint16>(ThingAttrWritable); }
@@ -259,6 +275,21 @@ public:
     bool isTopEffect() { return m_attribs.has(ThingAttrTopEffect); }
     bool hasBones() { return m_attribs.has(ThingAttrBones); }
 
+    bool isPodium() { return m_attribs.has(ThingAttrAttrPodium); }
+    bool hasClockExpire() { return m_attribs.has(ThingAttrAttrClockExpire); }
+    bool hasExpire() { return m_attribs.has(ThingAttrAttrExpire); }
+    bool hasExpireStop() { return m_attribs.has(ThingAttrAttrExpireStop); }
+    bool hasWearOut() { return m_attribs.has(ThingAttrAttrWearOut); }
+    bool isDecoKit() { return m_attribs.has(ThingAttrAttrDecoKit); }
+
+    void setU16Attr(ThingAttr attr, uint16 v) {
+        m_attribs.set(attr, v);
+    }
+
+    void setBoolAttr(ThingAttr attr, bool v) {
+        m_attribs.set(attr, v);
+    }
+
     std::vector<int> getSprites() { return m_spritesIndex; }
 
     // additional
@@ -267,7 +298,7 @@ public:
     void setPathable(bool var);
 
 private:
-    const TexturePtr& getTexture(int animationPhase);
+    TexturePtr getTexture(int animationPhase);
     Size getBestTextureDimension(int w, int h, int count);
     uint getSpriteIndex(int w, int h, int l, int x, int y, int z, int a);
     uint getTextureIndex(int l, int x, int y, int z);
@@ -288,6 +319,7 @@ private:
     int m_numPatternX, m_numPatternY, m_numPatternZ;
     int m_layers;
     int m_elevation;
+    int m_upgradeClassification;
     float m_opacity;
     std::string m_customImage;
 

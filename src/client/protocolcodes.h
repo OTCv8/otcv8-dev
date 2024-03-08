@@ -52,6 +52,7 @@ namespace Proto {
         GameServerLoginSuccess              = 23,
         GameServerLoginToken                = 24,
         GameServerStoreButtonIndicators     = 25, // 1097
+        GameServerBugReportAllow            = 26,
         GameServerPingBack                  = 29,
         GameServerPing                      = 30,
         GameServerChallenge                 = 31,
@@ -83,6 +84,10 @@ namespace Proto {
         GameServerDllsRequest               = 81,
         GameServerWindowsRequests           = 82,
 
+        GameServerInventoryImbuements       = 93,
+        GameServerPassiveData               = 94,
+
+        GameServerBosstiaryStatic           = 97,
         GameServerClientCheck               = 99,
 
         // original tibia ONLY
@@ -116,6 +121,7 @@ namespace Proto {
         GameServerMissleEffect              = 133,
         GameServerMarkCreature              = 134,
         GameServerTrappers                  = 135,
+        GameServerCreatureData              = 139,
         GameServerCreatureHealth            = 140,
         GameServerCreatureLight             = 141,
         GameServerCreatureOutfit            = 142,
@@ -160,7 +166,10 @@ namespace Proto {
         GameServerWalkWait                  = 182,
         GameServerUnjustifiedStats          = 183,
         GameServerPvpSituations             = 184,
+        GameServerBestiaryTracker           = 185,
+        GameServerHuntingStatic             = 186,
         GameServerHunting                   = 187,
+        GameServerBosstiaryTracker          = 189,
         GameServerFloorChangeUp             = 190,
         GameServerFloorChangeDown           = 191,
         GameServerLootContainers            = 192,

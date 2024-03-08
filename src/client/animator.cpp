@@ -42,6 +42,23 @@ Animator::Animator()
     m_phase = 0;
 }
 
+void Animator::unserializeAppearance(const appearances::SpriteAnimation& animation)
+{
+    m_animationPhases = animation.sprite_phase_size();
+    m_async = animation.loop_type() == 0;
+    m_loopCount = animation.loop_count();
+    m_startPhase = animation.default_start_phase();
+
+    for(const auto& phase : animation.sprite_phase()) {
+        m_phaseDurations.emplace_back(phase.duration_min(), phase.duration_max());
+    }
+
+    m_phase = getStartPhase();
+
+    VALIDATE(m_animationPhases == static_cast<int>(m_phaseDurations.size()));
+    VALIDATE(m_startPhase >= -1 && m_startPhase < m_animationPhases);
+}
+
 void Animator::unserialize(int animationPhases, const FileStreamPtr& fin)
 {
     m_animationPhases = animationPhases;

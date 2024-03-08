@@ -144,6 +144,12 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/platform/unixplatform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.h
+
+    # protobuf
+    ${CMAKE_CURRENT_LIST_DIR}/protobuf/appearances.pb.cc
+    ${CMAKE_CURRENT_LIST_DIR}/protobuf/appearances.pb.h
+    ${CMAKE_CURRENT_LIST_DIR}/protobuf/shared.pb.cc
+    ${CMAKE_CURRENT_LIST_DIR}/protobuf/shared.pb.h
 )
 
 set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
@@ -161,8 +167,6 @@ else()
     set(USE_STATIC_LIBS ON)
     set(USE_LIBCPP ON)
 endif()
-set(BUILD_COMMIT "devel" CACHE "Git commit string (intended for releases)" STRING)
-set(BUILD_REVISION 0 CACHE "Git revision string (intended for releases)" STRING)
 
 # default build type
 if(NOT CMAKE_BUILD_TYPE)
@@ -241,6 +245,7 @@ if(NOT WASM)
     find_package(LibZip REQUIRED)
     find_package(ZLIB REQUIRED)
     find_package(BZip2 REQUIRED)
+    
 
     #find lua
     if(LUAJIT)
@@ -259,6 +264,13 @@ if(NOT WASM)
     find_package(PhysFS REQUIRED)
     find_package(OpenSSL REQUIRED)
     find_package(ZLIB REQUIRED)
+    find_package(libzip CONFIG REQUIRED)
+    find_package(Boost COMPONENTS system filesystem REQUIRED)
+
+    include(FindProtobuf)
+    find_package(Protobuf CONFIG REQUIRED)
+    find_package(LibLZMA REQUIRED)
+    find_package(nlohmann_json CONFIG REQUIRED)
 
     set(framework_LIBRARIES ${framework_LIBRARIES}
         ${Boost_LIBRARIES}
@@ -266,9 +278,17 @@ if(NOT WASM)
         ${PHYSFS_LIBRARY}
         ${OPENSSL_LIBRARIES}
         ${ZLIB_LIBRARY}
-        ${LIBZIP_LIBRARY}
+        libzip::zip
+        ${PROTOBUF_LIBRARY}
+        ${PROTOBUF_LIBRARIES}
+        ${LIBLZMA_LIBRARIES}
+        ${NLOHMANN_JSON_LIBRARY}
 	${ZLIB_LIBRARY}
 	${BZIP2_LIBRARIES}
+    protobuf::libprotobuf
+    Boost::system
+    Boost::filesystem
+    nlohmann_json::nlohmann_json)
     )
 
     if(WIN32)
@@ -283,6 +303,9 @@ if(NOT WASM)
         ${framework_INCLUDE_DIRS}
         ${LIBZIP_INCLUDE_DIR_ZIP}
         ${LIBZIP_INCLUDE_DIR_ZIPCONF}
+        ${PROTOBUF_INCLUDE_DIRS}
+        ${LIBLZMA_INCLUDE_DIRS}
+        ${NLOHMANN_JSON_INCLUDE_DIR}
 	${ZLIB_INCLUDE_DIR}
 	${BZIP2_INCLUDE_DIR}
     )
@@ -591,6 +614,6 @@ if(EXTRA_LIBS)
     set(framework_LIBRARIES ${framework_LIBRARIES} ${EXTRA_LIBS})
 endif()
 
-include_directories(${framework_INCLUDE_DIRS})
+include_directories(${framework_INCLUDE_DIRS} ${Protobuf_INCLUDE_DIRS})
 add_definitions(${framework_DEFINITIONS})
 

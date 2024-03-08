@@ -144,7 +144,7 @@ void StaticText::compose()
         texts.push_back("#EFEF00");
         m_color = Color(239, 239, 0);
     } else if(m_mode == Otc::MessageMonsterSay || m_mode == Otc::MessageMonsterYell || m_mode == Otc::MessageSpell
-              || m_mode == Otc::MessageBarkLow || m_mode == Otc::MessageBarkLoud) {
+              || m_mode == Otc::MessageBarkLow || m_mode == Otc::MessageBarkLoud || m_mode == Otc::MessagePotion) {
         m_color = Color(254, 101, 0);
     } else if(m_mode == Otc::MessageNpcFrom || m_mode == Otc::MessageNpcFromStartBlock) {
         texts.push_back(m_name + " says:\n");

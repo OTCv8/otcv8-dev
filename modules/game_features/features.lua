@@ -6,7 +6,14 @@ function terminate()
   disconnect(g_game, { onClientVersionChange = updateFeatures })
 end
 
+oldCacheVersion = nil
+
 function updateFeatures(version)
+    if (oldCacheVersion ~= nil and oldCacheVersion == version) then
+        return
+    end
+
+    oldCacheVersion = version
     g_game.resetFeatures()
     if version <= 0 then
       return
@@ -74,7 +81,7 @@ function updateFeatures(version)
         g_game.enableFeature(GamePlayerRegenerationTime)
         g_game.enableFeature(GameChannelPlayerList)
         g_game.enableFeature(GameEnvironmentEffect)
-        g_game.enableFeature(GameItemAnimationPhase)
+        --g_game.enableFeature(GameItemAnimationPhase)
     end
 
     if(version >= 940) then
@@ -195,6 +202,11 @@ function updateFeatures(version)
       g_game.enableFeature(GamePlayerStateU32)
       g_game.enableFeature(GameTibia12Protocol)
     end
-    
-    modules.game_things.load()
+
+    g_game.enableFeature(GameDoubleHealth)
+    g_game.enableFeature(GameQuickLootFlags)
+    g_game.disableFeature(GameItemAnimationPhase)
+    g_game.enableFeature(GameDoubleShopSellAmount)
+
+    modules.game_things.load(version)
 end

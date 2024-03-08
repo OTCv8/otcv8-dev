@@ -196,17 +196,5 @@ MiniWindow
     SmallSkillButton
       id: skillId10
       SkillNameLabel
-        !text: tr('Life Leech Amount')
-      SkillValueLabel
-
-    SmallSkillButton
-      id: skillId11
-      SkillNameLabel
         !text: tr('Mana Leech Chance')
-      SkillValueLabel
-
-    SmallSkillButton
-      id: skillId12
-      SkillNameLabel
-        !text: tr('Mana Leech Amount')
       SkillValueLabel

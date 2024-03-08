@@ -9,8 +9,9 @@ MarketAction = {
 }
 
 MarketRequest = {
-  MyOffers = 0xFFFE,
-  MyHistory = 0xFFFF
+  MyHistory = 1,
+  MyOffers = 2,
+  MyItems = 3
 }
 
 MarketOfferState = {
@@ -134,11 +135,18 @@ MarketItemDescription = {
   Charges = 13,
   WeaponName = 14,
   Weight = 15,
-  Imbuements = 16
+  Augment = 16,
+  Imbuements = 17,
+  Cleave = 18,
+  MagicShieldCapacity = 19,
+  PerfectShot = 20,
+  DamageReflect = 21,
+  UpgradeClassification = 22,
+  Tier = 23
 }
 
 MarketItemDescription.First = MarketItemDescription.Armor
-MarketItemDescription.Last = MarketItemDescription.Weight
+MarketItemDescription.Last = MarketItemDescription.Tier
 
 MarketItemDescriptionStrings = {
   [1] = 'Armor',
@@ -156,7 +164,14 @@ MarketItemDescriptionStrings = {
   [13] = 'Charges',
   [14] = 'Weapon Type',
   [15] = 'Weight',
-  [16] = 'Imbuements'
+  [16] = 'Augment',
+  [17] = 'Imbuements',
+  [18] = 'Cleave',
+  [19] = 'Magic Shield Capacity',
+  [20] = 'Perfect Shot',
+  [21] = 'Damage Reflect',
+  [22] = 'Upgrade Classification',
+  [23] = 'Tier'
 }
 
 function getMarketDescriptionName(id)
