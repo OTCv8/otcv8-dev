@@ -1,0 +1,18 @@
+classDiagram
+    class SoundFile {
+        +loadSoundFile()
+        +read()
+        +reset()
+        +eof()
+        +getSampleFormat()
+        +getChannels()
+        +getRate()
+        +getBps()
+        +getSize()
+        +getName()
+        #m_file
+        #m_channels
+        #m_rate
+        #m_bps
+        #m_size
+    }

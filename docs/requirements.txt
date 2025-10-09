@@ -1,0 +1,12 @@
+sphinx==7.4.7
+myst-parser>=4.0.1
+furo>=2024.8.6
+sphinx-copybutton>=0.5.2
+sphinx-design>=0.6.0
+sphinx-sitemap>=2.6.0
+linkify-it-py>=2.0.0
+sphinxext-opengraph>=0.9.1
+sphinx-favicon>=1.0.1
+sphinxcontrib-mermaid>=0.9.2
+sphinx-codeautolink>=0.15.0
+sphinx-hoverxref>=1.4.2,<1.5

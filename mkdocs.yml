@@ -1,0 +1,74 @@
+site_name: OTCv8 Dev — Dokumentacja
+site_url: https://lukaszj321.github.io/otcv8-dev/
+
+theme:
+  name: material
+  language: pl
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.top
+  logo: _assets/img/logo.svg
+  favicon: _assets/img/favicon.png
+
+docs_dir: docs
+site_dir: site
+repo_url: https://github.com/lukaszj321/otcv8-dev
+repo_name: lukaszj321/otcv8-dev
+edit_uri: edit/master/docs/
+use_directory_urls: true
+strict: false
+
+extra_css:
+  - _assets/css/title-fix.css
+
+markdown_extensions:
+  - toc
+  - tables
+  - fenced_code
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.critic
+  - pymdownx.tilde
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search            # bez błędnej opcji "exclude"
+  - redirects
+  - exclude:
+      glob:
+        - 'modules/__md_backup_*'
+        - 'modules/**/__md_backup_*'
+        - 'modules/**/__md_backup_*.md'
+
+# Wycisza gigantyczną listę “omitted_files” w logach
+validation:
+  nav:
+    omitted_files: ignore
+    not_found: warn
+    absolute_links: warn
+  links:
+    not_found: warn
+    absolute_links: warn
+    unrecognized_links: warn
+    anchors: warn
+
+nav:
+  - Start: index.md
+  - Modules:
+      - INDEX: modules/structured/INDEX.md
+      - Core:
+          - INDEX: modules/structured/core/INDEX.md
+      - Gameplay:
+          - INDEX: modules/structured/gameplay/INDEX.md
+      - Dev tools:
+          - INDEX: modules/structured/dev_tools/INDEX.md

@@ -1,200 +1,186 @@
 name: Build on request
 on: [workflow_dispatch]
 
+permissions:
+  contents: read
+
 jobs:
   Windows:
-    name: Build windows version
-    runs-on: windows-2019
+    name: Build Windows
+    runs-on: windows-2025
     timeout-minutes: 120
 
+    env:
+      VCPKG_DEFAULT_TRIPLET: x86-windows-static
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
           submodules: recursive
 
-    - name: Setup MSBuild and add to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
-      id: setup_msbuild
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
 
-    - name: Run vcpkg
-      uses: lukka/run-vcpkg@v7
-      with:
-        vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
-        vcpkgTriplet: x86-windows-static
-        vcpkgGitCommitId: 3b3bd424827a1f7f4813216f6b32b6c61e386b2e
-        vcpkgArguments: >
-          boost-iostreams boost-asio boost-beast boost-system boost-variant boost-lockfree boost-process boost-program-options boost-uuid boost-filesystem
-          luajit glew physfs openal-soft libogg libvorbis zlib libzip bzip2 openssl
+      - name: Setup vcpkg (pin)
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgDirectory: ${{ runner.workspace }}\vcpkg
+          vcpkgGitCommitId: 3b3bd424827a1f7f4813216f6b32b6c61e386b2e
+          runVcpkgFormatString: >
+            install
+            boost-iostreams boost-asio boost-beast boost-system boost-variant boost-lockfree
+            boost-process boost-program-options boost-uuid boost-filesystem
+            luajit glew physfs openal-soft libogg libvorbis zlib libzip bzip2 openssl
+            --triplet ${{ env.VCPKG_DEFAULT_TRIPLET }}
 
-    - name: Integrate vcpkg
-      run: |
-        ${{ runner.workspace }}/vcpkg/vcpkg integrate install
-        
-    - name: Compile otclient_dx
-      timeout-minutes: 20
-      run: |
-        cd vc16
-        MSBuild /property:Configuration=DirectX /p:BUILD_REVISION=${{github.run_number}}
-        
-    - name: Compile otclient_gl
-      timeout-minutes: 20
-      run: |
-        cd vc16
-        MSBuild /property:Configuration=OpenGL /p:BUILD_REVISION=${{github.run_number}}
+      - name: vcpkg integrate
+        run: |
+          "${{ runner.workspace }}\vcpkg\vcpkg.exe" integrate install
 
-    #- name: Sign binaries
-    #  run: |
-    #     .\tools\sign\signtool.exe sign /f .\tools\sign\certificate.pfx /p ${{ secrets.SIGN_PASSWORD }} /fd SHA256 /t http://timestamp.digicert.com /d "OTclientV8" otclient_gl.exe
-    #     .\tools\sign\signtool.exe sign /f .\tools\sign\certificate.pfx /p ${{ secrets.SIGN_PASSWORD }} /fd SHA256 /t http://timestamp.digicert.com /d "OTclientV8" otclient_dx.exe
+      - name: Build DirectX
+        working-directory: ./vc16
+        run: msbuild /p:Configuration=DirectX /p:BUILD_REVISION=${{ github.run_number }}
 
-    - name: Upload binaries
-      uses: 'actions/upload-artifact@v2'
-      with:
-        name: Download-binaries
-        path: |
-          otclient_gl.exe
-          otclient_dx.exe
-        if-no-files-found: error
+      - name: Build OpenGL
+        working-directory: ./vc16
+        run: msbuild /p:Configuration=OpenGL  /p:BUILD_REVISION=${{ github.run_number }}
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-binaries
+          path: |
+            vc16\DirectX\otclient_dx.exe
+            vc16\OpenGL\otclient_gl.exe
+          if-no-files-found: error
 
   Android:
-    name: Build android version
-    runs-on: windows-2019
+    name: Build Android
+    runs-on: windows-2025
     timeout-minutes: 120
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
           submodules: recursive
 
-    - name: Setup MSBuild and add to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
-      id: setup_msbuild
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
 
-    - name: Create data.zip for android
-      run: |
-        powershell -ExecutionPolicy Bypass -File .\create_android_assets.ps1
+      - name: Setup Java (JDK)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
 
-    - name: Decompress android libs
-      run: |
-        7z x android_libs.7z -aoa -oC:\android
+      - name: Setup Android SDK + NDK
+        uses: android-actions/setup-android@v3
 
-    - name: Install android
-      run: |
-        $sdkRoot = "C:\Android\android-sdk"
-        $sdkManager = "$sdkRoot\cmdline-tools\latest\bin\sdkmanager.bat"
-        Install-AndroidSDKPackages -AndroidSDKManagerPath $sdkManager `
-                                  -AndroidSDKRootPath $sdkRoot `
-                                  -AndroidPackages "ndk;21.4.7075529"
+      - name: Install NDK 21.4
+        shell: pwsh
+        run: |
+          $sdkRoot = "${env:ANDROID_SDK_ROOT}"
+          & "$sdkRoot\cmdline-tools\latest\bin\sdkmanager.bat" --install "ndk;21.4.7075529"
+          echo "VS_NdkRoot=$sdkRoot\ndk\21.4.7075529" | Out-File -FilePath $env:GITHUB_ENV -Encoding ascii -Append
 
-    - name: Build for android
-      timeout-minutes: 25
-      run: |
-        cd android
-        $env:VS_NdkRoot="C:\Android\android-sdk\ndk\21.4.7075529"
-        MSBuild.exe /p:Configuration=Release /p:Platform="ARM64" /p:BUILD_REVISION=${{github.run_number}}
+      - name: Prepare android assets
+        shell: pwsh
+        run: |
+          if (Test-Path .\create_android_assets.ps1) {
+            powershell -ExecutionPolicy Bypass -File .\create_android_assets.ps1
+          }
 
-    - name: Upload binaries
-      uses: 'actions/upload-artifact@v2'
-      with:
-        name: Download-binaries
-        path: |
-          otclientv8.apk
-        if-no-files-found: error
+      - name: Unpack prebuilt android libs (if present)
+        shell: pwsh
+        run: |
+          if (Test-Path .\android_libs.7z) {
+            7z x android_libs.7z -aoa -oC:\android
+          }
+
+      - name: Build (ARM64 Release)
+        shell: pwsh
+        working-directory: ./android
+        run: msbuild /p:Configuration=Release /p:Platform="ARM64" /p:BUILD_REVISION=${{ github.run_number }}
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: |
+            **\*.apk
+          if-no-files-found: error
 
   Mac:
-    name: Build mac os version
-    runs-on: 	macos-11
+    name: Build macOS
+    runs-on: macos-13
     timeout-minutes: 120
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
           submodules: recursive
 
-    - name: Get latest CMake
-      uses: lukka/get-cmake@latest
+      - name: Install deps (brew)
+        run: |
+          brew update
+          brew install cmake ninja physfs pkgconf luajit xquartz glew openal-soft libogg libvorbis libzip bzip2 openssl@3
 
-    - name: MacOS - install physfs pkgconfig luajit xquartz
-      run: brew install physfs pkgconfig luajit xquartz
+      - name: Configure
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
-    - name: Run vcpkg
-      uses: lukka/run-vcpkg@v7
-      with:
-        vcpkgArguments: >
-          boost-iostreams boost-asio boost-system boost-variant boost-lockfree boost-beast glew 
-          boost-filesystem boost-uuid libogg libvorbis zlib opengl libzip openal-soft bzip2
-          boost-process openssl
-        vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
-        vcpkgTriplet: x64-osx
-        vcpkgGitCommitId: 761c81d43335a5d5ccc2ec8ad90bd7e2cbba734e
+      - name: Build
+        run: |
+          cmake --build build --parallel
 
-    - name: Build with CMake
-      uses: lukka/run-cmake@v3
-      with:
-        buildDirectory: ${{ runner.workspace }}/build
-        cmakeAppendedArgs: '-G Ninja -DCMAKE_BUILD_TYPE="Release" -DVERSION=${{github.run_number}}'
-        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
-        useVcpkgToolchainFile: true
+      - name: Rename binary
+        run: |
+          if [ -f build/otclient ]; then mv build/otclient build/otclient_mac; fi
 
-    - name: Change name
-      run: |
-        mv '${{ runner.workspace }}/build/otclient' '${{ runner.workspace }}/build/otclient_mac'
-
-    - name: Upload otclient
-      uses: actions/upload-artifact@v2
-      with:
-        name: Download-binaries
-        path: |
-          ${{ runner.workspace }}/build/otclient_mac
-        if-no-files-found: error
+      - name: Upload mac binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-binary
+          path: build/otclient_mac
+          if-no-files-found: error
 
   Linux:
-    name: Build linux version
-    runs-on: ubuntu-20.04
+    name: Build Linux
+    runs-on: ubuntu-22.04
     timeout-minutes: 120
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
           submodules: recursive
 
-    - name: Get latest CMake
-      uses: lukka/get-cmake@latest
+      - name: Install deps (apt)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential ninja-build cmake \
+            libglew-dev liblua5.1-0-dev libluajit-5.1-dev \
+            libogg-dev libvorbis-dev zlib1g-dev libzip-dev \
+            libopenal-dev libbz2-dev libssl-dev libphysfs-dev
 
-    - name: Ubuntu - install opengl lua5.1 luajit
-      run: sudo apt update && sudo apt install -y libglew-dev liblua5.1-0-dev libluajit-5.1-dev
+      - name: Configure
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
-    - name: Run vcpkg
-      uses: lukka/run-vcpkg@v7
-      with:
-        vcpkgArguments: >
-          boost-iostreams boost-asio boost-system boost-variant boost-lockfree boost-beast glew 
-          boost-filesystem boost-uuid libogg libvorbis zlib opengl libzip openal-soft bzip2
-          boost-process openssl physfs
-        vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
-        vcpkgTriplet: x64-linux
-        vcpkgGitCommitId: 761c81d43335a5d5ccc2ec8ad90bd7e2cbba734e
+      - name: Build
+        run: |
+          cmake --build build --parallel
 
-    - name: Build with CMake
-      uses: lukka/run-cmake@v3
-      with:
-        buildDirectory: ${{ runner.workspace }}/build
-        cmakeAppendedArgs: '-G Ninja -DCMAKE_BUILD_TYPE="Release" -DVERSION=${{github.run_number}}'
-        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
-        useVcpkgToolchainFile: true
+      - name: Rename binary
+        run: |
+          if [ -f build/otclient ]; then mv build/otclient build/otclient_linux; fi
 
-    - name: Change name
-      run: |
-        mv '${{ runner.workspace }}/build/otclient' '${{ runner.workspace }}/build/otclient_linux'
-
-    - name: Upload otclient
-      uses: actions/upload-artifact@v2
-      with:
-        name: Download-binaries
-        path: |
-          ${{ runner.workspace }}/build/otclient_linux
-        if-no-files-found: error
+      - name: Upload linux binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-binary
+          path: build/otclient_linux
+          if-no-files-found: error

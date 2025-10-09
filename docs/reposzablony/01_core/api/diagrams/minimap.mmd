@@ -1,0 +1,28 @@
+classDiagram
+    class MinimapTile {
+    }
+    class MinimapBlock {
+        +clean()
+        +update()
+        +updateTile()
+        +resetTile()
+        +getTileIndex()
+        +mustUpdate()
+        +justSaw()
+        +wasSeen()
+    }
+    class Minimap {
+        +init()
+        +terminate()
+        +clean()
+        +draw()
+        +getTilePoint()
+        +getTilePosition()
+        +getTileRect()
+        +updateTile()
+        +threadGetTile()
+        +loadImage()
+        +saveImage()
+        +loadOtmm()
+        +saveOtmm()
+    }

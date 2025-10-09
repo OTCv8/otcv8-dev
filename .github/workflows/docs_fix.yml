@@ -1,0 +1,41 @@
+name: Docs – Fix structure & frontmatter
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**/link_lint.csv'
+      - 'chapter_*.md'
+      - '01_core/**'
+      - '03_modules/**'
+      - '04_ui/**'
+      - 'README.md'
+      - '_tools/README.md'
+      - 'scripts/fix-docs.ps1'
+
+jobs:
+  fix-docs:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run fix-docs.ps1
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy -Scope Process Bypass -Force
+          pwsh -File .\scripts\fix-docs.ps1 -RepoRoot "${{ github.workspace }}"
+
+      - name: Commit & push if changed
+        shell: pwsh
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if (-not (git diff --quiet)) {
+            git add -A
+            git commit -m "chore(docs): fix structure + add frontmatter (CI)"
+            git push
+          } else {
+            Write-Host "No changes."
+          }

@@ -1,0 +1,21 @@
+classDiagram
+    class OutputMessage {
+        +reset()
+        +setBuffer()
+        +getBuffer()
+        +addU8()
+        +addU16()
+        +addU32()
+        +addU64()
+        +addString()
+        +addRawString()
+        +addPaddingBytes()
+        +encryptRsa()
+        +getWritePos()
+        +getMessageSize()
+        +setWritePos()
+        +setMessageSize()
+        #writeChecksum()
+        #writeSequence()
+        #writeMessageSize()
+    }

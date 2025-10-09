@@ -1,0 +1,27 @@
+classDiagram
+    class UIAnchor {
+        +getAnchoredEdge()
+        +getHookedEdge()
+        +getHookedWidget()
+        +getHookedPoint()
+        #m_anchoredEdge
+        #m_hookedEdge
+        #m_hookedWidgetId
+    }
+    class UIAnchorGroup {
+        +addAnchor()
+        +isUpdated()
+        +setUpdated()
+    }
+    class UIAnchorLayout {
+        +removeAnchors()
+        +hasAnchors()
+        +centerIn()
+        +fill()
+        +addWidget()
+        +removeWidget()
+        +isUIAnchorLayout()
+        #internalUpdate()
+        #updateWidget()
+        #m_anchorsGroups
+    }

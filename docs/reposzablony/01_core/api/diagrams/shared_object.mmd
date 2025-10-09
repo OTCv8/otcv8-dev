@@ -1,0 +1,19 @@
+classDiagram
+    class shared_object_ptr {
+        +add_ref()
+        +dec_ref()
+        +ref_count()
+    }
+    class shared_object {
+        +add_ref()
+        +dec_ref()
+        +ref_count()
+    }
+    class shared_object_ptr {
+        +reset()
+        +reset()
+        +swap()
+        +use_count()
+        +is_unique()
+        +unspecified_bool_type()
+    }

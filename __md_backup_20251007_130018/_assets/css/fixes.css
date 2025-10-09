@@ -1,0 +1,31 @@
+/* Nie rozbijaj słów na pojedyncze litery */
+html, body,
+.md-nav__title, .md-nav__link,
+.md-header__title, .md-header__topic,
+.md-typeset h1, .md-typeset h2, .md-typeset h3, .md-typeset h4 {
+  word-break: normal !important;     /* domyślne zachowanie */
+  overflow-wrap: break-word !important; /* zawijaj między wyrazami */
+  hyphens: auto;                      /* miękkie dzielenie (działa lepiej z lang=pl) */
+  letter-spacing: normal !important;  /* na wszelki wypadek */
+}
+
+/* Pozwól tytułowi w nagłówku zawijać się normalnie */
+.md-header__title, .md-header__topic {
+  white-space: normal !important;   /* zamiast jednowierszowego */
+}
+
+/* Czasem winny bywa zbyt wąski sidebar */
+:root {
+  --md-nav-width: 20rem;            /* szerzej, żeby się mieściło */
+}
+
+/* W menu po lewej wyłącz agresywne łamanie, gdyby coś je nadpisywało */
+.md-nav__item .md-nav__link {
+  overflow: visible;
+}
+
+/* Jeśli masz custom css z break-all – nadpisz go wprost: */
+* {
+  /* usunięcie ewentualnego globalnego word-break: break-all */
+  word-break: normal;
+}

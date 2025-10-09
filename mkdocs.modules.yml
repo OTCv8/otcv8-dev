@@ -1,0 +1,52 @@
+site_name: OTCv8 Dev — Modules preview
+site_url: https://lukaszj321.github.io/otcv8-dev/modules-preview/
+
+theme:
+  name: material
+  language: pl
+
+plugins:
+  - search
+  - exclude:
+      glob:
+        # Zostaw tylko Modules + start ich sekcji. Wszystko poza tym wytnij.
+        - 'api/**'
+        - 'architektura/**'
+        - 'build/**'
+        - 'cpp/**'
+        - 'data/**'
+        - 'dev/**'
+        - 'guides/**'
+        - 'knowledge/**'
+        - 'lua/**'
+        - 'tools/**'
+        - 'ui/**'
+        - '**/downloads/**'
+        - '**/download/**'
+        - '**/backup/**'
+        - '**/__old__/**'
+        - '**/archive/**'
+        - 'modules/**/__md_backup_*'
+        - 'modules/__md_backup_*'
+
+markdown_extensions:
+  - toc
+  - fenced_code
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - Start (Modules): modules/structured/INDEX.md
+  - Core:
+      - INDEX: modules/structured/core/INDEX.md
+  - Gameplay:
+      - INDEX: modules/structured/gameplay/INDEX.md
+  - Dev tools:
+      - INDEX: modules/structured/dev_tools/INDEX.md
+
+docs_dir: docs
+site_dir: site-modules
+use_directory_urls: true

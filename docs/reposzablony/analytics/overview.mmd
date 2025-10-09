@@ -1,0 +1,18 @@
+graph TD
+    Root[OTClient v8 Docs]
+    API[C++ API<br/>195 files]
+    Lua[Lua Modules<br/>317 files]
+    UI[OTUI Widgets<br/>133 files]
+    Events[Events/Emitters]
+    Datasets[RAG Datasets]
+    
+    Root --> API
+    Root --> Lua
+    Root --> UI
+    Root --> Events
+    Root --> Datasets
+    
+    API --> Datasets
+    Lua --> Datasets
+    UI --> Datasets
+    Events --> Datasets

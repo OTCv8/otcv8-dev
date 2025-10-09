@@ -1,0 +1,7 @@
+/* Fix dziwnego łamania tytułu w headerze Material */
+.md-header__title, .md-header .md-header__ellipsis, .md-header .md-ellipsis {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  word-break: normal !important;
+}

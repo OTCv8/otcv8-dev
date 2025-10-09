@@ -1,0 +1,24 @@
+classDiagram
+    class UILayout {
+        +update()
+        +updateLater()
+        +applyStyle()
+        +addWidget()
+        +removeWidget()
+        +disableUpdates()
+        +enableUpdates()
+        +setParent()
+        +getParentWidget()
+        +isUpdateDisabled()
+        +isUpdating()
+        +isUIAnchorLayout()
+        +isUIBoxLayout()
+        +isUIHorizontalLayout()
+        +isUIVerticalLayout()
+        +isUIGridLayout()
+        #internalUpdate()
+        #m_updateDisabled
+        #m_updating
+        #m_updateScheduled
+        ... (1 more members)
+    }

@@ -1,0 +1,17 @@
+name: Copilot Setup Steps
+on:
+  push:
+    branches: [ "master", "main" ]
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure output roots
+        run: |
+          mkdir -p                 docs/reposzablony/01_core/api/cpp                 docs/reposzablony/03_modules/lua                 docs/reposzablony/04_ui/{otui,diagrams}                 docs/reposzablony/datasets/{api,ui,modules,chunks}
+      - name: Bootstrap skeleton (optional)
+        run: bash docs/reposzablony/_bootstrap.sh || true

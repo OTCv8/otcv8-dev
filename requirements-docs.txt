@@ -1,0 +1,7 @@
+sphinx==7.*
+myst-parser==3.*
+furo==2024.*
+sphinx-copybutton==0.5.*
+# opcjonalnie:
+# sphinxemoji==0.3.*
+# sphinxcontrib-mermaid==0.9.*

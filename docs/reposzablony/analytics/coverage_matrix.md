@@ -1,0 +1,67 @@
+# Coverage Matrix
+
+Macierz pokrycia dokumentacją dla poszczególnych modułów.
+
+| Module | API | Lua | OTUI | Events | Diagrams | Datasets |
+|--------|-----|-----|------|--------|----------|----------|
+| android | 2 | 0 | 0 | 0 | 1 | 2 |
+| client | 44 | 1 | 0 | 0 | 40 | 45 |
+| client_background | 0 | 1 | 1 | 0 | 0 | 2 |
+| client_entergame | 0 | 2 | 3 | 0 | 1 | 5 |
+| client_feedback | 0 | 1 | 1 | 0 | 0 | 2 |
+| client_locales | 0 | 2 | 1 | 0 | 1 | 3 |
+| client_mobile | 0 | 1 | 1 | 0 | 0 | 2 |
+| client_options | 0 | 1 | 7 | 0 | 1 | 8 |
+| client_profiles | 0 | 1 | 0 | 0 | 0 | 1 |
+| client_stats | 0 | 1 | 1 | 0 | 1 | 2 |
+| client_styles | 0 | 1 | 0 | 0 | 0 | 1 |
+| client_terminal | 0 | 2 | 1 | 0 | 1 | 3 |
+| client_textedit | 0 | 1 | 1 | 0 | 1 | 2 |
+| client_topmenu | 0 | 1 | 0 | 0 | 0 | 1 |
+| corelib | 0 | 46 | 0 | 0 | 0 | 46 |
+| crash_reporter | 0 | 1 | 0 | 0 | 0 | 1 |
+| events | 0 | 1 | 0 | 0 | 0 | 0 |
+| framework | 148 | 0 | 0 | 0 | 125 | 148 |
+| game_actionbar | 0 | 1 | 6 | 0 | 4 | 7 |
+| game_battle | 0 | 1 | 2 | 0 | 2 | 3 |
+| game_bot | 0 | 192 | 56 | 0 | 55 | 248 |
+| game_bugreport | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_buttons | 0 | 1 | 1 | 0 | 0 | 2 |
+| game_console | 0 | 1 | 4 | 0 | 2 | 5 |
+| game_containers | 0 | 1 | 0 | 0 | 0 | 1 |
+| game_cooldown | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_features | 0 | 1 | 0 | 0 | 0 | 1 |
+| game_healthbars | 0 | 1 | 0 | 0 | 0 | 1 |
+| game_healthinfo | 0 | 1 | 1 | 0 | 0 | 2 |
+| game_hotkeys | 0 | 2 | 1 | 0 | 1 | 3 |
+| game_imbuing | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_interface | 0 | 2 | 2 | 0 | 2 | 4 |
+| game_inventory | 0 | 1 | 1 | 0 | 0 | 2 |
+| game_itemselector | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_market | 0 | 4 | 15 | 0 | 10 | 19 |
+| game_minimap | 0 | 1 | 2 | 0 | 1 | 3 |
+| game_modaldialog | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_npctrade | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_outfit | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_playerdeath | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_playermount | 0 | 1 | 0 | 0 | 0 | 1 |
+| game_playertrade | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_prey | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_protocol | 0 | 1 | 0 | 0 | 0 | 1 |
+| game_questlog | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_ruleviolation | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_shaders | 0 | 1 | 0 | 0 | 0 | 1 |
+| game_shop | 0 | 1 | 2 | 0 | 1 | 3 |
+| game_skills | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_spelllist | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_stats | 0 | 1 | 1 | 0 | 0 | 2 |
+| game_textmessage | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_textwindow | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_things | 0 | 1 | 0 | 0 | 0 | 1 |
+| game_topbar | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_unjustifiedpoints | 0 | 1 | 1 | 0 | 1 | 2 |
+| game_viplist | 0 | 1 | 3 | 0 | 2 | 4 |
+| game_walking | 0 | 1 | 0 | 0 | 0 | 1 |
+| gamelib | 0 | 16 | 0 | 0 | 0 | 16 |
+| root | 1 | 0 | 0 | 0 | 0 | 1 |
+| updater | 0 | 1 | 1 | 0 | 0 | 2 |

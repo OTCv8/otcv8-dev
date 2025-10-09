@@ -1,0 +1,237 @@
+name: Build – OTClient v8 (Windows/Linux/macOS/Android)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "**/*.cpp"
+      - "**/*.c"
+      - "**/*.h"
+      - "**/*.hpp"
+      - "**/CMakeLists.txt"
+      - "CMakePresets.json"
+      - "vcpkg.json"
+      - "android/**"
+      - ".github/workflows/build_clients.yml"
+      - "data/**"
+      - "modules/**"
+      - "mods/**"
+      - "things/**"
+      - "otui/**"
+
+concurrency:
+  group: build-native-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  desktop:
+    name: Desktop (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows x64
+            os: windows-latest
+            triplet: x64-windows-static
+            arch: x64
+          - name: Linux x64
+            os: ubuntu-22.04
+            triplet: x64-linux
+            arch: x64
+          - name: macOS x64 (Intel)
+            os: macos-13
+            triplet: x64-osx
+            arch: x64
+          - name: macOS arm64 (Apple Silicon)
+            os: macos-14
+            triplet: arm64-osx
+            arch: arm64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v5
+
+      # vcpkg (manifest mode, jeśli repo ma vcpkg.json; jeśli nie, krok nie zaszkodzi)
+      - name: Set up vcpkg
+        uses: actions/setup-vcpkg@v1
+        with:
+          # Możesz przypiąć commit vcpkg: vcpkgCommitId: 3b3c2c7...
+          # cache dostajesz w pakiecie
+          appendedCacheKey: ${{ runner.os }}-${{ matrix.triplet }}
+
+      # (Linux) – pomocniczo do OpenGL/GLVND – zwykle i tak bierzemy przez vcpkg
+      - name: Install system deps (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libx11-dev libxi-dev libxcursor-dev libxrandr-dev \
+            libgl1-mesa-dev libglu1-mesa-dev
+          # Reszta zależności idzie z vcpkg (SDL2, OpenAL itd.)
+
+      - name: Configure (CMake)
+        shell: bash
+        env:
+          VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
+          VCPKG_FEATURE_FLAGS: manifests,versions
+        run: |
+          cmake -S . -B build \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+            -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" \
+            -DVCPKG_TARGET_TRIPLET="${{ matrix.triplet }}" \
+            -DOPENGL_GL_PREFERENCE=GLVND
+
+      - name: Build
+        shell: bash
+        run: cmake --build build --config RelWithDebInfo -j 2
+
+      # Jeśli projekt ma "install", to fajnie zebrać do jednego katalogu
+      - name: Install to dist (best-effort)
+        shell: bash
+        run: |
+          set -e
+          cmake --install build --prefix dist || true
+          # Fallback: jeśli nie ma install target – zbierzmy typowe binaria
+          if [ ! -d dist ]; then
+            mkdir -p dist/bin
+            if [ "${{ runner.os }}" = "Windows" ]; then
+              shopt -s nullglob
+              cp -f build/*.exe dist/bin/ 2>/dev/null || true
+              cp -f build/*.dll dist/bin/ 2>/dev/null || true
+              cp -f build/*.pdb dist/bin/ 2>/dev/null || true
+            else
+              cp -f build/* dist/bin/ 2>/dev/null || true
+              cp -f build/*/*.dylib dist/bin/ 2>/dev/null || true
+              cp -f build/*/*.so    dist/bin/ 2>/dev/null || true
+            fi
+          fi
+
+      - name: Bundle runtime assets (data/modules/mods/things/otui)
+        shell: bash
+        run: |
+          mkdir -p dist/assets
+          for d in data modules mods things otui; do
+            if [ -d "$d" ]; then
+              mkdir -p "dist/assets/$d"
+              rsync -a "$d/" "dist/assets/$d/"
+            fi
+          done
+
+      - name: Archive package
+        shell: bash
+        run: |
+          PKG="otclient-${{ matrix.arch }}-${{ runner.os }}.zip"
+          (cd dist && zip -r "../$PKG" .)
+          echo "PACKAGE_NAME=$PKG" >> $GITHUB_ENV
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PACKAGE_NAME }}
+          path: ${{ env.PACKAGE_NAME }}
+          if-no-files-found: error
+          retention-days: 14
+
+  android:
+    name: Android (Gradle or NDK)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK/NDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: |
+            platforms;android-34
+            build-tools;34.0.0
+            ndk;26.1.10909125
+            cmake;3.22.1
+
+      - name: Detect Gradle project
+        id: detect
+        shell: bash
+        run: |
+          if [ -f "android/app/build.gradle" ] || [ -f "android/app/build.gradle.kts" ]; then
+            echo "has_gradle=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_gradle=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Ścieżka 1: Gradle (jeśli masz android/ z appką)
+      - name: Build with Gradle
+        if: steps.detect.outputs.has_gradle == 'true'
+        working-directory: android
+        env:
+          ANDROID_NDK_HOME: ${{ env.ANDROID_NDK_HOME }}
+        run: |
+          ./gradlew --version
+          ./gradlew assembleRelease
+          ls -R app/build/outputs || true
+
+      - name: Upload APK/AAB (Gradle)
+        if: steps.detect.outputs.has_gradle == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-gradle-artifacts
+          path: |
+            android/app/build/outputs/**/*.apk
+            android/app/build/outputs/**/*.aab
+          if-no-files-found: warn
+          retention-days: 14
+
+      # Ścieżka 2: CMake+NDK (fallback gdy brak Gradle)
+      - name: Build with CMake+NDK
+        if: steps.detect.outputs.has_gradle == 'false'
+        env:
+          ANDROID_NDK: ${{ env.ANDROID_NDK_HOME }}
+        run: |
+          echo "CMake+NDK fallback"
+          cmake -S . -B build-android -G Ninja \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+            -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK/build/cmake/android.toolchain.cmake" \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=24 \
+            -DANDROID_STL=c++_static
+          cmake --build build-android --config RelWithDebInfo -j 2
+          mkdir -p dist-android/lib
+          cp -rf build-android/* dist-android/lib/ || true
+          # dołącz assets (jeśli chcesz je spakować razem)
+          mkdir -p dist-android/assets
+          for d in data modules mods things otui; do
+            if [ -d "$d" ]; then
+              mkdir -p "dist-android/assets/$d"
+              rsync -a "$d/" "dist-android/assets/$d/"
+            fi
+          done
+          (cd dist-android && zip -r ../otclient-android-ndk.zip .)
+
+      - name: Upload NDK build artifacts
+        if: steps.detect.outputs.has_gradle == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: otclient-android-ndk.zip
+          path: otclient-android-ndk.zip
+          if-no-files-found: error
+          retention-days: 14

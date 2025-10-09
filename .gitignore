@@ -126,3 +126,33 @@ ipch/
 # ReSharper is a .NET coding add-in
 _ReSharper*/
 *.[Rr]e[Ss]harper
+
+# allow published downloads
+!docs/downloads/
+!docs/downloads/**
+node_modules
+
+#################
+## Python / venv
+#################
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python cache & artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+.python-version
+pip-wheel-metadata/
+
+# Tools/IDEs
+.vscode/
+.idea/

@@ -1,0 +1,9 @@
+﻿.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+  word-break: normal;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  letter-spacing: normal;
+}
+.md-typeset h1 { line-height: 1.25; }

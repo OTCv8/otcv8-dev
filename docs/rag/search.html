@@ -1,0 +1,99 @@
+﻿<!doctype html>
+<meta charset="utf-8" />
+<title>RAG demo — OTCv8 Docs</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root { color-scheme: light dark; }
+  body{font:14px system-ui,Segoe UI,Roboto,Arial;max-width:900px;margin:32px auto;padding:0 16px}
+  .row{display:flex;gap:8px;margin:12px 0}
+  input{flex:1;padding:10px;border:1px solid #ccc;border-radius:8px}
+  button{padding:10px 14px;border:0;border-radius:8px;background:#222;color:#fff;cursor:pointer}
+  li{margin:12px 0}
+  .muted{opacity:.75}
+# status{padding:8px 10px;border-radius:8px;background:color-mix(in oklab, Canvas 92%, CanvasText 8%);margin:12px 0}
+  mark{padding:0 2px;border-radius:3px}
+</style>
+
+<h2>RAG search (OTCv8 Docs)</h2>
+<div id="status">Ładuję model i indeks…</div>
+
+<div class="row">
+  <input id="q" placeholder="np. OTUI / Lua events / Android build" />
+  <button id="go">Szukaj</button>
+</div>
+<p class="muted">Pierwsze uruchomienie pobierze model (WASM) — może potrwać kilkanaście sekund.</p>
+<ul id="out"></ul>
+
+<script type="module">
+  const EMB_URL = 'https://lukaszj321.github.io/otcv8-dev/rag/embeddings.json';
+  const $ = (id) => document.getElementById(id);
+  const setStatus = (t) => { $('status').textContent = t; };
+
+  const dot = (a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
+  const norm = a => Math.sqrt(dot(a,a));
+  const cos = (a,b)=> dot(a,b)/(norm(a)*norm(b));
+
+  function hi(text, q){
+    if(!q) return text;
+    const esc = q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    return text.replace(new RegExp(esc, 'ig'), m => `<mark>${m}</mark>`);
+}
+
+  let data = null;
+  let extractor = null;
+
+  async function loadAll() {
+    setStatus('Ładuję embeddings.json…');
+    data = await fetch(EMB_URL).then(r => {
+      if (!r.ok) throw new Error('Nie można pobrać embeddings.json');
+      return r.json();
+    });
+
+    setStatus('Ładuję model (Xenova/all-MiniLM-L6-v2)…');
+    const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers/dist/transformers.min.js');
+    extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+    setStatus('Gotowe. Wpisz zapytanie i kliknij „Szukaj”.');
+}
+
+  async function search(q, k = 5) {
+    if (!q.trim()) return [];
+    setStatus('Szukam…');
+    const qv = await extractor(q, { pooling:'mean', normalize:true });
+    const qarr = Array.from(qv.data);
+    const scored = data.map(d => {
+      const base = cos(qarr, d.embedding);
+      const titleBoost = d.title && d.title.toLowerCase().includes(q.toLowerCase()) ? 0.05 : 0;
+      return { ...d, score: base + titleBoost };
+    }).sort((a,b)=> b.score - a.score).slice(0,k);
+    setStatus('Gotowe.');
+    return scored;
+}
+
+  function render(list, q) {
+    const out = $('out');
+    out.innerHTML = '';
+    if (!list.length) { out.innerHTML = '<li class="muted">Brak wyników</li>'; return; }
+    for (const r of list) {
+      const li = document.createElement('li');
+      const title = r.title || r.url;
+      const preview = (r.text || '').slice(0, 220).replace(/\s+/g,' ');
+      li.innerHTML = `
+        <div><strong>${hi(title, q)}</strong> — score: ${r.score.toFixed(3)}</div>
+        <div><a href="${r.url}" target="_blank" rel="noreferrer">${r.url}</a></div>
+        <div class="muted">${hi(preview, q)}…</div>`;
+      out.appendChild(li);
+}
+}
+
+  $('go').onclick = async () => {
+    try {
+      const q = $('q').value.trim();
+      if (!q) return;
+      const res = await search(q, 5);
+      render(res, q);
+    } catch (e) { console.error(e); setStatus('Błąd: ' + (e?.message || e)); }
+};
+  $('q').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('go').click(); });
+
+  loadAll().catch(e => { console.error(e); setStatus('Błąd inicjalizacji: ' + (e?.message || e)); });
+</script>

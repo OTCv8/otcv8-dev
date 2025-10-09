@@ -1,0 +1,26 @@
+classDiagram
+    class BinaryTree {
+        +seek()
+        +skip()
+        +tell()
+        +size()
+        +getU8()
+        +getU16()
+        +getU32()
+        +getU64()
+        +getString()
+        +getPoint()
+        +getChildren()
+        +canRead()
+    }
+    class OutputBinaryTree {
+        +addU8()
+        +addU16()
+        +addU32()
+        +addString()
+        +addPos()
+        +addPoint()
+        +startNode()
+        +endNode()
+        #write()
+    }

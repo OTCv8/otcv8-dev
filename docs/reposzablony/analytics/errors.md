@@ -1,0 +1,39 @@
+# Errors and Warnings
+
+Zbiorczy raport błędów i ostrzeżeń z procesu generacji dokumentacji.
+
+## Frontmatter Issues
+
+```
+file,issue,field
+chapter_10_game_runtime_docs_export_kit_authoring_agent_ready.md,No frontmatter found,general
+chapter_05_assets_docs_export_kit_authoring_agent_ready.md,No frontmatter found,general
+chapter_03_modules_docs_export_kit_authoring_agent_ready.md,No frontmatter found,general
+chapter_08_audio_docs_export_kit_authoring_agent_ready.md,No frontmatter found,general
+chapter_09_logging_docs_export_kit_authoring_agent_ready.md,No frontmatter found,general
+README.md,No frontmatter found,general
+GENERATION_REPORT.md,No frontmatter found,general
+chapter_06_network_docs_export_kit_authoring_agent_ready.md,No frontmatter found,general
+chapter_01_specyfikacja_implementacji_studio_react_electron_dla_skryptow_otclient_v_8_v_bot.md,No frontmatter found,general
+chapter_07_settings_crypto_docs_export_kit_authoring_agent_ready.md,No frontmatter found,general
+chapter_02_events_docs_export_kit_authoring_agent_ready.md,No frontmatter found,general
+relations/matrix.md,No frontmatter found,general
+_tools/README.md,No frontmatter found,general
+04_ui/README.md,No frontmatter found,general
+
+```
+
+## Broken Links
+
+```
+from,to,status,reason
+chapter_10_game_runtime_docs_export_kit_authoring_agent_ready.md,./sections/00_game_runtime_basics.md,BROKEN,File not found
+chapter_10_game_runtime_docs_export_kit_authoring_agent_ready.md,./sections/01_introduction.md,BROKEN,File not found
+chapter_10_game_runtime_docs_export_kit_authoring_agent_ready.md,./sections/02_game_runtime_model.md,BROKEN,File not found
+chapter_10_game_runtime_docs_export_kit_authoring_agent_ready.md,./sections/03_collection_methods.md,BROKEN,File not found
+chapter_10_game_runtime_docs_export_kit_authoring_agent_ready.md,./sections/04_quality_and_limits.md,BROKEN,File not found
+chapter_10_game_runtime_docs_export_kit_authoring_agent_ready.md,./sections/05_how_to_read_stats.md,BROKEN,File not found
+chapter_10_game_runtime_docs_export_kit_authoring_agent_ready.md,./stats/stats.md,BROKEN,File not found
+chapter_10_game_runtime_docs_export_kit_authoring_agent_ready.md,./analysis/findings.md,BROKEN,File not found
+chapter_10_game_runtime_docs_exp
+```

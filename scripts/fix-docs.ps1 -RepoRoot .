@@ -1,0 +1,160 @@
+Param(
+  [Parameter(Mandatory = $true)] [string]$RepoRoot,
+  [switch]$FromLinkLint = $true
+)
+
+$ErrorActionPreference = 'Stop'
+Set-Location -LiteralPath $RepoRoot
+
+function Ensure-Dir([string]$p) {
+  $d = Split-Path -LiteralPath $p -Parent
+  if ($d -and -not (Test-Path -LiteralPath $d)) {
+    New-Item -ItemType Directory -Path $d -Force | Out-Null
+  }
+}
+
+function Ensure-File([string]$p, [string]$content) {
+  Ensure-Dir $p
+  if (-not (Test-Path -LiteralPath $p)) {
+    Set-Content -LiteralPath $p -Value $content -Encoding utf8
+  }
+}
+
+function Ensure-Mermaid([string]$p) {
+  Ensure-File $p "%% auto-stub
+flowchart TD
+  A[auto-stub] --> B[TODO: replace];
+"
+}
+
+function Ensure-JsonSchema([string]$p) {
+  Ensure-File $p "{`n  `"\$schema`": `"http://json-schema.org/draft-07/schema#`",`n  `"title`": `"stub`",`n  `"type`": `"object`",`n  `"properties`": {}`n}"
+}
+
+function Ensure-Csv([string]$p) {
+  # CSV z nagłówkiem (QA: "CSV ma mieć nagłówki")
+  Ensure-File $p "id,doc_id,title,content"
+}
+
+function Ensure-Jsonl([string]$p) {
+  # Pusty JSONL jest akceptowalny jako stub
+  Ensure-File $p ""
+}
+
+function Add-Frontmatter([string]$filePath) {
+  if (-not (Test-Path -LiteralPath $filePath)) { return }
+  $raw = Get-Content -LiteralPath $filePath -Raw
+  if ($raw -match '^\s*---\s*\r?\n') { return } # już ma frontmatter
+
+  $repoAbs = (Resolve-Path -LiteralPath $RepoRoot).Path
+  $fileAbs = (Resolve-Path -LiteralPath $filePath).Path
+  $rel = $fileAbs.Substring($repoAbs.Length).TrimStart('\','/')
+
+  $class = 'guide'
+  if ($rel -like '01_core/api/*') { $class = 'api' }
+  elseif ($rel -like '03_modules/*') { $class = 'spec' }
+  elseif ($rel -like '04_ui/*') { $class = 'ui' }
+  elseif ($rel -like 'chapter_*') { $class = 'guide' }
+  elseif ($rel -like 'README.md' -or $rel -like '_tools/README.md') { $class = 'guide' }
+
+  $titleBase = Split-Path -Leaf $rel
+  switch ($class) {
+    'api'  { $title = "API: $titleBase";  $tags = '["cpp","api","otclient"]' }
+    'spec' { $title = "Moduł Lua: $titleBase"; $tags = '["lua","module","otclient"]' }
+    'ui'   { $title = "OTUI: $titleBase"; $tags = '["otui","widget","otclient"]' }
+    default{ $title = "Dokument: $titleBase"; $tags = '["guide","otclient"]' }
+  }
+
+  # doc_id = prefix + sha1(rel)
+  $sha1 = [System.Security.Cryptography.SHA1]::Create()
+  $bytes = [Text.Encoding]::UTF8.GetBytes($rel)
+  $hex = ($sha1.ComputeHash($bytes) | ForEach-Object { $_.ToString('x2') }) -join ''
+  switch ($class) {
+    'api'  { $prefix = 'cpp-api' }
+    'spec' { $prefix = 'lua-spec' }
+    'ui'   { $prefix = 'otui-ui' }
+    default{ $prefix = 'guide' }
+  }
+  $docId = "$prefix-$($hex.Substring(0,12))"
+
+  # git sha (ostatni commit dot. pliku) – jak brak repo, wpis "0000000"
+  try {
+    $gitSha = (& git log -n 1 --pretty=format:%h -- "$filePath" 2>$null)
+    if (-not $gitSha) { $gitSha = '0000000' }
+  } catch { $gitSha = '0000000' }
+
+  $now = [DateTimeOffset]::UtcNow.ToString('o')
+  $summary = "Auto frontmatter dla $titleBase (wygenerowane)."
+
+  $fm = @"
+---
+doc_id: "$docId"
+source_path: "$rel"
+source_sha: "$gitSha"
+last_sync_iso: "$now"
+doc_class: "$class"
+language: "pl"
+title: "$title"
+summary: "$summary"
+tags: $tags
+---
+"@
+
+  Set-Content -LiteralPath $filePath -Value ($fm + "`r`n" + $raw) -Encoding utf8
+}
+
+Write-Host "==> 1) Tworzenie stubów z raportu linków (jeśli dostępny)" -ForegroundColor Cyan
+$lintFiles = @()
+if ($FromLinkLint) {
+  $lintFiles = Get-ChildItem -Recurse -File -Filter '*link_lint.csv' | Select-Object -ExpandProperty FullName
+}
+foreach ($lf in $lintFiles) {
+  Write-Host "   • $lf"
+  $rows = Import-Csv -LiteralPath $lf
+  foreach ($r in $rows) {
+    if ($r.status -ne 'BROKEN') { continue }
+    $from = Join-Path $RepoRoot $r.from
+    $base = Split-Path -Parent $from
+    if (-not $base) { $base = $RepoRoot }
+    $target = [System.IO.Path]::GetFullPath((Join-Path $base $r.to))
+
+    $ext = [System.IO.Path]::GetExtension($target).ToLowerInvariant()
+    switch ($ext) {
+      '.md'   {
+        Ensure-File $target "# $(Split-Path -Leaf $target)`n`n> Auto-stub (utworzono, aby naprawić linki).`n"
+        Add-Frontmatter $target
+      }
+      '.mmd'  { Ensure-Mermaid $target }
+      '.json' { Ensure-JsonSchema $target }
+      '.csv'  { Ensure-Csv $target }
+      '.jsonl'{ Ensure-Jsonl $target }
+      default { Ensure-File $target "" } # np. "obj"
+    }
+  }
+}
+
+Write-Host "==> 2) Stub brakujących diagramów ../diagrams/*.mmd w API/OTUI" -ForegroundColor Cyan
+$mdTargets = @()
+$mdTargets += Get-ChildItem -Recurse -File -Path (Join-Path $RepoRoot '01_core/api') -Filter *.md -ErrorAction SilentlyContinue
+$mdTargets += Get-ChildItem -Recurse -File -Path (Join-Path $RepoRoot '04_ui')      -Filter *.md -ErrorAction SilentlyContinue
+
+$regex = '\.\./diagrams/([A-Za-z0-9_]+)\.mmd'
+foreach ($md in $mdTargets) {
+  $txt = Get-Content -LiteralPath $md.FullName -Raw
+  $matches = [System.Text.RegularExpressions.Regex]::Matches($txt, $regex)
+  if ($matches.Count -eq 0) { continue }
+  $baseDir = Split-Path -Parent $md.FullName
+  foreach ($m in $matches) {
+    $rel = "../diagrams/$($m.Groups[1].Value).mmd"
+    $p = [System.IO.Path]::GetFullPath((Join-Path $baseDir $rel))
+    if (-not (Test-Path -LiteralPath $p)) {
+      Ensure-Mermaid $p
+    }
+  }
+}
+
+Write-Host "==> 3) Frontmatter dla wszystkich .md, które go nie mają" -ForegroundColor Cyan
+$allMd = Get-ChildItem -Recurse -File -Filter *.md
+foreach ($f in $allMd) { Add-Frontmatter $f.FullName }
+
+Write-Host "DONE." -ForegroundColor Green

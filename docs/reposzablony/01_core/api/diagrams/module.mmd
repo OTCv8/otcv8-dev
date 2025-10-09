@@ -1,0 +1,23 @@
+classDiagram
+    class Module {
+        +load()
+        +unload()
+        +reload()
+        +canUnload()
+        +canReload()
+        +isLoaded()
+        +isReloadable()
+        +isDependent()
+        +isSandboxed()
+        +hasDependency()
+        +getSandbox()
+        +getDescription()
+        +getName()
+        +getAuthor()
+        +getWebsite()
+        +getVersion()
+        +isAutoLoad()
+        +getAutoLoadPriority()
+        +asModule()
+        #discover()
+    }
