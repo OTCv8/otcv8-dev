@@ -32,9 +32,6 @@
 #include <queue>
 #include <regex>
 
-#if not(defined(ANDROID) || defined(FREE_VERSION))
-#include <boost/process.hpp>
-#endif
 #include <locale>
 #include <zlib.h>
 
@@ -69,76 +66,7 @@ void ResourceManager::terminate()
 }
 
 bool ResourceManager::launchCorrect(const std::string& product, const std::string& app) { // curently works only on windows
-#if not(defined(ANDROID) || defined(FREE_VERSION))
-    auto init_path = m_binaryPath.parent_path();
-    init_path /= INIT_FILENAME;
-    if (std::filesystem::exists(init_path)) // debug version
-        return false;
-
-    const char* localDir = PHYSFS_getPrefDir(product.c_str(), app.c_str());
-    if (!localDir)
-        return false;
-
-    auto fileName2 = m_binaryPath.stem().string();
-    fileName2 = stdext::split(fileName2, "-")[0];
-    stdext::tolower(fileName2);
-
-    std::filesystem::path path(std::filesystem::u8path(localDir));
-    std::error_code ec;
-    auto lastWrite = std::filesystem::last_write_time(m_binaryPath, ec);
-    std::filesystem::path binary = m_binaryPath;
-    for (auto& entry : std::filesystem::directory_iterator(path)) {
-        if (std::filesystem::is_directory(entry.path()))
-            continue;
-
-        auto fileName1 = entry.path().stem().string();
-        fileName1 = stdext::split(fileName1, "-")[0];
-        stdext::tolower(fileName1);
-        if (fileName1 != fileName2)
-            continue;
-
-        if (entry.path().extension() == m_binaryPath.extension()) {
-            std::error_code ec;
-            auto writeTime = std::filesystem::last_write_time(entry.path(), ec);
-            if (!ec && writeTime > lastWrite) {
-                lastWrite = writeTime;
-                binary = entry.path();
-            }
-        }
-    }
-
-    for (auto& entry : std::filesystem::directory_iterator(path)) { // remove old
-        if (std::filesystem::is_directory(entry.path()))
-            continue;
-
-        auto fileName1 = entry.path().stem().string();
-        fileName1 = stdext::split(fileName1, "-")[0];
-        stdext::tolower(fileName1);
-        if (fileName1 != fileName2)
-            continue;
-
-        if (entry.path().extension() == m_binaryPath.extension()) {
-            if (binary == entry.path())
-                continue;
-            std::error_code ec;
-            std::filesystem::remove(entry.path(), ec);
-        }
-    }
-
-    if (binary == m_binaryPath)
-        return false;
-
-    boost::process::child c(binary.string());
-    std::error_code ec2;
-    if (c.wait_for(std::chrono::seconds(5), ec2)) {
-        return c.exit_code() == 0;
-    }
-
-    c.detach();
     return true;
-#else
-    return false;
-#endif
 }
 
 bool ResourceManager::setupWriteDir(const std::string& product, const std::string& app) {

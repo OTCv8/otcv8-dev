@@ -58,10 +58,6 @@ int main(int argc, const char* argv[]) {
     }
 #endif
 
-    if (g_resources.launchCorrect(g_app.getName(), g_app.getCompactName())) {
-        return 0; // started other executable
-    }
-
     // initialize application framework and otclient
     g_app.init(args);
     g_client.init(args);

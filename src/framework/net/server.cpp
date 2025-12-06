@@ -23,7 +23,7 @@
 #include "server.h"
 #include "connection.h"
 
-extern asio::io_service g_ioService;
+extern asio::io_context g_ioService;
 
 Server::Server(int port)
     : m_acceptor(g_ioService, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))

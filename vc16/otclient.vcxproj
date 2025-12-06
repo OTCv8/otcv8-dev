@@ -39,7 +39,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DirectX|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <WholeProgramOptimization>PGOptimize</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
@@ -160,7 +160,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DirectX|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>$(PREPROCESSOR_DEFS);%(PreprocessorDefinitions);WITH_ENCRYPTION;OPENGL_ES;_SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING;_SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNINGS;NDEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>$(PREPROCESSOR_DEFS);%(PreprocessorDefinitions);WITH_ENCRYPTION;OPENGL_ES;_SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING;_SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNINGS;NDEBUG;BOOST_ALL_NO_LIB;BOOST_BEAST_USE_STD_STRING_VIEW;_WIN32_WINNT=0x0601</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <Optimization>MaxSpeed</Optimization>
@@ -197,7 +197,7 @@
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <PreventDllBinding>true</PreventDllBinding>
       <RegisterOutput>false</RegisterOutput>
-      <AdditionalDependencies>$(OTCLIENT_LIBDEPS);$(ProjectDir)angle\lib\libGLESv2.dll.lib;$(ProjectDir)angle\lib\libEGL.dll.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(OTCLIENT_LIBDEPS);$(ProjectDir)angle\lib\libGLESv2.dll.lib;$(ProjectDir)angle\lib\libEGL.dll.lib;legacy_stdio_definitions.lib;Avrt.lib;ws2_32.lib;mswsock.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <PreprocessorDefinitions>OPENGL_ES</PreprocessorDefinitions>

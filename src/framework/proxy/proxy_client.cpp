@@ -37,7 +37,7 @@ void Proxy::terminate()
         g_proxies.erase(self);
         disconnect();
         boost::system::error_code ec;
-        m_timer.cancel(ec);
+        m_timer.cancel();
     });
 }
 
@@ -75,7 +75,7 @@ void Proxy::check(const boost::system::error_code& ec)
             ping();
         }
     }
-    m_timer.expires_from_now(std::chrono::milliseconds(CHECK_INTERVAL));
+    m_timer.expires_after(std::chrono::milliseconds(CHECK_INTERVAL));
     m_timer.async_wait(std::bind(&Proxy::check, shared_from_this(), std::placeholders::_1));
 }
 
@@ -106,12 +106,12 @@ void Proxy::connect()
             }
             endpoint = boost::asio::ip::tcp::endpoint(address, self->m_port);
         } else {
-            endpoint = boost::asio::ip::tcp::endpoint(*results);
+            endpoint = boost::asio::ip::tcp::endpoint(*results.begin());
             endpoint.port(self->m_port);
         }
         self->m_resolvedIp = endpoint.address().to_string();
         self->m_socket = boost::asio::ip::tcp::socket(self->m_io);
-        self->m_lastPingSent = std::chrono::high_resolution_clock::now(); // used for async_connect timeout
+        self->m_lastPingSent = std::chrono::high_resolution_clock::now();
         self->m_socket.async_connect(endpoint, [self, endpoint](const boost::system::error_code& ec) {
             if (ec) {
                 self->m_state = STATE_NOT_CONNECTED;
@@ -323,7 +323,7 @@ void Session::terminate(boost::system::error_code ec)
             boost::system::error_code ecc;
             m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ecc);
             m_socket.close(ecc);
-            m_timer.cancel(ecc);
+            m_timer.cancel();
         } else if (m_disconnectCallback) {
             m_disconnectCallback(ec);
         }
@@ -348,7 +348,7 @@ void Session::check(const boost::system::error_code& ec)
 
     selectProxies();
 
-    m_timer.expires_from_now(std::chrono::milliseconds(CHECK_INTERVAL));
+    m_timer.expires_after(std::chrono::milliseconds(CHECK_INTERVAL));
     m_timer.async_wait(std::bind(&Session::check, shared_from_this(), std::placeholders::_1));
 }
 
