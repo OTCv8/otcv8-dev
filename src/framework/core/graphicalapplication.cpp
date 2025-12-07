@@ -45,6 +45,7 @@
 #ifdef FW_SOUND
 #include <framework/sound/soundmanager.h>
 #endif
+#include "configmanager.h"
 
 GraphicalApplication g_app;
 
@@ -67,6 +68,11 @@ void GraphicalApplication::init(std::vector<std::string>& args)
     g_ui.init();
 
     // initialize graphics
+    std::string driver;
+    if(ConfigPtr conf = g_configs.getSettings())
+        driver = conf->getValue("renderer");
+    
+    g_window.setDriver(driver);
     g_graphics.init();
 
     // fire first resize event

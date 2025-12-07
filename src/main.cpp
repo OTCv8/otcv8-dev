@@ -58,10 +58,6 @@ int main(int argc, const char* argv[]) {
     }
 #endif
 
-    // initialize application framework and otclient
-    g_app.init(args);
-    g_client.init(args);
-    g_http.init();
 
     bool testMode = std::find(args.begin(), args.end(), "--test") != args.end();
     if (testMode) {
@@ -71,6 +67,11 @@ int main(int argc, const char* argv[]) {
     // find script init.lua and run it
     g_resources.setupWriteDir(g_app.getName(), g_app.getCompactName());
     g_resources.setup();
+
+    // initialize application framework and otclient
+    g_app.init(args);
+    g_client.init(args);
+    g_http.init();
 
     if (!g_lua.safeRunScript("init.lua")) {
         if (g_resources.isLoadedFromArchive() && !g_resources.isLoadedFromMemory() &&

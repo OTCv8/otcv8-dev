@@ -14,6 +14,33 @@ OptionPanel
     margin: 5 5 5 5
 
   OptionCheckBox
+    id: useAdvancedGraphics
+    !text: tr('Advanced rendering options')
+    !tooltip: tr('Enable manual selection of the graphics engine')
+
+  Label
+    id: rendererLabel
+    margin-top: 8
+    !text: tr("graphics engine")
+
+  ComboBox
+    id: renderer
+    margin-top: 3
+    margin-right: 2
+    margin-left: 2
+    visible: false
+    @onOptionChange: modules.client_options.setOption('renderer', self:getText())
+    @onSetup: |
+      self:addOption("auto")
+      self:addOption("OpenGL")
+      self:addOption("DirectX")
+
+  HorizontalSeparator
+    id: separator2
+    margin-top: 12
+    margin-bottom: 12
+
+  OptionCheckBox
     id: vsync
     !text: tr('Enable vertical synchronization')
     !tooltip: tr('Limits FPS (usually to 60)')
@@ -95,6 +122,6 @@ OptionPanel
     text-auto-resize: true
     text-align: left
     text-wrap: true
-    !text: tr("If you have FPS issues:\n- Use OpenGL version (_gl)\n- Disable vertical synchronization\n- Set higher optimization level\n- Lower screen resolution\nOr report it on forum: http://otclient.net")
+    !text: tr("If you have FPS issues:\n- Use OpenGL version\n- Disable vertical synchronization\n- Set higher optimization level\n- Lower screen resolution\nOr report it on forum: otclient.net")
     $mobile:
       visible: false

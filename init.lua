@@ -45,7 +45,6 @@ if not g_resources.directoryExists("/modules") then
 end
 
 -- settings
-g_configs.loadSettings("/config.otml")
 
 -- set layout
 local settings = g_configs.getSettings()

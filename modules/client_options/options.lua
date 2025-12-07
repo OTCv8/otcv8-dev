@@ -1,5 +1,5 @@
 local defaultOptions = {
-  layout = DEFAULT_LAYOUT, -- set in init.lua
+  layout = DEFAULT_LAYOUT,
   vsync = true,
   showFps = true,
   showPing = true,
@@ -66,7 +66,10 @@ local defaultOptions = {
 
   profile = 1,
   
-  antialiasing = true
+  antialiasing = true,
+
+  renderer = "auto",
+  useAdvancedGraphics = false,
 }
 
 local optionsWindow
@@ -350,7 +353,24 @@ function setOption(key, value, force)
     generalPanel:getChildById('walkCtrlTurnDelayLabel'):setText(tr('Walk delay after ctrl turn: %s ms', value))  
   elseif key == "antialiasing" then
     g_app.setSmooth(value)
+  elseif key == 'useAdvancedGraphics' then
+    local rendererCombo = graphicsPanel:getChildById('renderer')
+    local rendererLabel = graphicsPanel:getChildById('rendererLabel')
+    if value then
+      rendererCombo:setVisible(true)
+      rendererLabel:setVisible(true)
+    else
+      rendererCombo:setVisible(false)
+      rendererLabel:setVisible(false)
+      g_window.setDriver('')
+    end
+  elseif key == 'renderer' then
+    if g_configs and g_configs.set then
+      g_configs.set('renderer', value)
+    end
+    g_window.setDriver(value)
   end
+
 
   -- change value for keybind updates
   for _,panel in pairs(optionsTabBar:getTabsPanel()) do

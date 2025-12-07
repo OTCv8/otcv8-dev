@@ -126,3 +126,18 @@ ipch/
 # ReSharper is a .NET coding add-in
 _ReSharper*/
 *.[Rr]e[Ss]harper
+vc16/otclient.vcxproj
+vc16/otclient/DirectX/otclient_dx.iobj
+vc16/otclient/DirectX/otclient.tlog/CL.command.1.tlog
+vc16/otclient/DirectX/otclient.tlog/Cl.items.tlog
+vc16/otclient/DirectX/otclient.tlog/CL.read.1.tlog
+vc16/otclient/DirectX/otclient.tlog/CL.write.1.tlog
+vc16/otclient/DirectX/otclient.tlog/link.command.1.tlog
+vc16/otclient/DirectX/otclient.tlog/link.read.1.tlog
+vc16/otclient/DirectX/otclient.tlog/link.secondary.1.tlog
+vc16/otclient/DirectX/otclient.tlog/link.write.1.tlog
+vc16/otclient/DirectX/otclient.tlog/otclient.lastbuildstate
+vc16/otclient/DirectX/otclient.tlog/rc.command.1.tlog
+vc16/otclient/DirectX/otclient.tlog/rc.read.1.tlog
+vc16/otclient/DirectX/otclient.tlog/rc.write.1.tlog
+vc16/otclient.vcxproj

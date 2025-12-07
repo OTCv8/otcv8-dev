@@ -104,6 +104,9 @@ public:
 
     virtual void flash();
 
+    std::string getDriver() { return m_driver; }
+    void setDriver(std::string driver){ m_driver = driver; }
+
 protected:
     virtual int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot) = 0;
 
@@ -139,6 +142,8 @@ protected:
     std::function<void()> m_onClose;
     OnResizeCallback m_onResize;
     OnInputEventCallback m_onInputEvent;
+
+    std::string m_driver;
 };
 
 extern PlatformWindow& g_window;

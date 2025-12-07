@@ -95,6 +95,7 @@ void Application::init(std::vector<std::string>& args)
 
     // initialize configs
     g_configs.init();
+    g_configs.loadSettings("/config.otml");
 
     // initialize lua
     g_lua.init();
