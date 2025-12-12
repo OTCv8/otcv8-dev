@@ -31,6 +31,7 @@
 #include "framebuffermanager.h"
 #include <framework/platform/platformwindow.h>
 #include <framework/graphics/textrender.h>
+#include <framework/core/graphicalapplication.h>
 
 Graphics g_graphics;
 
@@ -41,6 +42,13 @@ Graphics::Graphics()
 
 void Graphics::init()
 {
+    bool isGLES = g_window.isOpenGLES();
+    if(isGLES) {
+        if(!gladLoadGLES2Loader((GLADloadproc)GraphicalApplication::load_with_egl))
+            g_logger.fatal("Unable to init GLAD ES");
+    } else if(!gladLoadGL())
+        g_logger.fatal("Unable to init GLAD");
+
     g_graphics.checkForError(__FUNCTION__, __FILE__, __LINE__);
     glGetString(GL_NONE); glGetError(); // REQUIRED, DON'T REMOVE
     m_vendor = std::string((const char*)glGetString(GL_VENDOR) ? (const char*)glGetString(GL_VENDOR) : "");
@@ -51,25 +59,16 @@ void Graphics::init()
     g_logger.info(stdext::format("GPU %s (%s)", m_renderer, m_vendor));
     g_logger.info(stdext::format("OpenGL %s", m_version));
 
-    // init GL extensions
-#ifndef OPENGL_ES
-    float glVersion = 1.0;
-    try {
-        glVersion = std::atof(m_version.c_str());
-    }
-    catch (const std::exception&) {}
+    int major = GLVersion.major;
 
-    if (glVersion < 2.0) {
+    if(major < 2.0) {
         g_logger.fatal(stdext::format("Your device doesn't support OpenGL >= 2.0, try to use DX version or install graphics drivers. GPU: %s OpenGL: %s (%f), Ext: %s",
-            m_renderer, m_version, glVersion, m_extensions));
+            m_renderer, m_version, major, m_extensions));
     }
 
-    GLenum err = glewInit();
-    if(err != GLEW_OK)
-        g_logger.fatal(stdext::format("Unable to init GLEW: %s", glewGetErrorString(err)));
+    g_logger.info(stdext::format("GLAD loaded OpenGL %d.%d", GLVersion.major, GLVersion.minor));
 
-    // overwrite framebuffer API if needed
-    if(GLEW_EXT_framebuffer_object && !GLEW_ARB_framebuffer_object) {
+    if(!isGLES && GLAD_GL_EXT_framebuffer_object && !GLAD_GL_ARB_framebuffer_object && !GLAD_GL_VERSION_3_0) {
         glGenFramebuffers = glGenFramebuffersEXT;
         glDeleteFramebuffers = glDeleteFramebuffersEXT;
         glBindFramebuffer = glBindFramebufferEXT;
@@ -77,14 +76,13 @@ void Graphics::init()
         glCheckFramebufferStatus = glCheckFramebufferStatusEXT;
         glGenerateMipmap = glGenerateMipmapEXT;
     }
-#endif
 
     // blending is always enabled
     glEnable(GL_BLEND);
 
     int maxTextureSize = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-    if (m_maxTextureSize == -1 || m_maxTextureSize < maxTextureSize)
+    if(m_maxTextureSize == -1 || m_maxTextureSize < maxTextureSize)
         m_maxTextureSize = maxTextureSize;
 
 #ifdef WITH_DEPTH_BUFFER

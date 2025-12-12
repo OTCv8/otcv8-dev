@@ -27,10 +27,7 @@
 
 #include <winsock2.h>
 #include <windows.h>
-
-#ifdef OPENGL_ES
 #include <EGL/egl.h>
-#endif
 
 struct WindowProcProxy;
 
@@ -102,14 +99,11 @@ private:
     UINT m_timerRes = 0;
     bool m_hidden;
 
-#ifdef OPENGL_ES
     EGLConfig m_eglConfig;
     EGLContext m_eglContext;
     EGLDisplay m_eglDisplay;
     EGLSurface m_eglSurface;
-#else
     HGLRC m_wglContext;
-#endif
 };
 
 #endif

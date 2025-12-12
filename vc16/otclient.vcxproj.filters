@@ -112,6 +112,12 @@
     <Filter Include="Source Files\framework\proxy">
       <UniqueIdentifier>{02ae06e3-ad5a-44f4-8fde-5b7553943b95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\framework\graphics\glad">
+      <UniqueIdentifier>{e2214c5c-2148-4597-a837-3c322b47dcdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\framework\graphics\glad">
+      <UniqueIdentifier>{06c758db-e751-42da-b946-efcc8065f80e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\framework\core\application.cpp">
@@ -560,6 +566,9 @@
     </ClCompile>
     <ClCompile Include="..\src\framework\util\pngunpacker.cpp">
       <Filter>Source Files\framework\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\glad\glad.c">
+      <Filter>Source Files\framework\graphics\glad</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1126,6 +1135,12 @@
     </ClInclude>
     <ClInclude Include="..\src\framework\util\pngunpacker.h">
       <Filter>Header Files\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\framework\graphics\graphicsengine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\framework\graphics\glad\glad.h">
+      <Filter>Header Files\framework\graphics\glad</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

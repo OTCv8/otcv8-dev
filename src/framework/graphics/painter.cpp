@@ -169,11 +169,11 @@ void Painter::clear(const Color& color)
 {
     glClearColor(color.rF(), color.gF(), color.bF(), color.aF());
 #ifdef WITH_DEPTH_BUFFER
-#ifdef OPENGL_ES
-    glClearDepthf(0.99f);
-#else
-    glClearDepth(0.99f);
-#endif
+    if(g_window.isOpenGLES()){
+        glClearDepthf(0.99f);
+    }else{
+        glClearDepth(0.99f);
+    }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #else
     glClear(GL_COLOR_BUFFER_BIT);
@@ -186,11 +186,11 @@ void Painter::clearRect(const Color& color, const Rect& rect)
     setClipRect(rect);
     glClearColor(color.rF(), color.gF(), color.bF(), color.aF());
 #ifdef WITH_DEPTH_BUFFER
-#ifdef OPENGL_ES
-    glClearDepthf(0.99f);
-#else
-    glClearDepth(0.99f);
-#endif
+    if(g_window.isOpenGLES()){
+        glClearDepthf(0.99f);
+    }else{
+        glClearDepth(0.99f);
+    }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #else
     glClear(GL_COLOR_BUFFER_BIT);

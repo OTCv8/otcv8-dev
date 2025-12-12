@@ -217,11 +217,7 @@ void AndroidWindow::internalChooseGL()
 void AndroidWindow::internalCreateGLContext()
 {
     EGLint attrList[] = {
-#if OPENGL_ES==2
-        EGL_CONTEXT_CLIENT_VERSION, 2,
-#else
         EGL_CONTEXT_CLIENT_VERSION, 1,
-#endif
         EGL_NONE
     };
 

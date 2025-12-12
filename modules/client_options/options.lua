@@ -68,7 +68,7 @@ local defaultOptions = {
   
   antialiasing = true,
 
-  renderer = "auto",
+  renderer = "Auto",
   useAdvancedGraphics = false,
 }
 
@@ -362,13 +362,11 @@ function setOption(key, value, force)
     else
       rendererCombo:setVisible(false)
       rendererLabel:setVisible(false)
-      g_window.setDriver('')
     end
   elseif key == 'renderer' then
     if g_configs and g_configs.set then
       g_configs.set('renderer', value)
     end
-    g_window.setDriver(value)
   end
 
 

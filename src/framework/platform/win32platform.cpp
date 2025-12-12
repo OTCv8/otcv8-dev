@@ -277,10 +277,7 @@ std::string Platform::getOSName()
     ZeroMemory(&si, sizeof(SYSTEM_INFO));
     ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
 
-    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-    bOsVersionInfoEx = VerifyVersionInfo(&osvi, 0, 0);
-
-    if (!bOsVersionInfoEx)
+   if (GetVersionEx((OSVERSIONINFO*)&osvi) == 0)
         return std::string();
 
     pGNSI = (PGNSI)GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "GetNativeSystemInfo");

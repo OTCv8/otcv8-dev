@@ -35,6 +35,7 @@
 #include <framework/core/asyncdispatcher.h>
 #include <thread>
 #include <framework/util/stats.h>
+#include <framework/platform/platformwindow.h>
 
 SoundManager g_sounds;
 
@@ -229,55 +230,62 @@ SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
             source = SoundSourcePtr(new SoundSource);
             source->setBuffer(it->second);
         } else {
-#if defined __linux && !defined OPENGL_ES
-            // due to OpenAL implementation bug, stereo buffers are always downmixed to mono on linux systems
-            // this is hack to work around the issue
-            // solution taken from http://opensource.creative.com/pipermail/openal/2007-April/010355.html
-            CombinedSoundSourcePtr combinedSource(new CombinedSoundSource);
-            StreamSoundSourcePtr streamSource;
-
-            streamSource = StreamSoundSourcePtr(new StreamSoundSource);
-            streamSource->downMix(StreamSoundSource::DownMixLeft);
-            streamSource->setRelative(true);
-            streamSource->setPosition(Point(-128, 0));
-            combinedSource->addSource(streamSource);
-            m_streamFiles[streamSource] = g_asyncDispatcher.schedule([=]() -> SoundFilePtr {
-                stdext::timer a;
-                try {
-                    return SoundFile::loadSoundFile(filename);
-                } catch(std::exception& e) {
-                    g_logger.error(e.what());
-                    return nullptr;
-                }
-            });
-
-            streamSource = StreamSoundSourcePtr(new StreamSoundSource);
-            streamSource->downMix(StreamSoundSource::DownMixRight);
-            streamSource->setRelative(true);
-            streamSource->setPosition(Point(128,0));
-            combinedSource->addSource(streamSource);
-            m_streamFiles[streamSource] = g_asyncDispatcher.schedule([=]() -> SoundFilePtr {
-                try {
-                    return SoundFile::loadSoundFile(filename);
-                } catch(std::exception& e) {
-                    g_logger.error(e.what());
-                    return nullptr;
-                }
-            });
-
-            source = combinedSource;
+            bool isLinux;
+#if defined __linux
+            isLinux = true;
 #else
-            StreamSoundSourcePtr streamSource(new StreamSoundSource);
-            m_streamFiles[streamSource] = g_asyncDispatcher.schedule([=]() -> SoundFilePtr {
-                try {
-                    return SoundFile::loadSoundFile(filename);
-                } catch(std::exception& e) {
-                    g_logger.error(e.what());
-                    return nullptr;
-                }
-            });
-            source = streamSource;
+            isLinux = false;
 #endif
+            if(!g_window.isOpenGLES() && isLinux) {
+                // due to OpenAL implementation bug, stereo buffers are always downmixed to mono on linux systems
+                // this is hack to work around the issue
+                // solution taken from http://opensource.creative.com/pipermail/openal/2007-April/010355.html
+                CombinedSoundSourcePtr combinedSource(new CombinedSoundSource);
+                StreamSoundSourcePtr streamSource;
+
+                streamSource = StreamSoundSourcePtr(new StreamSoundSource);
+                streamSource->downMix(StreamSoundSource::DownMixLeft);
+                streamSource->setRelative(true);
+                streamSource->setPosition(Point(-128, 0));
+                combinedSource->addSource(streamSource);
+                m_streamFiles[streamSource] = g_asyncDispatcher.schedule([=]() -> SoundFilePtr {
+                    stdext::timer a;
+                    try {
+                        return SoundFile::loadSoundFile(filename);
+                    } catch(std::exception& e) {
+                        g_logger.error(e.what());
+                        return nullptr;
+                    }
+                });
+
+                streamSource = StreamSoundSourcePtr(new StreamSoundSource);
+                streamSource->downMix(StreamSoundSource::DownMixRight);
+                streamSource->setRelative(true);
+                streamSource->setPosition(Point(128,0));
+                combinedSource->addSource(streamSource);
+                m_streamFiles[streamSource] = g_asyncDispatcher.schedule([=]() -> SoundFilePtr {
+                    try {
+                        return SoundFile::loadSoundFile(filename);
+                    } catch(std::exception& e) {
+                        g_logger.error(e.what());
+                        return nullptr;
+                    }
+                });
+
+                source = combinedSource;
+            }
+            else{
+                StreamSoundSourcePtr streamSource(new StreamSoundSource);
+                m_streamFiles[streamSource] = g_asyncDispatcher.schedule([=]() -> SoundFilePtr {
+                    try {
+                        return SoundFile::loadSoundFile(filename);
+                    } catch(std::exception& e) {
+                        g_logger.error(e.what());
+                        return nullptr;
+                    }
+                });
+                source = streamSource;
+            }
         }
     } catch(std::exception& e) {
         g_logger.error(stdext::format("failed to load sound source: '%s'", e.what()));

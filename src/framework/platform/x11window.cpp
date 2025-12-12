@@ -48,15 +48,15 @@ X11Window::X11Window()
     m_minimumSize = Size(600,480);
     m_size = Size(600,480);
 
-#ifdef OPENGL_ES
-    m_eglConfig = 0;
-    m_eglContext = 0;
-    m_eglDisplay = 0;
-    m_eglSurface = 0;
-#else
-    m_fbConfig = 0;
-    m_glxContext = 0;
-#endif
+    if (g_window.isOpenGLES()) { 
+        m_eglConfig = 0;
+        m_eglContext = 0;
+        m_eglDisplay = 0;
+        m_eglSurface = 0;
+    } else {
+        m_fbConfig = 0;
+        m_glxContext = 0;
+    }
 
     m_keyMap[XK_Escape] = Fw::KeyEscape;
     m_keyMap[XK_Tab] = Fw::KeyTab;
@@ -298,10 +298,10 @@ void X11Window::internalCreateWindow()
     depth = m_visual->depth;
     attrsMask = CWEventMask | CWBorderPixel | CWColormap;
 
-#ifdef OPENGL_ES
-    attrs.override_redirect = False;
-    attrsMask |= CWOverrideRedirect;
-#endif
+    if(g_window.OpenGLES()){
+        attrs.override_redirect = False;
+        attrsMask |= CWOverrideRedirect;
+    }
 
     updateUnmaximizedCoords();
     m_window = XCreateWindow(m_display, m_rootWindow,
@@ -361,164 +361,156 @@ bool X11Window::internalSetupWindowInput()
 
 void X11Window::internalCheckGL()
 {
-#ifdef OPENGL_ES
-    m_eglDisplay = eglGetDisplay((EGLNativeDisplayType)m_display);
-    if(m_eglDisplay == EGL_NO_DISPLAY)
-        g_logger.fatal("EGL not supported");
+    if(g_window.isOpenGLES()) {
+        m_eglDisplay = eglGetDisplay((EGLNativeDisplayType)m_display);
+        if(m_eglDisplay == EGL_NO_DISPLAY)
+            g_logger.fatal("EGL not supported");
 
-    if(!eglInitialize(m_eglDisplay, NULL, NULL))
-        g_logger.fatal("Unable to initialize EGL");
-#else
-    if(!glXQueryExtension(m_display, NULL, NULL))
-        g_logger.fatal("GLX not supported");
-#endif
+        if(!eglInitialize(m_eglDisplay, NULL, NULL))
+            g_logger.fatal("Unable to initialize EGL");
+    } else {
+        if(!glXQueryExtension(m_display, NULL, NULL))
+            g_logger.fatal("GLX not supported");
+    }
 }
 
 void X11Window::internalChooseGLVisual()
 {
-#ifdef OPENGL_ES
-    static int attrList[] = {
-#if OPENGL_ES==2
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-#else
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
-#endif
-        EGL_RED_SIZE, 4,
-        EGL_GREEN_SIZE, 4,
-        EGL_BLUE_SIZE, 4,
-        EGL_ALPHA_SIZE, 4,
-        EGL_NONE
-    };
+    if(g_window.isOpenGLES()) {
+        static int attrList[] = {
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+            EGL_RED_SIZE, 4,
+            EGL_GREEN_SIZE, 4,
+            EGL_BLUE_SIZE, 4,
+            EGL_ALPHA_SIZE, 4,
+            EGL_NONE
+        };
 
-    EGLint numConfig;
-    XVisualInfo visTemplate;
-    int numVisuals;
+        EGLint numConfig;
+        XVisualInfo visTemplate;
+        int numVisuals;
 
-    if(!eglChooseConfig(m_eglDisplay, attrList, &m_eglConfig, 1, &numConfig))
-        g_logger.fatal("Failed to choose EGL config");
+        if(!eglChooseConfig(m_eglDisplay, attrList, &m_eglConfig, 1, &numConfig))
+            g_logger.fatal("Failed to choose EGL config");
 
-    if(numConfig != 1)
-        g_logger.warning("Didn't got the exact EGL config");
+        if(numConfig != 1)
+            g_logger.warning("Didn't got the exact EGL config");
 
-    EGLint vid;
-    if(!eglGetConfigAttrib(m_eglDisplay, m_eglConfig, EGL_NATIVE_VISUAL_ID, &vid))
-        g_logger.fatal("Unable to get visual EGL visual id");
+        EGLint vid;
+        if(!eglGetConfigAttrib(m_eglDisplay, m_eglConfig, EGL_NATIVE_VISUAL_ID, &vid))
+            g_logger.fatal("Unable to get visual EGL visual id");
 
-    memset(&visTemplate, 0, sizeof(visTemplate));
-    visTemplate.visualid = vid;
-    m_visual = XGetVisualInfo(m_display, VisualIDMask, &visTemplate, &numVisuals);
-    if(!m_visual)
-        g_logger.fatal("Couldn't choose RGBA, double buffered visual");
+        memset(&visTemplate, 0, sizeof(visTemplate));
+        visTemplate.visualid = vid;
+        m_visual = XGetVisualInfo(m_display, VisualIDMask, &visTemplate, &numVisuals);
+        if(!m_visual)
+            g_logger.fatal("Couldn't choose RGBA, double buffered visual");
 
-    m_rootWindow = DefaultRootWindow(m_display);
-#else
-    static int attrList[] = {
-        GLX_RENDER_TYPE, GLX_RGBA_BIT,
-        GLX_DOUBLEBUFFER, True,
-        GLX_RED_SIZE, 8,
-        GLX_GREEN_SIZE, 8,
-        GLX_BLUE_SIZE, 8,
-        GLX_ALPHA_SIZE, 8,
-        None
-    };
+        m_rootWindow = DefaultRootWindow(m_display);
+    } else {
+        static int attrList[] = {
+            GLX_RENDER_TYPE, GLX_RGBA_BIT,
+            GLX_DOUBLEBUFFER, True,
+            GLX_RED_SIZE, 8,
+            GLX_GREEN_SIZE, 8,
+            GLX_BLUE_SIZE, 8,
+            GLX_ALPHA_SIZE, 8,
+            None
+        };
 
-    int nelements;
-    m_fbConfig = glXChooseFBConfig(m_display, m_screen, attrList, &nelements);
-    if(!m_fbConfig)
-        g_logger.fatal("Couldn't choose RGBA, double buffered fbconfig");
+        int nelements;
+        m_fbConfig = glXChooseFBConfig(m_display, m_screen, attrList, &nelements);
+        if(!m_fbConfig)
+            g_logger.fatal("Couldn't choose RGBA, double buffered fbconfig");
 
-    m_visual = glXGetVisualFromFBConfig(m_display, *m_fbConfig);
-    if(!m_visual)
-        g_logger.fatal("Couldn't choose RGBA, double buffered visual");
+        m_visual = glXGetVisualFromFBConfig(m_display, *m_fbConfig);
+        if(!m_visual)
+            g_logger.fatal("Couldn't choose RGBA, double buffered visual");
 
-    m_rootWindow = RootWindow(m_display, m_visual->screen);
-#endif
+        m_rootWindow = RootWindow(m_display, m_visual->screen);
+    }
 }
 
 void X11Window::internalCreateGLContext()
 {
-#ifdef OPENGL_ES
-    EGLint attrList[] = {
-#if OPENGL_ES==2
-        EGL_CONTEXT_CLIENT_VERSION, 2,
-#else
-        EGL_CONTEXT_CLIENT_VERSION, 1,
-#endif
-        EGL_NONE
-    };
+    if(g_window.isOpenGLES()) {
+        EGLint attrList[] = {
+            EGL_CONTEXT_CLIENT_VERSION, 1,
+            EGL_NONE
+        };
 
-    m_eglContext = eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, attrList);
-    if(m_eglContext == EGL_NO_CONTEXT )
-        g_logger.fatal(stdext::format("Unable to create EGL context: %s", eglGetError()));
-#else
-    m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
+        m_eglContext = eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, attrList);
+        if(m_eglContext == EGL_NO_CONTEXT )
+            g_logger.fatal(stdext::format("Unable to create EGL context: %s", eglGetError()));
+    }else{
+        m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
 
-    if(!m_glxContext)
-        g_logger.fatal("Unable to create GLX context");
+        if(!m_glxContext)
+            g_logger.fatal("Unable to create GLX context");
 
-    if(!glXIsDirect(m_display, m_glxContext))
-        g_logger.warning("GL direct rendering is not possible");
-#endif
+        if(!glXIsDirect(m_display, m_glxContext))
+            g_logger.warning("GL direct rendering is not possible");
+    }
 }
 
 void X11Window::internalDestroyGLContext()
 {
-#ifdef OPENGL_ES
-    if(m_eglDisplay) {
-        if(m_eglContext) {
-            eglDestroyContext(m_eglDisplay, m_eglContext);
-            m_eglContext = 0;
+    if(g_window.isOpenGLES()) {
+        if(m_eglDisplay) {
+            if(m_eglContext) {
+                eglDestroyContext(m_eglDisplay, m_eglContext);
+                m_eglContext = 0;
+            }
+            if(m_eglSurface) {
+                eglDestroySurface(m_eglDisplay, m_eglSurface);
+                m_eglSurface = 0;
+            }
+            eglTerminate(m_eglDisplay);
+            m_eglDisplay = 0;
         }
-        if(m_eglSurface) {
-            eglDestroySurface(m_eglDisplay, m_eglSurface);
-            m_eglSurface = 0;
+    }else{
+        if(m_glxContext) {
+            glXMakeCurrent(m_display, None, NULL);
+            glXDestroyContext(m_display, m_glxContext);
+            m_glxContext = 0;
         }
-        eglTerminate(m_eglDisplay);
-        m_eglDisplay = 0;
     }
-#else
-    if(m_glxContext) {
-        glXMakeCurrent(m_display, None, NULL);
-        glXDestroyContext(m_display, m_glxContext);
-        m_glxContext = 0;
-    }
-#endif
 }
 
 void X11Window::internalConnectGLContext()
 {
-#ifdef OPENGL_ES
-    m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_window, NULL);
-    if(m_eglSurface == EGL_NO_SURFACE)
-        g_logger.fatal(stdext::format("Unable to create EGL surface: %s", eglGetError()));
-    if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
-        g_logger.fatal("Unable to connect EGL context into X11 window");
-#else
-    if(!glXMakeCurrent(m_display, m_window, m_glxContext))
-        g_logger.fatal("Unable to set GLX context on X11 window");
-#endif
+    if(g_window.isOpenGLES()) {
+        m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_window, NULL);
+        if(m_eglSurface == EGL_NO_SURFACE)
+            g_logger.fatal(stdext::format("Unable to create EGL surface: %s", eglGetError()));
+        if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
+            g_logger.fatal("Unable to connect EGL context into X11 window");
+    }else{
+        if(!glXMakeCurrent(m_display, m_window, m_glxContext))
+            g_logger.fatal("Unable to set GLX context on X11 window");
+    }
 }
 
 void *X11Window::getExtensionProcAddress(const char *ext)
 {
-#ifdef OPENGL_ES
-    //TODO
-    return NULL;
-#else
-    return (void *)glXGetProcAddressARB((const GLubyte*)ext);
-#endif
+    if(g_window.isOpenGLES()){
+        //TODO
+        return NULL;
+    }else{
+        return (void *)glXGetProcAddressARB((const GLubyte*)ext);
+    }
 }
 
 bool X11Window::isExtensionSupported(const char *ext)
 {
-#ifdef OPENGL_ES
-    //TODO
-    return false;
-#else
-    const char *exts = glXQueryExtensionsString(m_display, m_screen);
-    if(strstr(exts, ext))
-        return true;
-#endif
+    if(g_window.isOpenGLES()){
+        //TODO
+        return false;
+    }else{
+        const char *exts = glXQueryExtensionsString(m_display, m_screen);
+        if(strstr(exts, ext))
+            return true;
+    }
     return false;
 }
 
@@ -872,11 +864,11 @@ void X11Window::poll()
 
 void X11Window::swapBuffers()
 {
-#ifdef OPENGL_ES
-    eglSwapBuffers(m_eglDisplay, m_eglSurface);
-#else
-    glXSwapBuffers(m_display, m_window);
-#endif
+    if(g_window.isOpenGLES()){
+        eglSwapBuffers(m_eglDisplay, m_eglSurface);
+    }else{
+        glXSwapBuffers(m_display, m_window);
+    }
 }
 
 void X11Window::showMouse()
@@ -1034,20 +1026,20 @@ void X11Window::setVerticalSync(bool enable)
         g_graphicsDispatcher.addEvent(std::bind(&X11Window::setVerticalSync, this, enable));
         return;
     }
-#ifdef OPENGL_ES
-    //TODO
-#else
-    typedef GLint (*glSwapIntervalProc)(GLint);
-    glSwapIntervalProc glSwapInterval = NULL;
+    if(g_window.isOpenGLES()) {
+        return;
+    }else{
+        typedef GLint (*glSwapIntervalProc)(GLint);
+        glSwapIntervalProc glSwapInterval = NULL;
 
-    if(isExtensionSupported("GLX_MESA_swap_control"))
-        glSwapInterval = (glSwapIntervalProc)getExtensionProcAddress("glXSwapIntervalMESA");
-    else if(isExtensionSupported("GLX_SGI_swap_control"))
-        glSwapInterval = (glSwapIntervalProc)getExtensionProcAddress("glXSwapIntervalSGI");
+        if(isExtensionSupported("GLX_MESA_swap_control"))
+            glSwapInterval = (glSwapIntervalProc)getExtensionProcAddress("glXSwapIntervalMESA");
+        else if(isExtensionSupported("GLX_SGI_swap_control"))
+            glSwapInterval = (glSwapIntervalProc)getExtensionProcAddress("glXSwapIntervalSGI");
 
-    if(glSwapInterval)
-        glSwapInterval(enable ? 1 : 0);
-#endif
+        if(glSwapInterval)
+            glSwapInterval(enable ? 1 : 0);
+    }
 }
 
 void X11Window::setIcon(const std::string& file)
@@ -1146,17 +1138,17 @@ std::string X11Window::getClipboardText()
 std::string X11Window::getPlatformType()
 {
 #if defined(__APPLE__)
-#ifndef OPENGL_ES
-    return "MAC_GLX";
+    if(g_window.isOpenGLES()){
+        return "MAC_GLX";
+    }else{
+        return "MAC-EGL";
+    }
 #else
-    return "MAC-EGL";
-#endif
-#else
-#ifndef OPENGL_ES
-    return "X11-GLX";
-#else
-    return "X11-EGL";
-#endif
+    if(g_window.isOpenGLES()){
+        return "X11-GLX";
+    }else{
+        return "X11-EGL";
+    }
 #endif
 }
 

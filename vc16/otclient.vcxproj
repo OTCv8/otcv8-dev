@@ -639,6 +639,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_lib|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\glad\glad.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='OpenGL|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DirectX|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\src\framework\graphics\graph.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_lib|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -1034,6 +1038,7 @@
     <ClInclude Include="..\src\framework\graphics\fontmanager.h" />
     <ClInclude Include="..\src\framework\graphics\framebuffer.h" />
     <ClInclude Include="..\src\framework\graphics\framebuffermanager.h" />
+    <ClInclude Include="..\src\framework\graphics\glad\glad.h" />
     <ClInclude Include="..\src\framework\graphics\glutil.h" />
     <ClInclude Include="..\src\framework\graphics\graph.h" />
     <ClInclude Include="..\src\framework\graphics\graphics.h" />

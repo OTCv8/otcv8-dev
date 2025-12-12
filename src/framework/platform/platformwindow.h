@@ -105,6 +105,7 @@ public:
     virtual void flash();
 
     std::string getDriver() { return m_driver; }
+    bool isOpenGLES() { return m_driver == "directx"; }
     void setDriver(std::string driver){ m_driver = driver; }
 
 protected:

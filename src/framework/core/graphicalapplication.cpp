@@ -24,9 +24,11 @@
 #include "graphicalapplication.h"
 #include <framework/core/adaptiverenderer.h>
 #include <framework/core/clock.h>
-#include <framework/core/eventdispatcher.h>
+#include <framework/core/eventdispatcher.h> 
 #include <framework/core/asyncdispatcher.h>
 #include <framework/platform/platformwindow.h>
+#include <framework/platform/platform.h>
+#include <algorithm>
 #include <framework/ui/uimanager.h>
 #include <framework/graphics/graph.h>
 #include <framework/graphics/graphics.h>
@@ -46,33 +48,197 @@
 #include <framework/sound/soundmanager.h>
 #endif
 #include "configmanager.h"
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <dlfcn.h>
+#endif
 
 GraphicalApplication g_app;
+
+static void* open_handle(const char* lib_names[], int length)
+{
+    int i;
+    void* handle;
+
+    for(i = 0; i < length; ++i) {
+#ifdef _WIN32
+        handle = LoadLibraryA(lib_names[i]);
+#else
+        handle = dlopen(lib_names[i], RTLD_LAZY | RTLD_GLOBAL);
+#endif
+        if(handle != NULL) {
+            return handle;
+        }
+    }
+
+    return NULL;
+}
+
+static void close_handle(void* handle)
+{
+    if(handle != NULL) {
+#ifdef _WIN32
+        FreeLibrary((HMODULE)handle);
+#else
+        dlclose(handle);
+#endif
+    }
+}
+
+static void* dlsym_handle(void* handle, const char* name)
+{
+    if(handle == NULL)
+        return NULL;
+
+#ifdef _WIN32
+    return GetProcAddress((HMODULE)handle, name);
+#else
+    return dlsym(handle, name);
+#endif
+}
+
+static void* global_egl_handle;
+
+void* GraphicalApplication::load_with_egl(const char* name)
+{
+    void* result = dlsym_handle(global_egl_handle, name);
+    if(result == nullptr)
+        result = eglGetProcAddress(name);
+    return result;
+}
 
 void GraphicalApplication::init(std::vector<std::string>& args)
 {
     Application::init(args);
 
+    std::string driver;
+#if defined(__ANDROID__) || defined(__EMSCRIPTEN__)
+    driver = "directx";
+#else
+    // initialize graphics
+    if(ConfigPtr conf = g_configs.getSettings()) {
+        std::string uag = conf->getValue("useAdvancedGraphics");
+        stdext::tolower(uag);
+        if(uag == "true" || uag == "1") {
+            driver = conf->getValue("renderer");
+            stdext::tolower(driver);
+        }
+        if(driver == "auto")
+            driver = "";
+    }
+
+#ifdef WIN32
+    std::string osName = g_platform.getOSName();
+    if(driver.empty()) {
+        bool isLegacyWindows = osName.find("Windows XP") != std::string::npos ||
+            osName.find("Windows 2003") != std::string::npos ||
+            osName.find("Windows 2000") != std::string::npos ||
+            osName.find("Windows Vista") != std::string::npos ||
+            osName.find("Windows 7") != std::string::npos;
+
+        if(isLegacyWindows) {
+            g_logger.info(stdext::format("Driver detection: Legacy Windows detected (%s), forcing OpenGL", osName));
+            driver = "opengl";
+        }
+    }
+#endif
+
+    if(driver.empty()) {
+        g_logger.info("Driver detection: Auto-detecting driver...");
+
+        static const char* NAMES[] = { "libEGL.dll" };
+
+        global_egl_handle = open_handle(NAMES, sizeof(NAMES) / sizeof(NAMES[0]));
+
+        auto oglesCheck = []() {
+            EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+
+            EGLint major, minor;
+            eglInitialize(display, &major, &minor);
+
+            EGLint configAttribs[] = {
+                EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+                EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+                EGL_NONE
+            };
+
+            EGLConfig config;
+            EGLint numConfigs;
+            eglChooseConfig(display, configAttribs, &config, 1, &numConfigs);
+
+            EGLint contextAttribs[] = {
+                EGL_CONTEXT_CLIENT_VERSION, 2,
+                EGL_NONE
+            };
+
+            EGLContext context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs);
+
+            WNDCLASSA wc = { 0 };
+            wc.lpfnWndProc = DefWindowProcA;
+            wc.hInstance = GetModuleHandle(nullptr);
+            wc.lpszClassName = "TempEGLWindow";
+
+            RegisterClassA(&wc);
+
+            HWND hwnd = CreateWindowA(
+                "TempEGLWindow",
+                "Temp",
+                WS_OVERLAPPEDWINDOW,
+                CW_USEDEFAULT, CW_USEDEFAULT,
+                1, 1,
+                nullptr, nullptr,
+                wc.hInstance, nullptr);
+
+            EGLSurface surface = eglCreateWindowSurface(display, config, hwnd, nullptr);
+
+            eglMakeCurrent(display, surface, surface, context);
+
+            if(!gladLoadGLES2Loader((GLADloadproc)load_with_egl)) {
+                g_logger.error("GLAD failed");
+                return false;
+            }
+
+            bool hasGLES2 = GLAD_GL_ES_VERSION_2_0;
+            bool hasFBO = GLAD_GL_ES_VERSION_3_0 ||
+                GLAD_GL_EXT_framebuffer_object ||
+                GLAD_GL_OES_framebuffer_object;
+            if(!hasGLES2)
+                return false;
+            if(!hasFBO)
+                return false;
+            eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+            eglDestroySurface(display, surface);
+            eglDestroyContext(display, context);
+            eglTerminate(display);
+
+            DestroyWindow(hwnd);
+            return true;
+        };
+
+        if(oglesCheck())
+            driver = "directx";
+        else
+            driver = "opengl";
+
+        g_logger.info(stdext::format("Driver detection: Selected '%s'", driver));
+    }
+#endif
+
+    g_window.setDriver(driver);
+
     // setup platform window
     g_window.init();
-    g_graphics.checkForError(__FUNCTION__, __FILE__, __LINE__);
     g_window.hide();
     g_window.setOnResize(std::bind(&GraphicalApplication::resize, this, std::placeholders::_1));
     g_window.setOnInputEvent(std::bind(&GraphicalApplication::inputEvent, this, std::placeholders::_1));
     g_window.setOnClose(std::bind(&GraphicalApplication::close, this));
-    g_graphics.checkForError(__FUNCTION__, __FILE__, __LINE__);
 
     g_mouse.init();
 
     // initialize ui
     g_ui.init();
 
-    // initialize graphics
-    std::string driver;
-    if(ConfigPtr conf = g_configs.getSettings())
-        driver = conf->getValue("renderer");
-    
-    g_window.setDriver(driver);
     g_graphics.init();
 
     // fire first resize event
@@ -95,6 +261,8 @@ void GraphicalApplication::deinit()
 
 void GraphicalApplication::terminate()
 {
+    close_handle(global_egl_handle);
+
     // destroy any remaining widget
     g_ui.terminate();
 

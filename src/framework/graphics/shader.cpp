@@ -22,6 +22,7 @@
 
 #include "shader.h"
 #include "graphics.h"
+#include <framework/platform/platformwindow.h>
 
 #include <framework/core/application.h>
 #include <framework/core/resourcemanager.h>
@@ -51,15 +52,17 @@ Shader::~Shader()
 
 bool Shader::compileSourceCode(const std::string& sourceCode)
 {
-#ifdef OPENGL_ES
-    static const char *qualifierDefines =
-        "precision highp float;\n";
-    std::string code = qualifierDefines;
-    code.append(sourceCode);
-    const char* c_source = code.c_str();
-#else
-    const char* c_source = sourceCode.c_str();
-#endif
+    std::string code;
+    const char* c_source;
+    if(g_window.isOpenGLES()){
+        static const char *qualifierDefines =
+            "precision highp float;\n";
+        code = qualifierDefines;
+        code.append(sourceCode);
+        c_source = code.c_str();
+    }else{
+        c_source = sourceCode.c_str();
+    }
     glShaderSource(m_shaderId, 1, &c_source, NULL);
     glCompileShader(m_shaderId);
 

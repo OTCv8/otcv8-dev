@@ -31,7 +31,7 @@ OptionPanel
     visible: false
     @onOptionChange: modules.client_options.setOption('renderer', self:getText())
     @onSetup: |
-      self:addOption("auto")
+      self:addOption("Auto")
       self:addOption("OpenGL")
       self:addOption("DirectX")
 

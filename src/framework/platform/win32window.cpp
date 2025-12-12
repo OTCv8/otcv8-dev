@@ -42,14 +42,11 @@ WIN32Window::WIN32Window()
     m_size = Size(600,480);
     m_hidden = true;
 
-#ifdef OPENGL_ES
     m_eglConfig = 0;
     m_eglContext = 0;
     m_eglDisplay = 0;
     m_eglSurface = 0;
-#else
     m_wglContext = 0;
-#endif
 
     m_keyMap[VK_ESCAPE] = Fw::KeyEscape;
     m_keyMap[VK_TAB] = Fw::KeyTab;
@@ -327,182 +324,182 @@ void WIN32Window::internalCreateWindow()
 
 void WIN32Window::internalCreateGLContext()
 {
-#ifdef OPENGL_ES
-    PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(eglGetProcAddress("eglGetPlatformDisplayEXT"));
+    if(g_window.isOpenGLES()){
+        PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(eglGetProcAddress("eglGetPlatformDisplayEXT"));
 
-    EGLint displayAttributes[3][5] =
-    { 
-        {
-            EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
-            EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE,
-            EGL_NONE,
-        },
-        {
-            EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE,
-            EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE,
-            EGL_NONE,
-        },
-        {
-            EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
-            EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_D3D_WARP_ANGLE,
-            EGL_NONE,
-        },
-    };
+        EGLint displayAttributes[3][5] =
+        { 
+            {
+                EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
+                EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE,
+                EGL_NONE,
+            },
+            {
+                EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE,
+                EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE,
+                EGL_NONE,
+            },
+            {
+                EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
+                EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_D3D_WARP_ANGLE,
+                EGL_NONE,
+            },
+        };
 
-    auto setupDisplay = [&](EGLDisplay display) -> bool {
-        if (!display) return false;
-        if (eglInitialize(display, NULL, NULL)) {
-            m_eglDisplay = display;
-            return true;
-        }
-        return false;
-    };
-
-    if (eglGetPlatformDisplayEXT) {
-        std::string args(GetCommandLineA());
-        if (args.find("-dx11") != std::string::npos) {
-            setupDisplay(eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttributes[0]));
-        } else if (args.find("-dx9") != std::string::npos) {
-            setupDisplay(eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttributes[1]));
-        } else if (args.find("-warp") != std::string::npos) {
-            setupDisplay(eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttributes[2]));
-        } else {
-            for (EGLint* attributes : displayAttributes) {
-                if (setupDisplay(eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, attributes)))
-                    break;
+        auto setupDisplay = [&](EGLDisplay display) -> bool {
+            if (!display) return false;
+            if (eglInitialize(display, NULL, NULL)) {
+                m_eglDisplay = display;
+                return true;
             }
+            return false;
+        };
+
+        if (eglGetPlatformDisplayEXT) {
+            std::string args(GetCommandLineA());
+            if (args.find("-dx11") != std::string::npos) {
+                setupDisplay(eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttributes[0]));
+            } else if (args.find("-dx9") != std::string::npos) {
+                setupDisplay(eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttributes[1]));
+            } else if (args.find("-warp") != std::string::npos) {
+                setupDisplay(eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttributes[2]));
+            } else {
+                for (EGLint* attributes : displayAttributes) {
+                    if (setupDisplay(eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, attributes)))
+                        break;
+                }
+            }
+        }        
+        
+        if (!m_eglDisplay && !setupDisplay(eglGetDisplay(m_deviceContext))) {
+            g_logger.fatal("DirectX is not supported, try to use OpenGL version or install latest directx drivers. Also, make sure that your folder contains libEGL.dll, libGLESv2.dll and d3dcompiler_47.dll.");
         }
-    }        
-    
-    if (!m_eglDisplay && !setupDisplay(eglGetDisplay(m_deviceContext))) {
-        g_logger.fatal("DirectX is not supported, try to use OpenGL version or install latest directx drivers. Also, make sure that your folder contains libEGL.dll, libGLESv2.dll and d3dcompiler_47.dll.");
+
+        static int configList[] = {
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+            EGL_RED_SIZE, 8,
+            EGL_GREEN_SIZE, 8,
+            EGL_BLUE_SIZE, 8,
+            EGL_ALPHA_SIZE, 8,
+            EGL_NONE
+        };
+
+        EGLint numConfig;
+
+        if(!eglGetConfigs(m_eglDisplay, NULL, 0xFFFF, &numConfig)) // it must have 0xFFFF to work
+            g_logger.fatal("No valid GL configurations");
+
+        if(!eglChooseConfig(m_eglDisplay, configList, &m_eglConfig, 1, &numConfig))
+            g_logger.fatal("Failed to choose EGL config");
+
+        EGLint contextAtrrList[] = {
+            EGL_CONTEXT_CLIENT_VERSION, 2,
+            EGL_NONE
+        };
+
+        m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_window, NULL);
+        if(m_eglSurface == EGL_NO_SURFACE)
+            g_logger.fatal(stdext::format("Unable to create EGL surface: %i", eglGetError()));
+
+        m_eglContext = eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, contextAtrrList);
+        if(m_eglContext == EGL_NO_CONTEXT )
+            g_logger.fatal(stdext::format("Unable to create EGL context: %i", eglGetError()));
+
+    }else{
+        uint pixelFormat;
+        static PIXELFORMATDESCRIPTOR pfd = { sizeof(PIXELFORMATDESCRIPTOR),
+                                            1,
+                                            PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+                                            PFD_TYPE_RGBA,
+                                            32,                         // Select Our Color Depth
+                                            8, 0, 8, 0, 8, 0,           // Color Bits Ignored
+                                            8,                          // Alpha Buffer Bits
+                                            0,                          // Shift Bit Ignored
+                                            0,                          // No Accumulation Buffer
+                                            0, 0, 0, 0,                 // Accumulation Bits Ignored
+                                            0,                          // Z-Buffer (Depth Buffer)
+                                            0,                          // No Stencil Buffer
+                                            0,                          // No Auxiliary Buffer
+                                            PFD_MAIN_PLANE,             // Main Drawing Layer
+                                            0,                          // Reserved
+                                            0, 0, 0 };                  // Layer Masks Ignored
+
+        pixelFormat = ChoosePixelFormat(m_deviceContext, &pfd);
+        if(!pixelFormat)
+            g_logger.fatal("Could not find a suitable pixel format\nTry to update your graphics drivers or use DirectX version if available.");
+
+        if(!SetPixelFormat(m_deviceContext, pixelFormat, &pfd))
+            g_logger.fatal("Could not set the pixel format\nTry to update your graphics drivers or use DirectX version if available.");
+
+        if(!(m_wglContext = wglCreateContext(m_deviceContext)))
+            g_logger.fatal("Unable to create GL context.\nTry to update your graphics drivers or use DirectX version if available.");
     }
-
-    static int configList[] = {
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-        EGL_RED_SIZE, 8,
-        EGL_GREEN_SIZE, 8,
-        EGL_BLUE_SIZE, 8,
-        EGL_ALPHA_SIZE, 8,
-        EGL_NONE
-    };
-
-    EGLint numConfig;
-
-    if(!eglGetConfigs(m_eglDisplay, NULL, 0xFFFF, &numConfig)) // it must have 0xFFFF to work
-        g_logger.fatal("No valid GL configurations");
-
-    if(!eglChooseConfig(m_eglDisplay, configList, &m_eglConfig, 1, &numConfig))
-        g_logger.fatal("Failed to choose EGL config");
-
-    EGLint contextAtrrList[] = {
-        EGL_CONTEXT_CLIENT_VERSION, 2,
-        EGL_NONE
-    };
-
-    m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_window, NULL);
-    if(m_eglSurface == EGL_NO_SURFACE)
-        g_logger.fatal(stdext::format("Unable to create EGL surface: %i", eglGetError()));
-
-    m_eglContext = eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, contextAtrrList);
-    if(m_eglContext == EGL_NO_CONTEXT )
-        g_logger.fatal(stdext::format("Unable to create EGL context: %i", eglGetError()));
-
-#else
-    uint pixelFormat;
-    static PIXELFORMATDESCRIPTOR pfd = { sizeof(PIXELFORMATDESCRIPTOR),
-                                         1,
-                                         PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
-                                         PFD_TYPE_RGBA,
-                                         32,                         // Select Our Color Depth
-                                         8, 0, 8, 0, 8, 0,           // Color Bits Ignored
-                                         8,                          // Alpha Buffer Bits
-                                         0,                          // Shift Bit Ignored
-                                         0,                          // No Accumulation Buffer
-                                         0, 0, 0, 0,                 // Accumulation Bits Ignored
-                                         0,                          // Z-Buffer (Depth Buffer)
-                                         0,                          // No Stencil Buffer
-                                         0,                          // No Auxiliary Buffer
-                                         PFD_MAIN_PLANE,             // Main Drawing Layer
-                                         0,                          // Reserved
-                                         0, 0, 0 };                  // Layer Masks Ignored
-
-    pixelFormat = ChoosePixelFormat(m_deviceContext, &pfd);
-    if(!pixelFormat)
-        g_logger.fatal("Could not find a suitable pixel format\nTry to update your graphics drivers or use DirectX version if available.");
-
-    if(!SetPixelFormat(m_deviceContext, pixelFormat, &pfd))
-        g_logger.fatal("Could not set the pixel format\nTry to update your graphics drivers or use DirectX version if available.");
-
-    if(!(m_wglContext = wglCreateContext(m_deviceContext)))
-        g_logger.fatal("Unable to create GL context.\nTry to update your graphics drivers or use DirectX version if available.");
-#endif
 }
 
 void WIN32Window::internalDestroyGLContext()
 {
-#ifdef OPENGL_ES
-    if(m_eglDisplay) {
-        if(m_eglContext) {
-            eglDestroyContext(m_eglDisplay, m_eglContext);
-            m_eglContext = 0;
+    if(g_window.isOpenGLES()){
+        if(m_eglDisplay) {
+            if(m_eglContext) {
+                eglDestroyContext(m_eglDisplay, m_eglContext);
+                m_eglContext = 0;
+            }
+            if(m_eglSurface) {
+                eglDestroySurface(m_eglDisplay, m_eglSurface);
+                m_eglSurface = 0;
+            }
+            eglTerminate(m_eglDisplay);
+            m_eglDisplay = 0;
         }
-        if(m_eglSurface) {
-            eglDestroySurface(m_eglDisplay, m_eglSurface);
-            m_eglSurface = 0;
+    }else{
+        if(m_wglContext) {
+            if(!wglMakeCurrent(NULL, NULL))
+                g_logger.error("Release of dc and rc failed.");
+            if(!wglDeleteContext(m_wglContext))
+                g_logger.error("Release rendering context failed.");
+            m_wglContext = NULL;
         }
-        eglTerminate(m_eglDisplay);
-        m_eglDisplay = 0;
     }
-#else
-    if(m_wglContext) {
-        if(!wglMakeCurrent(NULL, NULL))
-            g_logger.error("Release of dc and rc failed.");
-        if(!wglDeleteContext(m_wglContext))
-            g_logger.error("Release rendering context failed.");
-        m_wglContext = NULL;
-    }
-#endif
 }
 
 void WIN32Window::internalRestoreGLContext()
 {
-#ifdef OPENGL_ES
-    if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
-        g_logger.fatal(stdext::format("Unable to make current EGL context (error: %i, report it)", (int)eglGetError()));
-#else
-    if(!wglMakeCurrent(m_deviceContext, m_wglContext))
-        g_logger.fatal(stdext::format("Unable to make current WGL context (error: %i, report it)", GetLastError()));
-#endif
+    if(g_window.isOpenGLES()){
+        if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
+            g_logger.fatal(stdext::format("Unable to make current EGL context (error: %i, report it)", (int)eglGetError()));
+    }else{
+        if(!wglMakeCurrent(m_deviceContext, m_wglContext))
+            g_logger.fatal(stdext::format("Unable to make current WGL context (error: %i, report it)", GetLastError()));
+    }
 }
 
 bool WIN32Window::isExtensionSupported(const char *ext)
 {
-#ifdef OPENGL_ES
-    //TODO
-    return false;
-#else
-    typedef const char* (WINAPI * wglGetExtensionsStringProc)();
-    wglGetExtensionsStringProc wglGetExtensionsString = (wglGetExtensionsStringProc)getExtensionProcAddress("wglGetExtensionsStringEXT");
-    if(!wglGetExtensionsString)
+    if(g_window.isOpenGLES()){
+        //TODO
         return false;
+    }else{
+        typedef const char* (WINAPI * wglGetExtensionsStringProc)();
+        wglGetExtensionsStringProc wglGetExtensionsString = (wglGetExtensionsStringProc)getExtensionProcAddress("wglGetExtensionsStringEXT");
+        if(!wglGetExtensionsString)
+            return false;
 
-    const char *exts = wglGetExtensionsString();
-    if(exts && strstr(exts, ext))
-        return true;
+        const char *exts = wglGetExtensionsString();
+        if(exts && strstr(exts, ext))
+            return true;
 
-    return false;
-#endif
+        return false;
+    }
 }
 
 void *WIN32Window::getExtensionProcAddress(const char *ext)
 {
-#ifdef OPENGL_ES
-    //TODO
-    return NULL;
-#else
-    return (void*)wglGetProcAddress(ext);
-#endif
+    if(g_window.isOpenGLES()){
+        //TODO
+        return NULL;
+    }else{
+        return (void*)wglGetProcAddress(ext);
+    }
 }
 
 void WIN32Window::move(const Point& pos)
@@ -927,11 +924,11 @@ LRESULT WIN32Window::dispatcherWindowProc(HWND, UINT uMsg, WPARAM wParam, LPARAM
 
 void WIN32Window::swapBuffers()
 {
-#ifdef OPENGL_ES
-    eglSwapBuffers(m_eglDisplay, m_eglSurface);
-#else
-    SwapBuffers(m_deviceContext);
-#endif
+    if(g_window.isOpenGLES()){
+        eglSwapBuffers(m_eglDisplay, m_eglSurface);
+    }else{
+        SwapBuffers(m_deviceContext);
+    }
 }
 
 void WIN32Window::showMouse()
@@ -1038,33 +1035,33 @@ void WIN32Window::setFullscreen(bool fullscreen)
 void WIN32Window::setVerticalSync(bool enable)
 {
     m_verticalSync = enable;
-#ifdef OPENGL_ES
-    g_graphicsDispatcher.addEvent([&, enable] {
-        if (eglSwapInterval(m_eglDisplay, enable ? 1 : 0) != EGL_TRUE) {
-            g_logger.error("Error while setting vsync");
-        }
-    });
-#else
-    g_graphicsDispatcher.addEvent([&, enable] {
-        typedef BOOL(WINAPI* wglSwapIntervalProc)(int);
-        if (isExtensionSupported("WGL_EXT_swap_control") && isExtensionSupported("EXT_swap_control_tear")) {
-            wglSwapIntervalProc wglSwapInterval = (wglSwapIntervalProc)getExtensionProcAddress("wglSwapIntervalEXT");
-            if (wglSwapInterval) {
-                wglSwapInterval(enable ? -1 : 0);
-                return;
+    if(g_window.isOpenGLES()){
+        g_graphicsDispatcher.addEvent([&, enable] {
+            if (eglSwapInterval(m_eglDisplay, enable ? 1 : 0) != EGL_TRUE) {
+                g_logger.error("Error while setting vsync");
             }
-        }
+        });
+    }else{
+        g_graphicsDispatcher.addEvent([&, enable] {
+            typedef BOOL(WINAPI* wglSwapIntervalProc)(int);
+            if (isExtensionSupported("WGL_EXT_swap_control") && isExtensionSupported("EXT_swap_control_tear")) {
+                wglSwapIntervalProc wglSwapInterval = (wglSwapIntervalProc)getExtensionProcAddress("wglSwapIntervalEXT");
+                if (wglSwapInterval) {
+                    wglSwapInterval(enable ? -1 : 0);
+                    return;
+                }
+            }
 
-        if (!isExtensionSupported("WGL_EXT_swap_control"))
-            return;
+            if (!isExtensionSupported("WGL_EXT_swap_control"))
+                return;
 
-        wglSwapIntervalProc wglSwapInterval = (wglSwapIntervalProc)getExtensionProcAddress("wglSwapIntervalEXT");
-        if (!wglSwapInterval)
-            return;
+            wglSwapIntervalProc wglSwapInterval = (wglSwapIntervalProc)getExtensionProcAddress("wglSwapIntervalEXT");
+            if (!wglSwapInterval)
+                return;
 
-        wglSwapInterval(enable ? 1 : 0);
-    });
-#endif
+            wglSwapInterval(enable ? 1 : 0);
+        });
+    }
 }
 
 void WIN32Window::setIcon(const std::string& file)
@@ -1158,17 +1155,17 @@ std::string WIN32Window::getClipboardText()
 std::string WIN32Window::getPlatformType()
 {
 #ifdef __GNUC__
-#ifndef OPENGL_ES
-    return "WIN32-WGL-GCC";
+    if(g_window.isOpenGLES()){
+        return "WIN32-WGL-GCC";
+    }else{
+        return "WIN32-EGL-GCC";
+    }
 #else
-    return "WIN32-EGL-GCC";
-#endif
-#else
-#ifndef OPENGL_ES
-    return "WIN32-WGL";
-#else
-    return "WIN32-EGL";
-#endif
+    if(g_window.isOpenGLES()){
+        return "WIN32-WGL";
+    }else{
+        return "WIN32-EGL";
+    }
 #endif
 }
 

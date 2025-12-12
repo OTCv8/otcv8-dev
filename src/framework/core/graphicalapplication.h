@@ -65,6 +65,8 @@ public:
 
     void doMapScreenshot(std::string fileName);
 
+    static void* load_with_egl(const char* name);
+
 protected:
     void resize(const Size& size);
     void inputEvent(InputEvent event);
