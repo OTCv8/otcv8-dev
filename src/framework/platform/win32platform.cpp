@@ -66,6 +66,24 @@ bool Platform::spawnProcess(std::string process, const std::vector<std::string>&
     return false;
 }
 
+bool Platform::restartProcess()
+{
+    STARTUPINFOW si;
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+    PROCESS_INFORMATION pi;
+    ZeroMemory(&pi, sizeof(pi));
+
+    if (CreateProcessW(NULL, GetCommandLineW(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+        g_logger.info("restartProcess success");
+        return true;
+    }
+    g_logger.error(stdext::format("restartProcess failed: %d", GetLastError()));
+    return false;
+}
+
 int Platform::getProcessId()
 {
     return GetCurrentProcessId();

@@ -179,6 +179,13 @@ void Application::close()
 
 void Application::restart()
 {
+    g_logger.info(stdext::format("Attempting to restart: %s", g_resources.getBinaryName()));
+    
+    if(g_platform.restartProcess())
+        g_logger.info("restartProcess success");
+    else
+        g_logger.error("restartProcess failed");
+
     exit();
 }
 

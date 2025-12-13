@@ -31,7 +31,12 @@
 #include <string.h>
 #include <framework/stdext/stdext.h>
 #include <framework/core/eventdispatcher.h>
+#include <framework/core/resourcemanager.h>
 
+bool Platform::restartProcess()
+{
+    return spawnProcess(g_resources.getBinaryName(), {});
+}
 #include <sys/stat.h>
 
 void Platform::processArgs(std::vector<std::string>& args)

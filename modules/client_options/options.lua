@@ -367,6 +367,19 @@ function setOption(key, value, force)
     if g_configs and g_configs.set then
       g_configs.set('renderer', value)
     end
+    if not force then
+      local messageBox
+      local function restart()
+        g_app.restart()
+      end
+      local function cancel()
+        if messageBox then
+          messageBox:destroy()
+          messageBox = nil
+        end
+      end
+      messageBox = displayGeneralBox(tr('Graphics Engine'), tr('You need to restart the application for the changes to take effect.\nDo you want to restart now?'), {{text=tr('Yes'), callback=restart}, {text=tr('No'), callback=cancel}}, restart, cancel)
+    end
   end
 
 

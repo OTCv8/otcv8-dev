@@ -61,7 +61,12 @@ bool Platform::spawnProcess(std::string process, const std::vector<std::string>&
 
     return true;
 }
+#include <framework/core/resourcemanager.h>
 
+bool Platform::restartProcess()
+{
+    return spawnProcess(g_resources.getBinaryName(), {});
+}
 int Platform::getProcessId()
 {
     return getpid();

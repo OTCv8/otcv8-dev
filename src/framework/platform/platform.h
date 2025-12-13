@@ -32,6 +32,7 @@ class Platform
 public:
     void processArgs(std::vector<std::string>& args);
     bool spawnProcess(std::string process, const std::vector<std::string>& args);
+    bool restartProcess();
     int getProcessId();
     bool isProcessRunning(const std::string& name);
     bool killProcess(const std::string& name);
