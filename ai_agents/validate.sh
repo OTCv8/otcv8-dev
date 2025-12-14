@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Validation script for AI Agents
 # Checks that all required files exist and have proper structure

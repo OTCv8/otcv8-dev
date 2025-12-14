@@ -218,7 +218,8 @@ function ScriptImprovementAgent.analyzeSecurity(content)
   end
   
   -- Check for potential SQL injection
-  if content:find("SELECT.-%.%.") or content:find("INSERT.-%.%.") then
+  if content:find("SELECT%s+.*%s+%.%.") or content:find("INSERT%s+.*%s+%.%.") or 
+     content:find("UPDATE%s+.*%s+%.%.") or content:find("DELETE%s+.*%s+%.%.") then
     table.insert(issues, {
       severity = "high",
       message = "Potential SQL injection vulnerability",
@@ -389,9 +390,11 @@ function ScriptImprovementAgent.analyzeRefactoring(content)
       if functionLines[currentFunction] then
         functionLines[currentFunction].lines = lineCount - functionLines[currentFunction].start
         if functionLines[currentFunction].lines > 50 then
+          -- Escape the function name for display (not used in pattern matching)
+          local safeFuncName = currentFunction:gsub("%%", "%%%%")
           table.insert(issues, {
             severity = "medium",
-            message = "Long function: " .. currentFunction .. " (" .. functionLines[currentFunction].lines .. " lines)",
+            message = "Long function: " .. safeFuncName .. " (" .. functionLines[currentFunction].lines .. " lines)",
             suggestion = "Consider breaking into smaller functions"
           })
         end
