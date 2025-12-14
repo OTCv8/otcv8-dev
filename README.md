@@ -54,6 +54,32 @@ You can use powershell script create_android_assets.ps1 to create them automatic
 - To run tests manually, unpack tests.7z and use command `otclient_debug.exe --test`
 - To test mobile UI use command `otclient_debug.exe --mobile`
 
+## 🤖 AI Agents - NEW!
+
+This repository now includes an AI agent system for automatically searching and improving Lua scripts.
+
+### Features:
+- 🔍 **Script Search**: Find and analyze scripts by patterns, size, or issues
+- 🛡️ **Security Analysis**: Detect vulnerabilities, SQL injection, hardcoded credentials
+- ⚡ **Performance**: Identify inefficient code, suggest optimizations
+- 📝 **Code Quality**: Check style, documentation, refactoring opportunities
+
+### Quick Start:
+```lua
+dofile("ai_agents/launcher.lua")
+local scripts = AgentCoordinator.searchScripts("/")
+local suggestions = AgentCoordinator.suggestImprovements("YourScript.lua")
+AgentCoordinator.printReport()
+```
+
+### Documentation:
+- 📖 [English Guide](ai_agents/README.md)
+- 📖 [Polish Guide / Instrukcja PL](ai_agents/INSTRUKCJA_PL.md)
+- 📖 [Quick Info](AI_AGENTS_INFO.md)
+- 📖 [Full Summary](AI_AGENTS_SUMMARY.md)
+
+See `ai_agents/examples/` for detailed usage examples.
+
 ## Links
 
 - Discord: https://discord.gg/feySup6
