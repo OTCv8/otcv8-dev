@@ -1,33 +1,30 @@
--- Icon Scripts Master Loader
--- Automatically loads all modern icon-based scripts
--- Created by AI Agents System
+-- 10 Most Useful Icon Scripts - Master Loader
+-- Organized by Profession and Usefulness
+-- Latest version with focused functionality
 
 print([[
 ╔════════════════════════════════════════════════════════════════╗
-║            Icon-Based Scripts - Master Loader                  ║
-║                   Latest Version 2024                          ║
+║         10 Most Useful Icon Scripts - Master Loader           ║
 ╚════════════════════════════════════════════════════════════════╝
 ]])
 
--- Configuration
-local iconScripts = {
-  {name = "Icon Healer", file = "icon_healer.lua", enabled = true},
-  {name = "Icon Combat", file = "icon_combat.lua", enabled = true},
-  {name = "Icon Utility", file = "icon_utility.lua", enabled = true},
-  {name = "Icon Loot", file = "icon_loot.lua", enabled = true},
-  {name = "Icon Cavebot", file = "icon_cavebot.lua", enabled = true}
+local scripts = {
+  -- PROFESSION-SPECIFIC (By Vocation)
+  {name = "1. Knight Healer", file = "icon_1_knight_healer.lua", category = "Knight", enabled = true},
+  {name = "2. Paladin Healer", file = "icon_2_paladin_healer.lua", category = "Paladin", enabled = true},
+  {name = "3. Mage Healer", file = "icon_3_mage_healer.lua", category = "Mage", enabled = true},
+  {name = "8. Sorcerer Spells", file = "icon_8_sorcerer_spells.lua", category = "Sorcerer", enabled = true},
+  {name = "9. Druid Spells", file = "icon_9_druid_spells.lua", category = "Druid", enabled = true},
+  
+  -- UNIVERSAL UTILITY (Most Useful for All)
+  {name = "4. Smart Combat", file = "icon_4_smart_combat.lua", category = "Combat", enabled = true},
+  {name = "5. Auto Loot Gold", file = "icon_5_auto_loot.lua", category = "Loot", enabled = true},
+  {name = "6. Emergency System", file = "icon_6_emergency.lua", category = "Safety", enabled = true},
+  {name = "7. Auto Buffs", file = "icon_7_auto_buffs.lua", category = "Utility", enabled = true},
+  {name = "10. Equipment Manager", file = "icon_10_equipment.lua", category = "Utility", enabled = true}
 }
 
--- Storage for loader
-if not storage.iconLoader then
-  storage.iconLoader = {
-    autoLoad = true,
-    loadedScripts = {}
-  }
-end
-
--- Load scripts function
-local function loadIconScript(scriptInfo)
+local function loadScript(scriptInfo)
   if not scriptInfo.enabled then
     print(string.format("⊘ %s - Disabled", scriptInfo.name))
     return false
@@ -38,205 +35,95 @@ local function loadIconScript(scriptInfo)
   end)
   
   if success then
-    print(string.format("✓ %s - Loaded successfully", scriptInfo.name))
-    table.insert(storage.iconLoader.loadedScripts, scriptInfo.name)
+    print(string.format("✓ %s [%s]", scriptInfo.name, scriptInfo.category))
     return true
   else
-    print(string.format("✗ %s - Failed to load", scriptInfo.name))
-    if error then
-      print(string.format("  Error: %s", tostring(error)))
-    end
+    print(string.format("✗ %s - Failed", scriptInfo.name))
     return false
   end
 end
 
--- Main loading process
-print("\n--- Loading Icon Scripts ---")
+print("\n--- Loading by Category ---")
 
-local loadedCount = 0
-local totalCount = 0
+-- Load by category
+local categories = {"Knight", "Paladin", "Mage", "Sorcerer", "Druid", "Combat", "Loot", "Safety", "Utility"}
+local loaded = 0
 
-for _, script in ipairs(iconScripts) do
-  totalCount = totalCount + 1
-  if loadIconScript(script) then
-    loadedCount = loadedCount + 1
-  end
-end
-
-print(string.rep("─", 60))
-print(string.format("Loaded %d/%d scripts successfully", loadedCount, totalCount))
-print(string.rep("─", 60))
-
--- Create UI for loader control
-setDefaultTab("Loader")
-UI.Label("Icon Scripts Loader")
-UI.Separator()
-
-UI.Label(string.format("Status: %d/%d scripts loaded", loadedCount, totalCount))
-UI.Separator()
-
--- Reload button
-addButton("Reload All Scripts", function()
-  print("\n[Loader] Reloading all scripts...")
-  storage.iconLoader.loadedScripts = {}
-  
-  for _, script in ipairs(iconScripts) do
-    loadIconScript(script)
-  end
-  
-  print("[Loader] Reload complete!")
-end)
-
--- Show loaded scripts
-addButton("Show Loaded Scripts", function()
-  print("\n[Loader] Currently loaded scripts:")
-  for i, scriptName in ipairs(storage.iconLoader.loadedScripts) do
-    print(string.format("  %d. %s", i, scriptName))
-  end
-end)
-
-UI.Separator()
-
--- Individual script toggles
-UI.Label("Script Control:")
-
-for i, script in ipairs(iconScripts) do
-  addSwitch("script_" .. i, script.name, function(widget)
-    iconScripts[i].enabled = not iconScripts[i].enabled
-    widget:setOn(iconScripts[i].enabled)
-    
-    if iconScripts[i].enabled then
-      loadIconScript(iconScripts[i])
-    else
-      print(string.format("[Loader] %s disabled", script.name))
+for _, category in ipairs(categories) do
+  local categoryLoaded = false
+  for _, script in ipairs(scripts) do
+    if script.category == category then
+      if not categoryLoaded then
+        print("\n" .. category .. ":")
+        categoryLoaded = true
+      end
+      if loadScript(script) then
+        loaded = loaded + 1
+      end
     end
-  end)
+  end
 end
 
-UI.Separator()
+print(string.rep("─", 60))
+print(string.format("✓ Loaded %d/10 scripts successfully", loaded))
+print(string.rep("─", 60))
 
--- Help section
-UI.Label("Quick Guide:")
-addButton("Show Help", function()
-  print([[
-
-╔════════════════════════════════════════════════════════════════╗
-║                   ICON SCRIPTS QUICK GUIDE                     ║
-╚════════════════════════════════════════════════════════════════╝
-
-📦 LOADED SCRIPTS:
-
-1. Icon Healer (icon_healer.lua)
-   • Auto Health/Mana Potions
-   • Auto Healing Spells (Exura Gran/San)
-   • Emergency Ring System
-   • Customizable HP/MP thresholds
-
-2. Icon Combat (icon_combat.lua)
-   • Smart Targeting (closest/lowest HP)
-   • Keep Target
-   • Auto Area Spells
-   • Auto Single Target Spells
-   • Rune Attacks (SD)
-   • Exori Combo System
-
-3. Icon Utility (icon_utility.lua)
-   • Auto Haste
-   • Auto Food
-   • Auto Cure Poison/Paralyze
-   • Auto Light
-   • Training Mode (Utamo Vita)
-   • Equipment Manager (Soft Boots, Rings, Amulets)
-
-4. Icon Loot (icon_loot.lua)
-   • Loot All Items
-   • Loot Gold Only
-   • Loot Rare Items
-   • Auto Open Corpses
-   • Container Stacking
-   • Depot Depositing
-
-5. Icon Cavebot (icon_cavebot.lua)
-   • Waypoint Recording
-   • Auto Walk Path
-   • Auto Fight
-   • Priority Targeting
-   • Auto Refiller
-
-═══════════════════════════════════════════════════════════════
-
-🎮 HOW TO USE:
-
-1. Click on any icon to toggle that feature ON/OFF
-2. Icons are MOVABLE - drag them anywhere on screen
-3. Icons show visual feedback when active
-4. Configure settings in each script's tab
-5. All settings are auto-saved to storage
-
-═══════════════════════════════════════════════════════════════
-
-⚙️ CONFIGURATION:
-
-• Each script has its own settings tab
-• Edit thresholds, spell names, item IDs
-• Changes take effect immediately
-• Settings persist across sessions
-
-═══════════════════════════════════════════════════════════════
-
-💡 TIPS:
-
-• Organize icons on screen for quick access
-• Use tooltips (hover over icons) for info
-• Combine multiple scripts for full automation
-• Start with basic features, then add more
-• Monitor console for status messages
-
-═══════════════════════════════════════════════════════════════
-
-📝 EXAMPLES:
-
-Hunt Setup:
-  1. Enable Icon Combat for targeting
-  2. Enable Icon Healer for survival
-  3. Enable Icon Loot for collecting items
-  4. Adjust thresholds in settings
-
-Training Setup:
-  1. Enable Icon Utility - Training Mode
-  2. Enable Icon Healer with high thresholds
-  3. Disable combat features
-
-PvP Setup:
-  1. Enable Icon Combat with manual targeting
-  2. Enable Icon Healer with low thresholds
-  3. Enable Icon Utility for buffs
-
-═══════════════════════════════════════════════════════════════
-
-All scripts created by AI Agents System
-Version: 2024 Latest
-For more info, check individual script tabs
-
-╚════════════════════════════════════════════════════════════════╝
-  ]])
-end)
-
-UI.Separator()
-
+-- Quick Guide
 print([[
 
 ╔════════════════════════════════════════════════════════════════╗
-║                    LOADING COMPLETE                            ║
+║                      QUICK GUIDE                               ║
 ╚════════════════════════════════════════════════════════════════╝
 
-✓ All icon-based scripts are ready to use!
-✓ Check each tab for settings and controls
-✓ Click icons to toggle features ON/OFF
-✓ Icons are movable - organize them as you like!
+PROFESSION-SPECIFIC HEALERS:
+  #1 Knight  - HP potions + Exura Ico
+  #2 Paladin - HP/MP potions + Exura San
+  #3 Mage    - MP potions + Exura Gran/Vita
+  #8 Sorcerer - Attack spells (area/single)
+  #9 Druid    - Support spells (sio/cure)
 
-Click "Show Help" button for full guide
+UNIVERSAL UTILITIES (Most Useful):
+  #4 Smart Combat - Auto targeting (lowest HP)
+  #5 Auto Loot    - Gold and corpse looting
+  #6 Emergency    - Ring/SSA protection
+  #7 Auto Buffs   - Haste, food, light
+  #10 Equipment   - Auto soft boots, amulets, rings
 
-Happy botting! 🤖
+USAGE:
+  • Click icons to toggle ON/OFF
+  • Drag icons anywhere on screen
+  • Configure in each script's tab
+  • All settings auto-saved
 
+LOAD INDIVIDUAL:
+  dofile("icon_1_knight_healer.lua")  -- For your vocation
+
+╚════════════════════════════════════════════════════════════════╝
 ]])
+
+setDefaultTab("Loader")
+UI.Label("Icon Scripts Loader")
+UI.Separator()
+UI.Label(string.format("Loaded: %d/10 scripts", loaded))
+UI.Separator()
+
+addButton("Reload All", function()
+  print("[Loader] Reloading...")
+  for _, script in ipairs(scripts) do
+    loadScript(script)
+  end
+end)
+
+addButton("Show Categories", function()
+  print("\n=== Scripts by Category ===")
+  for _, category in ipairs(categories) do
+    print("\n" .. category .. ":")
+    for _, script in ipairs(scripts) do
+      if script.category == category then
+        print("  • " .. script.name)
+      end
+    end
+  end
+end)
+
+print("\n[Master Loader] Ready! Click icons to use features.")
