@@ -2,8 +2,9 @@
 -- ROYAL PALADIN 900 SKILL - ADVANCED SCRIPTS
 -- ===============================================
 -- Zaawansowane skrypty dla doswiadczonego RP
+-- UWAGA: Auto-potion jest w kliencie - nie dublujemy!
 -- Funkcje: Energy Ring priority, zaawansowany combat, 
--- inteligentne healowanie, auto equipment, special attacks
+-- spells healing (nie potions), auto equipment, special attacks
 -- ===============================================
 
 setDefaultTab("RP 900")
@@ -14,8 +15,6 @@ if not storage.rp900 then
     energyRingMonsters = 3,
     emergencyHP = 30,
     ssaHP = 20,
-    hpPotionPercent = 70,
-    mpPotionPercent = 55,
     exuraSanHP = 60,
     exuraGranHP = 50,
     masResHP = 85,
@@ -114,52 +113,38 @@ addIcon("Ultimate Emergency", {
 end))
 
 -- ===============================================
--- ADVANCED HEALING SYSTEM
+-- EXURA SPELLS (NIE POTIONS - KLIENT MA WBUDOWANE)
 -- ===============================================
--- Multi-level healing z priorytetem:
--- 1. Exura Gran (krytyczne HP)
--- 2. Exura San (srednie HP)  
--- 3. HP/MP potions (standardowe)
--- 4. Mas Res (wielu potworow)
+-- Tylko spelly healing - potions sa w kliencie
 -- ===============================================
 
-addIcon("Advanced HP", {
-  item = 266,
+addIcon("Exura Gran", {
+  item = 3161,
   movable = true,
-  text = "HP+"
-}, macro(80, "Advanced HP Heal", function()
+  text = "Gran"
+}, macro(100, "Exura Gran", function()
   local hp = hppercent()
   
   if hp < storage.rp900.exuraGranHP and not isInPz() then
     if canCast("exura gran") then
       say("exura gran")
       delay(1000)
-      return
     end
   end
+end))
+
+addIcon("Exura San", {
+  item = 3160,
+  movable = true,
+  text = "San"
+}, macro(100, "Exura San", function()
+  local hp = hppercent()
   
   if hp < storage.rp900.exuraSanHP and not isInPz() then
     if canCast("exura san") then
       say("exura san")
       delay(1000)
-      return
     end
-  end
-  
-  if hp < storage.rp900.hpPotionPercent and not isInPz() then
-    use(266)
-    delay(800)
-  end
-end))
-
-addIcon("Advanced MP", {
-  item = 268,
-  movable = true,
-  text = "MP+"
-}, macro(80, "Advanced MP Restore", function()
-  if manapercent() < storage.rp900.mpPotionPercent and not isInPz() then
-    use(268)
-    delay(800)
   end
 end))
 
@@ -413,21 +398,16 @@ addTextEdit("eringMon", storage.rp900.energyRingMonsters, function(widget, text)
 end)
 
 UI.Separator()
-UI.Label("--- Healing Config ---")
-
-UI.Label("HP Potion %:")
-addTextEdit("rpHP", storage.rp900.hpPotionPercent, function(widget, text)
-  storage.rp900.hpPotionPercent = tonumber(text) or 70
-end)
-
-UI.Label("MP Potion %:")
-addTextEdit("rpMP", storage.rp900.mpPotionPercent, function(widget, text)
-  storage.rp900.mpPotionPercent = tonumber(text) or 55
-end)
+UI.Label("--- Healing Spells Config ---")
 
 UI.Label("Exura Gran HP %:")
 addTextEdit("granHP", storage.rp900.exuraGranHP, function(widget, text)
   storage.rp900.exuraGranHP = tonumber(text) or 50
+end)
+
+UI.Label("Exura San HP %:")
+addTextEdit("sanHP", storage.rp900.exuraSanHP, function(widget, text)
+  storage.rp900.exuraSanHP = tonumber(text) or 60
 end)
 
 UI.Separator()
@@ -465,4 +445,4 @@ addSwitch("softBootsSwitch", "Auto Soft Boots", function(widget)
   widget:setOn(storage.rp900.autoSoftBoots)
 end)
 
-print("[RP 900 SKILL ADVANCED] Zaladowano! 12 ikon dostepnych.")
+print("[RP 900 SKILL ADVANCED] Zaladowano! 11 ikon (bez auto-potion - to jest w kliencie).")

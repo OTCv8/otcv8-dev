@@ -6,7 +6,9 @@
 dofile("RP_ADVANCED_900_SKILL.lua")
 ```
 
-## 12 Zaawansowanych Ikon
+**UWAGA:** Auto-potion HP/MP jest wbudowane w klienta OTCv8 - nie ma potrzeby dublować tej funkcji w skrypcie!
+
+## 11 Zaawansowanych Ikon (bez auto-potion)
 
 ### 1. ⚡ Energy Ring Priority (PRIORYTET #1)
 
@@ -34,27 +36,26 @@ dofile("RP_ADVANCED_900_SKILL.lua")
 
 ---
 
-### 3. 💊 Advanced HP (Multi-level healing)
+### 3. 🔮 Exura Gran (Healing Spell)
 
-**Opis:** Inteligentny system leczenia z priorytetem:
-1. **Exura Gran** - gdy HP < 50% (najsilniejszy spell)
-2. **Exura San** - gdy HP < 60% (średni spell)
-3. **HP Potion** - gdy HP < 70% (potions)
+**Opis:** Automatyczny Exura Gran gdy HP < 50%
 
-**Dlaczego to ważne:** Automatycznie wybiera najlepszą metodę leczenia w zależności od HP.
+**Dlaczego to ważne:** Najsilniejszy self-healing spell RP. 
+**UWAGA:** Potions są w kliencie - ten skrypt używa tylko spelli!
 
 **Konfiguracja:**
-- HP Potion %: Próg dla potions (domyślnie 70%)
 - Exura Gran HP %: Próg dla Exura Gran (domyślnie 50%)
 
 ---
 
-### 4. 💧 Advanced MP (Mana management)
+### 4. 🔮 Exura San (Healing Spell)
 
-**Opis:** Automatyczne uzupełnianie many gdy MP < 55%.
+**Opis:** Automatyczny Exura San gdy HP < 60%
+
+**Dlaczego to ważne:** Średni healing spell - używaj gdy Gran na cooldown.
 
 **Konfiguracja:**
-- MP Potion %: Próg dla mana potions (domyślnie 55%)
+- Exura San HP %: Próg dla Exura San (domyślnie 60%)
 
 ---
 
@@ -135,7 +136,7 @@ dofile("RP_ADVANCED_900_SKILL.lua")
 
 ---
 
-### 12. 👢 Auto Soft Boots
+### 11. 👢 Auto Soft Boots
 
 **Opis:** Automatyczne zakładanie Soft Boots gdy:
 - MP < 85%
@@ -157,10 +158,9 @@ Wszystkie ustawienia są edytowalne w panelu:
 - **E-Ring HP %:** Kiedy założyć ring (domyślnie 40%)
 - **E-Ring Monsters:** Ile potworów = auto ring (domyślnie 3)
 
-### Healing
-- **HP Potion %:** Próg HP dla potions (domyślnie 70%)
-- **MP Potion %:** Próg MP dla potions (domyślnie 55%)
+### Healing Spells (NIE POTIONS - KLIENT MA TO!)
 - **Exura Gran HP %:** Próg HP dla Exura Gran (domyślnie 50%)
+- **Exura San HP %:** Próg HP dla Exura San (domyślnie 60%)
 
 ### Spells
 - **Divine Missile MP %:** Min MP do Divine Missile (domyślnie 30%)
@@ -180,8 +180,8 @@ Wszystkie ustawienia są edytowalne w panelu:
 ```
 E-Ring HP: 45%
 E-Ring Monsters: 4
-HP Potion: 75%
 Exura Gran HP: 55%
+Exura San HP: 65%
 Divine Missile MP: 35%
 Auto Utamo: ON
 ```
@@ -190,8 +190,8 @@ Auto Utamo: ON
 ```
 E-Ring HP: 35%
 E-Ring Monsters: 2
-HP Potion: 65%
 Exura Gran HP: 45%
+Exura San HP: 60%
 Divine Missile MP: 25%
 Auto Utamo: ON
 ```
@@ -200,8 +200,8 @@ Auto Utamo: ON
 ```
 E-Ring HP: 50%
 E-Ring Monsters: 3
-HP Potion: 80%
 Exura Gran HP: 60%
+Exura San HP: 70%
 Divine Missile MP: 40%
 Auto Utamo: ON
 Priority Targeting: ON
@@ -215,8 +215,7 @@ Priority Targeting: ON
 - Energy Ring (3088) - minimum 5 sztuk
 - Emergency Ring (3051) - minimum 3 sztuki
 - Stone Skin Amulet (3081) - minimum 2 sztuki
-- Ultimate Health Potion (266) - 100+
-- Ultimate Mana Potion (268) - 100+
+- **Potions - ustaw w kliencie OTCv8!** (klient ma wbudowane auto-potion)
 - Soft Boots (6132) - 1 para
 
 ### Opcjonalne:
@@ -242,7 +241,7 @@ A: Tak! Ten skrypt został zaprojektowany aby współpracować z innymi.
 **Q: Które ikony są najważniejsze?**
 A: 
 1. Energy Ring Priority (najpriorytet)
-2. Advanced HP (healing)
+2. Exura Gran/San (healing spells)
 3. Priority Target (targeting)
 4. Divine Missile (damage)
 
@@ -254,6 +253,9 @@ A: Kliknij ikonę aby ją disable (czerwony = wyłączone, zielony = włączone)
 
 **Q: Czy Energy Ring będzie się zużywać?**
 A: Tak, dlatego miej minimum 5 sztuk. Skrypt automatycznie zakłada nowy gdy poprzedni się zużyje.
+
+**Q: Dlaczego brak auto-potion HP/MP?**
+A: Klient OTCv8 ma wbudowane auto-potion - nie ma potrzeby dublować tej funkcji! Ustaw potions w kliencie.
 
 ---
 
