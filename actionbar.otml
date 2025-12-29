@@ -1,0 +1,192 @@
+actions_1:
+  1:
+    item: 34089
+    count: 1
+    actionType: 4
+  2:
+    item: 35849
+    count: 1
+    actionType: 4
+  3:
+  4:
+  5:
+    item: 34156
+    count: 1
+    actionType: 4
+  6:
+    item: 31579
+    count: 1
+    actionType: 4
+  7:
+    item: 8863
+    count: 1
+    actionType: 4
+  8:
+    item: 0
+    count: 1
+    actionType: 4
+  9:
+    item: 23477
+    count: 1
+    actionType: 4
+  10:
+    item: 31617
+    count: 1
+    actionType: 4
+  11:
+    item: 32636
+    count: 1
+    actionType: 4
+  12:
+    item: 31621
+    count: 1
+    actionType: 4
+  13:
+    item: 25698
+    count: 1
+    actionType: 4
+  14:
+  15:
+  16:
+    item: 25977
+    count: 1
+    actionType: 4
+  17:
+    item: 30006
+    count: 1
+    actionType: 4
+  18:
+    item: 25975
+    count: 1
+    actionType: 4
+  19:
+  20:
+    hotkey: Delete
+    count: 1
+    item: 9596
+    actionType: 1
+  21:
+    hotkey: Numpad0
+    count: 1
+    item: 9596
+    actionType: 3
+  22:
+  23:
+  24:
+  25:
+  26:
+  27:
+  28:
+  29:
+  30:
+  31:
+  32:
+  33:
+  34:
+  35:
+  36:
+  37:
+  38:
+  39:
+  40:
+  41:
+  42:
+  43:
+  44:
+  45:
+  46:
+  47:
+  48:
+  49:
+  50:
+actions_2:
+  1:
+    item: 28718
+    count: 1
+    actionType: 4
+  2:
+    item: 35524
+    count: 1
+    actionType: 4
+  3:
+    item: 34150
+    count: 1
+    actionType: 4
+  4:
+  5:
+    item: 28715
+    count: 1
+    actionType: 4
+  6:
+    item: 27648
+    count: 1
+    actionType: 4
+  7:
+    item: 28720
+    count: 1
+    actionType: 4
+  8:
+  9:
+    item: 3246
+    count: 1
+    actionType: 4
+  10:
+  11:
+    item: 30344
+    count: 1
+    actionType: 4
+  12:
+    item: 30343
+    count: 1
+    actionType: 4
+  13:
+    item: 31631
+    count: 1
+    actionType: 4
+  14:
+    item: 34158
+    count: 1
+    actionType: 4
+  15:
+  16:
+  17:
+  18:
+  19:
+  20:
+    hotkey: 3
+    item: 0
+    text: exana amp res
+  21:
+    hotkey: F4
+    count: 100
+    item: 3725
+    actionType: 0
+  22:
+  23:
+  24:
+  25:
+  26:
+  27:
+  28:
+  29:
+  30:
+  31:
+  32:
+  33:
+  34:
+  35:
+  36:
+  37:
+  38:
+  39:
+  40:
+  41:
+  42:
+  43:
+  44:
+  45:
+  46:
+  47:
+  48:
+  49:
+  50:

@@ -1,0 +1,9 @@
+# Backup files
+*.bak
+
+# Temporary files
+*.tmp
+*.temp
+
+# Cache files
+cache.dat
